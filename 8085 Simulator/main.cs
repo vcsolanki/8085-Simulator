@@ -8,6 +8,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+/*
+ * 
+ * have to do flag resgisters work
+ * 
+ * add more instructions
+ * 
+ * add HL pair support in instruction
+ * 
+ */
+
 namespace _8085_Simulator
 {
     public partial class main : Form
@@ -67,11 +77,11 @@ namespace _8085_Simulator
             creg.Text = c.ToString("X");
             dreg.Text = d.ToString("X");
             ereg.Text = e.ToString("X");
-            flagclbl.Text = carry ? "1" : "0";
-            flagzlbl.Text = zero ? "1" : "0";
-            flagslbl.Text = sign ? "1" : "0";
-            flagalbl.Text = auxilary ? "1" : "0";
-            flagplbl.Text = parity ? "1" : "0";
+            flagc.Text = carry ? "1" : "0";
+            flagz.Text = zero ? "1" : "0";
+            flags.Text = sign ? "1" : "0";
+            flaga.Text = auxilary ? "1" : "0";
+            flagp.Text = parity ? "1" : "0";
         }
 
         public void clear_registers()
@@ -340,9 +350,9 @@ namespace _8085_Simulator
                 }
                 else
                     error_string = "not enough parameter";
-                
+
             }  //done
-            else if(code[0]=="mvi")
+            else if (code[0] == "mvi")
             {
                 if (code.Length > 2)
                 {
@@ -390,10 +400,10 @@ namespace _8085_Simulator
                 }
                 else
                     error_string = "not enough parameter";
-                
+
 
             }  //done
-            else if(code[0]=="add")
+            else if (code[0] == "add")
             {
                 if (code.Length > 1)
                 {
@@ -404,7 +414,7 @@ namespace _8085_Simulator
                     {
 
                     }
-                    else if(code[1]=="a")
+                    else if (code[1] == "a")
                     {
                         error_string = $"You cant add \"a\" itself";
                     }
@@ -412,10 +422,10 @@ namespace _8085_Simulator
                         error_string = $"cannot identify \"{code[1]}\"";
                 }
                 else
-                    error_string= error_string = "not enough parameter";
-                
+                    error_string = error_string = "not enough parameter";
+
             } //done
-            else if(code[0]=="sub")
+            else if (code[0] == "sub")
             {
                 if (code.Length > 1)
                 {
@@ -436,19 +446,19 @@ namespace _8085_Simulator
                 }
                 else
                     error_string = error_string = "not enough parameter";
-                
+
             } //done
-            else if(code[0]=="adi")
+            else if (code[0] == "adi")
             {
                 if (code.Length > 1)
                 {
-                    if(code[1].EndsWith("h") || code[1].EndsWith("H"))
+                    if (code[1].EndsWith("h") || code[1].EndsWith("H"))
                     {
                         code[1] = code[1].Remove(code[1].Length - 1);
                         try
                         {
                             Convert.ToInt32(code[1], 16);
-                            if(code[1].Length>2)
+                            if (code[1].Length > 2)
                             {
                                 error_string = $"\"{code[1]}\" is not valid value";
                             }
@@ -464,6 +474,7 @@ namespace _8085_Simulator
                 else
                     error_string = "not enough parameter";
             } //done
+            else if (code[0] == "stc") { } //done
             else
                 error_string = $"\"{code[0]}\" is incompatible instruction";
 
