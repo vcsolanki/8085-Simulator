@@ -40,7 +40,7 @@
             this.breg = new System.Windows.Forms.Label();
             this.areg = new System.Windows.Forms.Label();
             this.codeEditor = new System.Windows.Forms.RichTextBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.output_box = new System.Windows.Forms.ListBox();
             this.lines_indicator = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
@@ -158,13 +158,13 @@
             // 
             // listBox1
             // 
-            this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 23;
-            this.listBox1.Location = new System.Drawing.Point(154, 326);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(477, 92);
-            this.listBox1.TabIndex = 13;
+            this.output_box.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.output_box.FormattingEnabled = true;
+            this.output_box.ItemHeight = 23;
+            this.output_box.Location = new System.Drawing.Point(154, 326);
+            this.output_box.Name = "listBox1";
+            this.output_box.Size = new System.Drawing.Size(477, 92);
+            this.output_box.TabIndex = 13;
             // 
             // lines_indicator
             // 
@@ -184,7 +184,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 460);
             this.Controls.Add(this.lines_indicator);
-            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.output_box);
             this.Controls.Add(this.codeEditor);
             this.Controls.Add(this.ereg);
             this.Controls.Add(this.dreg);
@@ -219,7 +219,7 @@
         private System.Windows.Forms.Label breg;
         private System.Windows.Forms.Label areg;
         private System.Windows.Forms.RichTextBox codeEditor;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox output_box;
         private System.Windows.Forms.RichTextBox lines_indicator;
     }
 }

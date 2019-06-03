@@ -84,7 +84,7 @@ namespace _8085_Simulator
         {
             clear_registers();
             errors.Clear();
-            listBox1.Items.Clear();
+            output_box.Items.Clear();
             int error_level = 0;
             int line_number = 1;
             string[] lines = codeEditor.Lines;
@@ -110,7 +110,7 @@ namespace _8085_Simulator
             {
                 foreach (string error in errors)
                 {
-                    listBox1.Items.Add(error);
+                    output_box.Items.Add(error);
                 }
             }
             else
@@ -138,6 +138,10 @@ namespace _8085_Simulator
                 add(code);
             else if (code[0].ToLower() == "sub")
                 sub(code);
+            else if (code[0].ToLower() == "adi")
+                adi(code);
+            else if (code[0].ToLower() == "stc")
+                stc();
             update_variables();
         }
 
@@ -277,11 +281,24 @@ namespace _8085_Simulator
                 a = byte.Parse(sub.ToString());
             }
         }
+        private void adi(string[] code)
+        {
+            if (code[1].EndsWith("h") || code[1].EndsWith("H"))
+            {
+                code[1] = code[1].Remove(code[1].Length - 1);
+                a = byte.Parse(Convert.ToInt32(code[1], 16).ToString());
+            }
+            else
+                    a = byte.Parse(code[1]);
+        }
+        private void stc()
+        {
+            carry = true;
+        }
 
         private string check_error(string[] code)
         {
             string error_string = "";
-
 
             if (code[0] == "mov")
             {
@@ -321,7 +338,7 @@ namespace _8085_Simulator
                         code[1] == "d" ||
                         code[1] == "e")
                     {
-                        if (code[2].EndsWith("h"))
+                        if (code[2].EndsWith("h") || code[2].EndsWith("H"))
                         {
                             code[2] = code[2].Remove(code[2].Length - 1);
                             try
@@ -332,19 +349,7 @@ namespace _8085_Simulator
                                     error_string = $"\"{code[2]}\" is not valid value";
                                 }
                             }
-                            catch (ArgumentOutOfRangeException e)
-                            {
-                                error_string = $"\"{code[2]}\" is not valid value";
-                            }
-                            catch (FormatException e)
-                            {
-                                error_string = $"\"{code[2]}\" is not valid value";
-                            }
-                            catch (ArgumentException e)
-                            {
-                                error_string = $"\"{code[2]}\" is not valid value";
-                            }
-                            catch (OverflowException e)
+                            catch
                             {
                                 error_string = $"\"{code[2]}\" is not valid value";
                             }
@@ -359,19 +364,10 @@ namespace _8085_Simulator
                                     error_string = $"\"{code[2]}\" is not valid value";
                                 }
                             }
-                            catch (ArgumentNullException e)
+                            catch
                             {
                                 error_string = $"\"{code[2]}\" is not valid value";
                             }
-                            catch (OverflowException e)
-                            {
-                                error_string = $"\"{code[2]}\" is not valid value";
-                            }
-                            catch (FormatException e)
-                            {
-                                error_string = $"\"{code[2]}\" is not valid value";
-                            }
-                            
                         }
 
                     }
@@ -417,6 +413,10 @@ namespace _8085_Simulator
                     {
 
                     }
+                    else if (code[1] == "a")
+                    {
+                        error_string = $"You cant sub \"a\" itself";
+                    }
                     else
                         error_string = $"cannot identify \"{code[1]}\"";
                 }
@@ -424,21 +424,36 @@ namespace _8085_Simulator
                     error_string = error_string = "not enough parameter";
                 
             } //done
-
+            else if(code[0]=="adi")
+            {
+                if (code.Length > 1)
+                {
+                    if(code[1].EndsWith("h") || code[1].EndsWith("H"))
+                    {
+                        code[1] = code[1].Remove(code[1].Length - 1);
+                        try
+                        {
+                            Convert.ToInt32(code[1], 16);
+                            if(code[1].Length>2)
+                            {
+                                error_string = $"\"{code[1]}\" is not valid value";
+                            }
+                        }
+                        catch
+                        {
+                            error_string = $"\"{code[1]}\" is not valid value";
+                        }
+                    }
+                    else
+                        error_string = $"cannot identify \"{code[1]}\"";
+                }
+                else
+                    error_string = "not enough parameter";
+            } //done
             else
                 error_string = $"\"{code[0]}\" is incompatible instruction";
 
-
             return error_string;
-        }
-
-        private void textbox_press(object sender, KeyPressEventArgs e)
-        {
-            if(e.KeyChar == (char)Keys.Return)
-            {
-                code_inspect();
-                e.Handled = true;
-            }
         }
 
         private void code_editor_key_press(object sender, KeyPressEventArgs e)
