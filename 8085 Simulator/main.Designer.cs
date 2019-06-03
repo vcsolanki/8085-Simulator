@@ -42,6 +42,16 @@
             this.codeEditor = new System.Windows.Forms.RichTextBox();
             this.output_box = new System.Windows.Forms.ListBox();
             this.lines_indicator = new System.Windows.Forms.RichTextBox();
+            this.flagclbl = new System.Windows.Forms.Label();
+            this.flagzlbl = new System.Windows.Forms.Label();
+            this.flagslbl = new System.Windows.Forms.Label();
+            this.flagalbl = new System.Windows.Forms.Label();
+            this.flagplbl = new System.Windows.Forms.Label();
+            this.flagp = new System.Windows.Forms.Label();
+            this.flaga = new System.Windows.Forms.Label();
+            this.flags = new System.Windows.Forms.Label();
+            this.flagz = new System.Windows.Forms.Label();
+            this.flagc = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -156,13 +166,13 @@
             this.codeEditor.Text = "";
             this.codeEditor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.code_editor_key_press);
             // 
-            // listBox1
+            // output_box
             // 
             this.output_box.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.output_box.FormattingEnabled = true;
             this.output_box.ItemHeight = 23;
             this.output_box.Location = new System.Drawing.Point(154, 326);
-            this.output_box.Name = "listBox1";
+            this.output_box.Name = "output_box";
             this.output_box.Size = new System.Drawing.Size(477, 92);
             this.output_box.TabIndex = 13;
             // 
@@ -178,11 +188,112 @@
             this.lines_indicator.TabIndex = 14;
             this.lines_indicator.Text = "";
             // 
-            // Form1
+            // flagclbl
+            // 
+            this.flagclbl.AutoSize = true;
+            this.flagclbl.Location = new System.Drawing.Point(13, 181);
+            this.flagclbl.Name = "flagclbl";
+            this.flagclbl.Size = new System.Drawing.Size(35, 23);
+            this.flagclbl.TabIndex = 15;
+            this.flagclbl.Text = "C : ";
+            // 
+            // flagzlbl
+            // 
+            this.flagzlbl.AutoSize = true;
+            this.flagzlbl.Location = new System.Drawing.Point(13, 204);
+            this.flagzlbl.Name = "flagzlbl";
+            this.flagzlbl.Size = new System.Drawing.Size(34, 23);
+            this.flagzlbl.TabIndex = 16;
+            this.flagzlbl.Text = "Z : ";
+            // 
+            // flagslbl
+            // 
+            this.flagslbl.AutoSize = true;
+            this.flagslbl.Location = new System.Drawing.Point(13, 227);
+            this.flagslbl.Name = "flagslbl";
+            this.flagslbl.Size = new System.Drawing.Size(33, 23);
+            this.flagslbl.TabIndex = 17;
+            this.flagslbl.Text = "S : ";
+            // 
+            // flagalbl
+            // 
+            this.flagalbl.AutoSize = true;
+            this.flagalbl.Location = new System.Drawing.Point(13, 250);
+            this.flagalbl.Name = "flagalbl";
+            this.flagalbl.Size = new System.Drawing.Size(35, 23);
+            this.flagalbl.TabIndex = 18;
+            this.flagalbl.Text = "A : ";
+            // 
+            // flagplbl
+            // 
+            this.flagplbl.AutoSize = true;
+            this.flagplbl.Location = new System.Drawing.Point(13, 273);
+            this.flagplbl.Name = "flagplbl";
+            this.flagplbl.Size = new System.Drawing.Size(34, 23);
+            this.flagplbl.TabIndex = 19;
+            this.flagplbl.Text = "P : ";
+            // 
+            // flagp
+            // 
+            this.flagp.AutoSize = true;
+            this.flagp.Location = new System.Drawing.Point(86, 273);
+            this.flagp.Name = "flagp";
+            this.flagp.Size = new System.Drawing.Size(19, 23);
+            this.flagp.TabIndex = 24;
+            this.flagp.Text = "0";
+            // 
+            // flaga
+            // 
+            this.flaga.AutoSize = true;
+            this.flaga.Location = new System.Drawing.Point(86, 250);
+            this.flaga.Name = "flaga";
+            this.flaga.Size = new System.Drawing.Size(19, 23);
+            this.flaga.TabIndex = 23;
+            this.flaga.Text = "0";
+            // 
+            // flags
+            // 
+            this.flags.AutoSize = true;
+            this.flags.Location = new System.Drawing.Point(86, 227);
+            this.flags.Name = "flags";
+            this.flags.Size = new System.Drawing.Size(19, 23);
+            this.flags.TabIndex = 22;
+            this.flags.Text = "0";
+            // 
+            // flagz
+            // 
+            this.flagz.AutoSize = true;
+            this.flagz.Location = new System.Drawing.Point(86, 204);
+            this.flagz.Name = "flagz";
+            this.flagz.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.flagz.Size = new System.Drawing.Size(19, 23);
+            this.flagz.TabIndex = 21;
+            this.flagz.Text = "0";
+            // 
+            // flagc
+            // 
+            this.flagc.AutoSize = true;
+            this.flagc.Location = new System.Drawing.Point(86, 181);
+            this.flagc.Name = "flagc";
+            this.flagc.Size = new System.Drawing.Size(19, 23);
+            this.flagc.TabIndex = 20;
+            this.flagc.Text = "0";
+            // 
+            // main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 460);
+            this.Controls.Add(this.flagp);
+            this.Controls.Add(this.flaga);
+            this.Controls.Add(this.flags);
+            this.Controls.Add(this.flagz);
+            this.Controls.Add(this.flagc);
+            this.Controls.Add(this.flagplbl);
+            this.Controls.Add(this.flagalbl);
+            this.Controls.Add(this.flagslbl);
+            this.Controls.Add(this.flagzlbl);
+            this.Controls.Add(this.flagclbl);
             this.Controls.Add(this.lines_indicator);
             this.Controls.Add(this.output_box);
             this.Controls.Add(this.codeEditor);
@@ -199,7 +310,7 @@
             this.Controls.Add(this.button1);
             this.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "Form1";
+            this.Name = "main";
             this.Text = "8085 Simulator";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -221,6 +332,16 @@
         private System.Windows.Forms.RichTextBox codeEditor;
         private System.Windows.Forms.ListBox output_box;
         private System.Windows.Forms.RichTextBox lines_indicator;
+        private System.Windows.Forms.Label flagclbl;
+        private System.Windows.Forms.Label flagzlbl;
+        private System.Windows.Forms.Label flagslbl;
+        private System.Windows.Forms.Label flagalbl;
+        private System.Windows.Forms.Label flagplbl;
+        private System.Windows.Forms.Label flagp;
+        private System.Windows.Forms.Label flaga;
+        private System.Windows.Forms.Label flags;
+        private System.Windows.Forms.Label flagz;
+        private System.Windows.Forms.Label flagc;
     }
 }
 

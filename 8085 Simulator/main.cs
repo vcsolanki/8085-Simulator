@@ -42,7 +42,7 @@ namespace _8085_Simulator
 
         private bool sign = new bool();
         private bool zero = new bool();
-        private bool auxiliary = new bool();
+        private bool auxilary = new bool();
         private bool parity = new bool();
         private bool carry = new bool();
 
@@ -67,11 +67,17 @@ namespace _8085_Simulator
             creg.Text = c.ToString("X");
             dreg.Text = d.ToString("X");
             ereg.Text = e.ToString("X");
+            flagclbl.Text = carry ? "1" : "0";
+            flagzlbl.Text = zero ? "1" : "0";
+            flagslbl.Text = sign ? "1" : "0";
+            flagalbl.Text = auxilary ? "1" : "0";
+            flagplbl.Text = parity ? "1" : "0";
         }
 
         public void clear_registers()
         {
             a = b = c = d = e = 0;
+            carry = zero = sign = auxilary = parity = false;
             update_variables();
         }
 
@@ -130,17 +136,20 @@ namespace _8085_Simulator
 
         private void code_execute(string[] code)
         {
-            if (code[0].ToLower() == "mov")
+            for (int i = 0; i < code.Length; i++)
+                code[i] = code[i].ToLower();
+
+            if (code[0] == "mov")
                 mov(code);
-            else if (code[0].ToLower() == "mvi")
+            else if (code[0] == "mvi")
                 mvi(code);
-            else if (code[0].ToLower() == "add")
+            else if (code[0] == "add")
                 add(code);
-            else if (code[0].ToLower() == "sub")
+            else if (code[0] == "sub")
                 sub(code);
-            else if (code[0].ToLower() == "adi")
+            else if (code[0] == "adi")
                 adi(code);
-            else if (code[0].ToLower() == "stc")
+            else if (code[0] == "stc")
                 stc();
             update_variables();
         }
@@ -240,6 +249,8 @@ namespace _8085_Simulator
             {
                 sum = a + b;
                 a = byte.Parse(sum.ToString());
+                //if (sum < a || sum < b)
+                //    carry = true;
             }
             if (code[1] == "c")
             {
@@ -298,6 +309,9 @@ namespace _8085_Simulator
 
         private string check_error(string[] code)
         {
+            for (int i = 0; i < code.Length; i++)
+                code[i] = code[i].ToLower();
+
             string error_string = "";
 
             if (code[0] == "mov")
