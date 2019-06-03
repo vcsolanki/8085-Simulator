@@ -2,9 +2,9 @@ C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\bin\Debug\808
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\bin\Debug\8085 Simulator.exe
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\bin\Debug\8085 Simulator.pdb
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csprojAssemblyReference.cache
-C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.Form1.resources
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.Properties.Resources.resources
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.GenerateResource.cache
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.CoreCompileInputs.cache
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.exe
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.pdb
+C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.main.resources

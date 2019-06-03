@@ -69,6 +69,12 @@ namespace _8085_Simulator
             ereg.Text = e.ToString("X");
         }
 
+        public void clear_registers()
+        {
+            a = b = c = d = e = 0;
+            update_variables();
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             code_inspect();
@@ -76,6 +82,7 @@ namespace _8085_Simulator
 
         private void code_inspect()
         {
+            clear_registers();
             errors.Clear();
             listBox1.Items.Clear();
             int error_level = 0;
@@ -99,16 +106,25 @@ namespace _8085_Simulator
                 }
                 line_number++;
             }
-            if(error_level>0)
+            if (error_level > 0)
             {
-                foreach(string error in errors)
+                foreach (string error in errors)
                 {
                     listBox1.Items.Add(error);
                 }
             }
             else
             {
-
+                line_number = 1;
+                foreach (string line in lines)
+                {
+                    if (line == "")
+                    {
+                        line_number++;
+                        continue;
+                    }
+                    code_execute(line.Split(' '));
+                }
             }
         }
 
@@ -371,13 +387,16 @@ namespace _8085_Simulator
             {
                 if (code.Length > 1)
                 {
-                    if (code[1] == "a" ||
-                        code[1] == "b" ||
+                    if (code[1] == "b" ||
                         code[1] == "c" ||
                         code[1] == "d" ||
                         code[1] == "e")
                     {
 
+                    }
+                    else if(code[1]=="a")
+                    {
+                        error_string = $"You cant add \"a\" itself";
                     }
                     else
                         error_string = $"cannot identify \"{code[1]}\"";
