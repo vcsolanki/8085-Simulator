@@ -53,25 +53,25 @@
             this.flagz = new System.Windows.Forms.Label();
             this.flagc = new System.Windows.Forms.Label();
             this.registers_box = new System.Windows.Forms.GroupBox();
-            this.flag_box = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.register_layout = new System.Windows.Forms.TableLayoutPanel();
+            this.hreg = new System.Windows.Forms.Label();
+            this.lreg = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.flag_box = new System.Windows.Forms.GroupBox();
             this.flag_layout = new System.Windows.Forms.TableLayoutPanel();
             this.main_layout = new System.Windows.Forms.TableLayoutPanel();
-            this.status_group_layout = new System.Windows.Forms.TableLayoutPanel();
             this.code_input_layout = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.status_group_layout = new System.Windows.Forms.TableLayoutPanel();
             this.registers_box.SuspendLayout();
-            this.flag_box.SuspendLayout();
             this.register_layout.SuspendLayout();
+            this.flag_box.SuspendLayout();
             this.flag_layout.SuspendLayout();
             this.main_layout.SuspendLayout();
-            this.status_group_layout.SuspendLayout();
             this.code_input_layout.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.status_group_layout.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -236,6 +236,7 @@
             // lines_indicator
             // 
             this.lines_indicator.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lines_indicator.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lines_indicator.Location = new System.Drawing.Point(3, 3);
             this.lines_indicator.Name = "lines_indicator";
             this.lines_indicator.ReadOnly = true;
@@ -381,78 +382,14 @@
             this.registers_box.TabStop = false;
             this.registers_box.Text = "Registers";
             // 
-            // flag_box
-            // 
-            this.flag_box.Controls.Add(this.flag_layout);
-            this.flag_box.Location = new System.Drawing.Point(3, 227);
-            this.flag_box.Name = "flag_box";
-            this.flag_box.Size = new System.Drawing.Size(100, 152);
-            this.flag_box.TabIndex = 26;
-            this.flag_box.TabStop = false;
-            this.flag_box.Text = "Flags";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(3, 130);
-            this.label1.Name = "label1";
-            this.label1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label1.Size = new System.Drawing.Size(42, 26);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "H";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Location = new System.Drawing.Point(3, 156);
-            this.label2.Name = "label2";
-            this.label2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label2.Size = new System.Drawing.Size(42, 33);
-            this.label2.TabIndex = 13;
-            this.label2.Text = "0";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label3.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(51, 130);
-            this.label3.Name = "label3";
-            this.label3.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label3.Size = new System.Drawing.Size(43, 26);
-            this.label3.TabIndex = 14;
-            this.label3.Text = "L";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label4.Location = new System.Drawing.Point(51, 156);
-            this.label4.Name = "label4";
-            this.label4.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label4.Size = new System.Drawing.Size(43, 33);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "0";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // register_layout
             // 
             this.register_layout.ColumnCount = 2;
             this.register_layout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.register_layout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.register_layout.Controls.Add(this.albl, 0, 0);
-            this.register_layout.Controls.Add(this.label2, 0, 6);
-            this.register_layout.Controls.Add(this.label4, 1, 6);
+            this.register_layout.Controls.Add(this.hreg, 0, 6);
+            this.register_layout.Controls.Add(this.lreg, 1, 6);
             this.register_layout.Controls.Add(this.label3, 1, 5);
             this.register_layout.Controls.Add(this.areg, 1, 0);
             this.register_layout.Controls.Add(this.blbl, 0, 1);
@@ -477,6 +414,70 @@
             this.register_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
             this.register_layout.Size = new System.Drawing.Size(97, 189);
             this.register_layout.TabIndex = 16;
+            // 
+            // hreg
+            // 
+            this.hreg.AutoSize = true;
+            this.hreg.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.hreg.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.hreg.Location = new System.Drawing.Point(3, 156);
+            this.hreg.Name = "hreg";
+            this.hreg.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.hreg.Size = new System.Drawing.Size(42, 33);
+            this.hreg.TabIndex = 13;
+            this.hreg.Text = "0";
+            this.hreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lreg
+            // 
+            this.lreg.AutoSize = true;
+            this.lreg.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.lreg.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lreg.Location = new System.Drawing.Point(51, 156);
+            this.lreg.Name = "lreg";
+            this.lreg.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lreg.Size = new System.Drawing.Size(43, 33);
+            this.lreg.TabIndex = 15;
+            this.lreg.Text = "0";
+            this.lreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(51, 130);
+            this.label3.Name = "label3";
+            this.label3.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label3.Size = new System.Drawing.Size(43, 26);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "L";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(3, 130);
+            this.label1.Name = "label1";
+            this.label1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label1.Size = new System.Drawing.Size(42, 26);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "H";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // flag_box
+            // 
+            this.flag_box.Controls.Add(this.flag_layout);
+            this.flag_box.Location = new System.Drawing.Point(3, 227);
+            this.flag_box.Name = "flag_box";
+            this.flag_box.Size = new System.Drawing.Size(100, 152);
+            this.flag_box.TabIndex = 26;
+            this.flag_box.TabStop = false;
+            this.flag_box.Text = "Flags";
             // 
             // flag_layout
             // 
@@ -522,21 +523,6 @@
             this.main_layout.Size = new System.Drawing.Size(1174, 755);
             this.main_layout.TabIndex = 27;
             // 
-            // status_group_layout
-            // 
-            this.status_group_layout.ColumnCount = 1;
-            this.status_group_layout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.status_group_layout.Controls.Add(this.registers_box, 0, 0);
-            this.status_group_layout.Controls.Add(this.flag_box, 0, 1);
-            this.status_group_layout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.status_group_layout.Location = new System.Drawing.Point(3, 3);
-            this.status_group_layout.Name = "status_group_layout";
-            this.status_group_layout.RowCount = 2;
-            this.status_group_layout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.status_group_layout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.status_group_layout.Size = new System.Drawing.Size(200, 749);
-            this.status_group_layout.TabIndex = 0;
-            // 
             // code_input_layout
             // 
             this.code_input_layout.ColumnCount = 1;
@@ -567,6 +553,21 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(733, 593);
             this.tableLayoutPanel1.TabIndex = 14;
             // 
+            // status_group_layout
+            // 
+            this.status_group_layout.ColumnCount = 1;
+            this.status_group_layout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.status_group_layout.Controls.Add(this.registers_box, 0, 0);
+            this.status_group_layout.Controls.Add(this.flag_box, 0, 1);
+            this.status_group_layout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.status_group_layout.Location = new System.Drawing.Point(3, 3);
+            this.status_group_layout.Name = "status_group_layout";
+            this.status_group_layout.RowCount = 2;
+            this.status_group_layout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.status_group_layout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.status_group_layout.Size = new System.Drawing.Size(200, 749);
+            this.status_group_layout.TabIndex = 0;
+            // 
             // main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
@@ -578,15 +579,15 @@
             this.Name = "main";
             this.Text = "8085 Simulator";
             this.registers_box.ResumeLayout(false);
-            this.flag_box.ResumeLayout(false);
             this.register_layout.ResumeLayout(false);
             this.register_layout.PerformLayout();
+            this.flag_box.ResumeLayout(false);
             this.flag_layout.ResumeLayout(false);
             this.flag_layout.PerformLayout();
             this.main_layout.ResumeLayout(false);
-            this.status_group_layout.ResumeLayout(false);
             this.code_input_layout.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.status_group_layout.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -619,9 +620,9 @@
         private System.Windows.Forms.GroupBox registers_box;
         private System.Windows.Forms.GroupBox flag_box;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lreg;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label hreg;
         private System.Windows.Forms.TableLayoutPanel register_layout;
         private System.Windows.Forms.TableLayoutPanel flag_layout;
         private System.Windows.Forms.TableLayoutPanel main_layout;

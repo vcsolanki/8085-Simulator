@@ -77,6 +77,8 @@ namespace _8085_Simulator
             creg.Text = c.ToString("X");
             dreg.Text = d.ToString("X");
             ereg.Text = e.ToString("X");
+            hreg.Text = h.ToString("X");
+            lreg.Text = l.ToString("X");
             flagc.Text = carry ? "1" : "0";
             flagz.Text = zero ? "1" : "0";
             flags.Text = sign ? "1" : "0";
@@ -86,7 +88,7 @@ namespace _8085_Simulator
 
         public void clear_registers()
         {
-            a = b = c = d = e = 0;
+            a = b = c = d = e = h = l = 0;
             carry = zero = sign = auxilary = parity = false;
             update_variables();
         }
@@ -176,6 +178,10 @@ namespace _8085_Simulator
                     a = d;
                 if (code[2] == "e")
                     a = e;
+                if (code[2] == "h")
+                    a = h;
+                if (code[2] == "l")
+                    a = l;
             }
             if (code[1] == "b")
             {
@@ -187,6 +193,10 @@ namespace _8085_Simulator
                     b = d;
                 if (code[2] == "e")
                     b = e;
+                if (code[2] == "h")
+                    b = h;
+                if (code[2] == "l")
+                    b = l;
             }
             if (code[1] == "c")
             {
@@ -198,6 +208,10 @@ namespace _8085_Simulator
                     c = d;
                 if (code[2] == "e")
                     c = e;
+                if (code[2] == "h")
+                    c = h;
+                if (code[2] == "l")
+                    c = l;
             }
             if (code[1] == "d")
             {
@@ -209,6 +223,10 @@ namespace _8085_Simulator
                     d = a;
                 if (code[2] == "e")
                     d = e;
+                if (code[2] == "h")
+                    d = h;
+                if (code[2] == "l")
+                    d = l;
             }
             if (code[1] == "e")
             {
@@ -220,6 +238,40 @@ namespace _8085_Simulator
                     e = d;
                 if (code[2] == "a")
                     e = a;
+                if (code[2] == "h")
+                    e = h;
+                if (code[2] == "l")
+                    e = l;
+            }
+            if (code[1] == "h")
+            {
+                if (code[2] == "b")
+                    h = b;
+                if (code[2] == "c")
+                    h = c;
+                if (code[2] == "d")
+                    h = d;
+                if (code[2] == "a")
+                    h = a;
+                if (code[2] == "e")
+                    h = e;
+                if (code[2] == "l")
+                    h = l;
+            }
+            if (code[1] == "l")
+            {
+                if (code[2] == "b")
+                    l = b;
+                if (code[2] == "c")
+                    l = c;
+                if (code[2] == "d")
+                    l = d;
+                if (code[2] == "a")
+                    l = a;
+                if (code[2] == "h")
+                    l = h;
+                if (code[2] == "e")
+                    l = e;
             }
         }
         private void mvi(string[] code)
@@ -237,6 +289,10 @@ namespace _8085_Simulator
                     d = byte.Parse(Convert.ToInt32(code[2], 16).ToString());
                 if (code[1] == "e")
                     e = byte.Parse(Convert.ToInt32(code[2], 16).ToString());
+                if (code[1] == "h")
+                    h = byte.Parse(Convert.ToInt32(code[2], 16).ToString());
+                if (code[1] == "l")
+                    l = byte.Parse(Convert.ToInt32(code[2], 16).ToString());
             }
             else
             {
@@ -250,6 +306,10 @@ namespace _8085_Simulator
                     d = byte.Parse(code[2]);
                 if (code[1] == "e")
                     e = byte.Parse(code[2]);
+                if (code[1] == "h")
+                    h = byte.Parse(code[2]);
+                if (code[1] == "l")
+                    l = byte.Parse(code[2]);
             }
         }
         private void add(string[] code)
@@ -332,13 +392,17 @@ namespace _8085_Simulator
                         code[1] == "b" ||
                         code[1] == "c" ||
                         code[1] == "d" ||
-                        code[1] == "e")
+                        code[1] == "e" ||
+                        code[1] == "h" || 
+                        code[1] == "l")
                     {
                         if (code[2] == "a" ||
                         code[2] == "b" ||
                         code[2] == "c" ||
                         code[2] == "d" ||
-                        code[2] == "e")
+                        code[2] == "e" ||
+                        code[2] == "h" ||
+                        code[2] == "l")
                         {
 
                         }
@@ -360,7 +424,9 @@ namespace _8085_Simulator
                         code[1] == "b" ||
                         code[1] == "c" ||
                         code[1] == "d" ||
-                        code[1] == "e")
+                        code[1] == "e" ||
+                        code[1] == "h" ||
+                        code[1] == "l")
                     {
                         if (code[2].EndsWith("h") || code[2].EndsWith("H"))
                         {
@@ -410,7 +476,9 @@ namespace _8085_Simulator
                     if (code[1] == "b" ||
                         code[1] == "c" ||
                         code[1] == "d" ||
-                        code[1] == "e")
+                        code[1] == "e" ||
+                        code[1] == "h" ||
+                        code[1] == "l")
                     {
 
                     }
@@ -433,7 +501,9 @@ namespace _8085_Simulator
                         code[1] == "b" ||
                         code[1] == "c" ||
                         code[1] == "d" ||
-                        code[1] == "e")
+                        code[1] == "e" ||
+                        code[1] == "h" ||
+                        code[1] == "l")
                     {
 
                     }
