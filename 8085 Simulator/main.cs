@@ -52,17 +52,16 @@ namespace _8085_Simulator
             public void setData(int data)
             {
                 Clear();
-                if (data < 256)
+                if (data > 255)
+                    data -= 256;
+                int i = 7;
+                foreach (char c in Convert.ToString(data, 2).Reverse<char>())
                 {
-                    int i = 7;
-                    foreach (char c in Convert.ToString(data, 2).Reverse<char>())
-                    {
-                        if (c == '1')
-                            this.data[i] = true;
-                        else
-                            this.data[i] = false;
-                        i--;
-                    }
+                    if (c == '1')
+                        this.data[i] = true;
+                    else
+                        this.data[i] = false;
+                    i--;
                 }
             }
             public void setData(string hex)
@@ -205,6 +204,17 @@ namespace _8085_Simulator
                 counter = 0;
             }
         };
+        public class LabelAddress
+        {
+            public string name = "";
+            public int address = 0;
+            public LabelAddress(string name,int address)
+            {
+                this.name = name;
+                this.address = address;
+            }
+        };
+
 
 
         //Variables
@@ -232,6 +242,7 @@ namespace _8085_Simulator
         private List<string> port;
         private List<string> stack;
         private List<string> errors;
+        private List<LabelAddress> labels;
 
         public main()
         {
@@ -324,7 +335,7 @@ namespace _8085_Simulator
             ListViewItem[] items = new ListViewItem[sp.Count];
             for (int i = 0; i < items.Length; i++)
             {
-                stack[i] = sp.ElementAt<int>(i).ToString("X");
+                stack[i] = sp.ElementAt<int>(i).ToString("X").PadLeft(4, '0');
                 item = new ListViewItem($"{i.ToString("X")}", i);
                 item.SubItems.Add($"{stack[i]}");
                 items[i] = item;
@@ -362,161 +373,165 @@ namespace _8085_Simulator
                 lineF = lineF.Trim(' ');
                 if (lineF == "")
                     continue;
-                string[] word = lineF.ToLower().Split(' ');
+                string[] code = lineF.ToLower().Split(' ');
 
-                if (word[0] == "mov")
+                if (code[0].EndsWith(":"))
+                    for (int i = 1; i < code.Length; i++)
+                        code[i - 1] = code[i];
+
+                if (code[0] == "mov")
                 {
-                    if (word[1] == "a")
+                    if (code[1] == "a")
                     {
-                        if (word[2] == "a")
+                        if (code[2] == "a")
                             opcode = "7F";
-                        if (word[2] == "b")
+                        if (code[2] == "b")
                             opcode = "78";
-                        if (word[2] == "c")
+                        if (code[2] == "c")
                             opcode = "79";
-                        if (word[2] == "d")
+                        if (code[2] == "d")
                             opcode = "7A";
-                        if (word[2] == "e")
+                        if (code[2] == "e")
                             opcode = "7B";
-                        if (word[2] == "h")
+                        if (code[2] == "h")
                             opcode = "7C";
-                        if (word[2] == "l")
+                        if (code[2] == "l")
                             opcode = "7D";
-                        if (word[2] == "m")
+                        if (code[2] == "m")
                             opcode = "7E";
                     }
-                    if (word[1] == "b")
+                    if (code[1] == "b")
                     {
-                        if (word[2] == "a")
+                        if (code[2] == "a")
                             opcode = "47";
-                        if (word[2] == "b")
+                        if (code[2] == "b")
                             opcode = "40";
-                        if (word[2] == "c")
+                        if (code[2] == "c")
                             opcode = "41";
-                        if (word[2] == "d")
+                        if (code[2] == "d")
                             opcode = "42";
-                        if (word[2] == "e")
+                        if (code[2] == "e")
                             opcode = "43";
-                        if (word[2] == "h")
+                        if (code[2] == "h")
                             opcode = "44";
-                        if (word[2] == "l")
+                        if (code[2] == "l")
                             opcode = "45";
-                        if (word[2] == "m")
+                        if (code[2] == "m")
                             opcode = "46";
                     }
 
-                    if (word[1] == "c")
+                    if (code[1] == "c")
                     {
-                        if (word[2] == "a")
+                        if (code[2] == "a")
                             opcode = "4F";
-                        if (word[2] == "b")
+                        if (code[2] == "b")
                             opcode = "48";
-                        if (word[2] == "c")
+                        if (code[2] == "c")
                             opcode = "49";
-                        if (word[2] == "d")
+                        if (code[2] == "d")
                             opcode = "4A";
-                        if (word[2] == "e")
+                        if (code[2] == "e")
                             opcode = "4B";
-                        if (word[2] == "h")
+                        if (code[2] == "h")
                             opcode = "4C";
-                        if (word[2] == "l")
+                        if (code[2] == "l")
                             opcode = "4D";
-                        if (word[2] == "m")
+                        if (code[2] == "m")
                             opcode = "4E";
                     }
 
-                    if (word[1] == "d")
+                    if (code[1] == "d")
                     {
-                        if (word[2] == "a")
+                        if (code[2] == "a")
                             opcode = "57";
-                        if (word[2] == "b")
+                        if (code[2] == "b")
                             opcode = "50";
-                        if (word[2] == "c")
+                        if (code[2] == "c")
                             opcode = "51";
-                        if (word[2] == "d")
+                        if (code[2] == "d")
                             opcode = "52";
-                        if (word[2] == "e")
+                        if (code[2] == "e")
                             opcode = "53";
-                        if (word[2] == "h")
+                        if (code[2] == "h")
                             opcode = "54";
-                        if (word[2] == "l")
+                        if (code[2] == "l")
                             opcode = "55";
-                        if (word[2] == "m")
+                        if (code[2] == "m")
                             opcode = "56";
                     }
-                    if (word[1] == "e")
+                    if (code[1] == "e")
                     {
-                        if (word[2] == "a")
+                        if (code[2] == "a")
                             opcode = "5F";
-                        if (word[2] == "b")
+                        if (code[2] == "b")
                             opcode = "58";
-                        if (word[2] == "c")
+                        if (code[2] == "c")
                             opcode = "59";
-                        if (word[2] == "d")
+                        if (code[2] == "d")
                             opcode = "5A";
-                        if (word[2] == "e")
+                        if (code[2] == "e")
                             opcode = "5B";
-                        if (word[2] == "h")
+                        if (code[2] == "h")
                             opcode = "5C";
-                        if (word[2] == "l")
+                        if (code[2] == "l")
                             opcode = "5D";
-                        if (word[2] == "m")
+                        if (code[2] == "m")
                             opcode = "5E";
                     }
-                    if (word[1] == "h")
+                    if (code[1] == "h")
                     {
-                        if (word[2] == "a")
+                        if (code[2] == "a")
                             opcode = "67";
-                        if (word[2] == "b")
+                        if (code[2] == "b")
                             opcode = "60";
-                        if (word[2] == "c")
+                        if (code[2] == "c")
                             opcode = "61";
-                        if (word[2] == "d")
+                        if (code[2] == "d")
                             opcode = "62";
-                        if (word[2] == "e")
+                        if (code[2] == "e")
                             opcode = "63";
-                        if (word[2] == "h")
+                        if (code[2] == "h")
                             opcode = "64";
-                        if (word[2] == "l")
+                        if (code[2] == "l")
                             opcode = "65";
-                        if (word[2] == "m")
+                        if (code[2] == "m")
                             opcode = "66";
                     }
 
-                    if (word[1] == "l")
+                    if (code[1] == "l")
                     {
-                        if (word[2] == "a")
+                        if (code[2] == "a")
                             opcode = "6F";
-                        if (word[2] == "b")
+                        if (code[2] == "b")
                             opcode = "68";
-                        if (word[2] == "c")
+                        if (code[2] == "c")
                             opcode = "69";
-                        if (word[2] == "d")
+                        if (code[2] == "d")
                             opcode = "6A";
-                        if (word[2] == "e")
+                        if (code[2] == "e")
                             opcode = "6B";
-                        if (word[2] == "h")
+                        if (code[2] == "h")
                             opcode = "6C";
-                        if (word[2] == "l")
+                        if (code[2] == "l")
                             opcode = "6D";
-                        if (word[2] == "m")
+                        if (code[2] == "m")
                             opcode = "6E";
                     }
-                    if (word[1] == "m")
+                    if (code[1] == "m")
                     {
-                        if (word[2] == "a")
+                        if (code[2] == "a")
                             opcode = "77";
-                        if (word[2] == "b")
+                        if (code[2] == "b")
                             opcode = "70";
-                        if (word[2] == "c")
+                        if (code[2] == "c")
                             opcode = "71";
-                        if (word[2] == "d")
+                        if (code[2] == "d")
                             opcode = "72";
-                        if (word[2] == "e")
+                        if (code[2] == "e")
                             opcode = "73";
-                        if (word[2] == "h")
+                        if (code[2] == "h")
                             opcode = "74";
-                        if (word[2] == "l")
+                        if (code[2] == "l")
                             opcode = "75";
                     }
                     memory[start_location] = opcode;
@@ -524,255 +539,262 @@ namespace _8085_Simulator
                     start_location++;
                 } //done
 
-                else if (word[0] == "mvi")
+                else if (code[0] == "mvi")
                 {
-                    if (word[1] == "a")
+                    if (code[1] == "a")
                         opcode = "3E";
-                    if (word[1] == "b")
+                    if (code[1] == "b")
                         opcode = "6";
-                    if (word[1] == "c")
+                    if (code[1] == "c")
                         opcode = "E";
-                    if (word[1] == "d")
+                    if (code[1] == "d")
                         opcode = "16";
-                    if (word[1] == "e")
+                    if (code[1] == "e")
                         opcode = "1E";
-                    if (word[1] == "h")
+                    if (code[1] == "h")
                         opcode = "26";
-                    if (word[1] == "l")
+                    if (code[1] == "l")
                         opcode = "2E";
-                    if (word[1] == "m")
+                    if (code[1] == "m")
                         opcode = "36";
-                    if (word[2].EndsWith("h"))
-                        word[2] = word[2].Remove(word[2].Length - 1);
+                    if (code[2].EndsWith("h"))
+                        code[2] = code[2].Remove(code[2].Length - 1);
                     else
                     {
-                        int data = Convert.ToInt32(word[2]);
-                        word[2] = data.ToString("X");
+                        int data = Convert.ToInt32(code[2]);
+                        code[2] = data.ToString("X");
                     }
                     memory[start_location] = opcode;
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
-                    memory[start_location] = word[2].ToUpper();
-                    memorybox.Items[start_location].SubItems[1].Text = word[2].ToUpper();
+                    memory[start_location] = code[2].ToUpper();
+                    memorybox.Items[start_location].SubItems[1].Text = code[2].ToUpper();
                     start_location++;
                 } //done
 
-                else if (word[0] == "lxi")
+                else if (code[0] == "lxi")
                 {
-                    if (word[1] == "b")
+                    if (code[1] == "b")
                         opcode = "1";
-                    if (word[1] == "d")
+                    if (code[1] == "d")
                         opcode = "11";
-                    if (word[1] == "h")
+                    if (code[1] == "h")
                         opcode = "21";
-                    if (word[1] == "sp")
+                    if (code[1] == "sp")
                         opcode = "31";
                     memory[start_location] = opcode;
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
-                    if (word[2].EndsWith("h"))
-                        word[2] = word[2].Remove(word[2].Length - 1);
+                    if (code[2].EndsWith("h"))
+                        code[2] = code[2].Remove(code[2].Length - 1);
                     else
                     {
-                        int data = Convert.ToInt32(word[2], 16);
-                        word[2] = data.ToString("X");
+                        int data = Convert.ToInt32(code[2], 16);
+                        code[2] = data.ToString("X");
                     }
-                    word[2] = word[2].PadLeft(4, '0');
-                    memory[start_location] = word[2].Substring(2, 2).ToUpper();
-                    memorybox.Items[start_location].SubItems[1].Text = word[2].Substring(2, 2).ToUpper();
+                    code[2] = code[2].PadLeft(4, '0');
+                    memory[start_location] = code[2].Substring(2, 2).ToUpper();
+                    memorybox.Items[start_location].SubItems[1].Text = code[2].Substring(2, 2).ToUpper();
                     start_location++;
-                    memory[start_location] = word[2].Substring(0, 2);
-                    memorybox.Items[start_location].SubItems[1].Text = word[2].Substring(0, 2).ToUpper();
+                    memory[start_location] = code[2].Substring(0, 2);
+                    memorybox.Items[start_location].SubItems[1].Text = code[2].Substring(0, 2).ToUpper();
                     start_location++;
                 } //done
 
-                else if (word[0] == "ldax" ||
-                        word[0] == "stax")
+                else if (code[0] == "ldax" ||
+                        code[0] == "stax")
                 {
-                    if (word[0] == "ldax")
-                        if (word[1] == "b")
+                    if (code[0] == "ldax")
+                        if (code[1] == "b")
                             opcode = "A";
-                        else if (word[1] == "d")
+                        else if (code[1] == "d")
                             opcode = "1A";
-                    if (word[0] == "stax")
-                        if (word[1] == "b")
+                    if (code[0] == "stax")
+                        if (code[1] == "b")
                             opcode = "2";
-                        else if (word[1] == "d")
+                        else if (code[1] == "d")
                             opcode = "12";
                     memory[start_location] = opcode;
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                 } //done
 
-                else if (word[0] == "lda" ||
-                        word[0] == "sta" ||
-                        word[0] == "lhld" ||
-                        word[0] == "shld" ||
-                        word[0] == "jmp" ||
-                        word[0] == "jnz" ||
-                        word[0] == "jz" ||
-                        word[0] == "jnc" ||
-                        word[0] == "jc" ||
-                        word[0] == "jpo" ||
-                        word[0] == "jpe" ||
-                        word[0] == "jp" ||
-                        word[0] == "jm" ||
-                        word[0] == "call" ||
-                        word[0] == "cnz" ||
-                        word[0] == "cz" ||
-                        word[0] == "cnc" ||
-                        word[0] == "cc" ||
-                        word[0] == "cpo" ||
-                        word[0] == "cpe" ||
-                        word[0] == "cp" ||
-                        word[0] == "cm"
+                else if (code[0] == "lda" ||
+                        code[0] == "sta" ||
+                        code[0] == "lhld" ||
+                        code[0] == "shld" ||
+                        code[0] == "jmp" ||
+                        code[0] == "jnz" ||
+                        code[0] == "jz" ||
+                        code[0] == "jnc" ||
+                        code[0] == "jc" ||
+                        code[0] == "jpo" ||
+                        code[0] == "jpe" ||
+                        code[0] == "jp" ||
+                        code[0] == "jm" ||
+                        code[0] == "call" ||
+                        code[0] == "cnz" ||
+                        code[0] == "cz" ||
+                        code[0] == "cnc" ||
+                        code[0] == "cc" ||
+                        code[0] == "cpo" ||
+                        code[0] == "cpe" ||
+                        code[0] == "cp" ||
+                        code[0] == "cm"
                         )
                 {
-                    if (word[0] == "lda")
+                    if (code[0] == "lda")
                         opcode = "3A";
-                    if (word[0] == "sta")
+                    if (code[0] == "sta")
                         opcode = "32";
-                    if (word[0] == "lhld")
+                    if (code[0] == "lhld")
                         opcode = "2A";
-                    if (word[0] == "shld")
+                    if (code[0] == "shld")
                         opcode = "22";
-                    if (word[0] == "jmp")
+                    if (code[0] == "jmp")
                         opcode = "C3";
-                    if (word[0] == "jnz")
+                    if (code[0] == "jnz")
                         opcode = "C2";
-                    if (word[0] == "jz")
+                    if (code[0] == "jz")
                         opcode = "CA";
-                    if (word[0] == "jnc")
+                    if (code[0] == "jnc")
                         opcode = "D2";
-                    if (word[0] == "jc")
+                    if (code[0] == "jc")
                         opcode = "DA";
-                    if (word[0] == "jpo")
+                    if (code[0] == "jpo")
                         opcode = "E2";
-                    if (word[0] == "jpe")
+                    if (code[0] == "jpe")
                         opcode = "EA";
-                    if (word[0] == "jp")
+                    if (code[0] == "jp")
                         opcode = "F2";
-                    if (word[0] == "jm")
+                    if (code[0] == "jm")
                         opcode = "FA";
-                    if (word[0] == "call")
+                    if (code[0] == "call")
                         opcode = "CD";
-                    if (word[0] == "cnz")
+                    if (code[0] == "cnz")
                         opcode = "C4";
-                    if (word[0] == "cz")
+                    if (code[0] == "cz")
                         opcode = "CC";
-                    if (word[0] == "cnc")
+                    if (code[0] == "cnc")
                         opcode = "D4";
-                    if (word[0] == "cc")
+                    if (code[0] == "cc")
                         opcode = "DC";
-                    if (word[0] == "cpo")
+                    if (code[0] == "cpo")
                         opcode = "E4";
-                    if (word[0] == "cpe")
+                    if (code[0] == "cpe")
                         opcode = "EC";
-                    if (word[0] == "cp")
+                    if (code[0] == "cp")
                         opcode = "F4";
-                    if (word[0] == "cm")
+                    if (code[0] == "cm")
                         opcode = "FC";
+
+                        foreach(LabelAddress ad in labels)
+                            if(ad.name==code[1])
+                        {
+                            code[1] = ad.address.ToString("X").PadLeft(4, '0');
+                        }
+
                     memory[start_location] = opcode;
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
-                    if (word[1].EndsWith("h"))
-                        word[1] = word[1].Remove(word[1].Length - 1);
+                    if (code[1].EndsWith("h"))
+                        code[1] = code[1].Remove(code[1].Length - 1);
                     else
                     {
-                        int data = Convert.ToInt32(word[1], 16);
-                        word[1] = data.ToString("X");
+                        int data = Convert.ToInt32(code[1], 16);
+                        code[1] = data.ToString("X");
                     }
-                    word[1] = word[1].PadLeft(4, '0');
-                    memory[start_location] = word[1].Substring(2, 2).ToUpper();
-                    memorybox.Items[start_location].SubItems[1].Text = word[1].Substring(2, 2).ToUpper();
+                    code[1] = code[1].PadLeft(4, '0');
+                    memory[start_location] = code[1].Substring(2, 2).ToUpper();
+                    memorybox.Items[start_location].SubItems[1].Text = code[1].Substring(2, 2).ToUpper();
                     start_location++;
-                    memory[start_location] = word[1].Substring(0, 2).ToUpper();
-                    memorybox.Items[start_location].SubItems[1].Text = word[1].Substring(0, 2).ToUpper();
+                    memory[start_location] = code[1].Substring(0, 2).ToUpper();
+                    memorybox.Items[start_location].SubItems[1].Text = code[1].Substring(0, 2).ToUpper();
                     start_location++;
                 } //done
 
-                else if (word[0] == "hlt" ||
-                        word[0] == "stc" ||
-                        word[0] == "rlc" ||
-                        word[0] == "rrc" ||
-                        word[0] == "ral" ||
-                        word[0] == "rar" ||
-                        word[0] == "ret" ||
-                        word[0] == "rnz" ||
-                        word[0] == "rz" ||
-                        word[0] == "rnc" ||
-                        word[0] == "rc" ||
-                        word[0] == "rpo" ||
-                        word[0] == "rpe" ||
-                        word[0] == "rp" ||
-                        word[0] == "rm" ||
-                        word[0] == "daa" ||
-                        word[0] == "cma" ||
-                        word[0] == "cmc" ||
-                        word[0] == "pchl" ||
-                        word[0] == "xchg" ||
-                        word[0] == "xthl" ||
-                        word[0] == "sphl" ||
-                        word[0] == "ei" ||
-                        word[0] == "di" ||
-                        word[0] == "rim" ||
-                        word[0] == "sim" ||
-                        word[0] == "nop"
+                else if (code[0] == "hlt" ||
+                        code[0] == "stc" ||
+                        code[0] == "rlc" ||
+                        code[0] == "rrc" ||
+                        code[0] == "ral" ||
+                        code[0] == "rar" ||
+                        code[0] == "ret" ||
+                        code[0] == "rnz" ||
+                        code[0] == "rz" ||
+                        code[0] == "rnc" ||
+                        code[0] == "rc" ||
+                        code[0] == "rpo" ||
+                        code[0] == "rpe" ||
+                        code[0] == "rp" ||
+                        code[0] == "rm" ||
+                        code[0] == "daa" ||
+                        code[0] == "cma" ||
+                        code[0] == "cmc" ||
+                        code[0] == "pchl" ||
+                        code[0] == "xchg" ||
+                        code[0] == "xthl" ||
+                        code[0] == "sphl" ||
+                        code[0] == "ei" ||
+                        code[0] == "di" ||
+                        code[0] == "rim" ||
+                        code[0] == "sim" ||
+                        code[0] == "nop"
                         )
                 {
-                    if (word[0] == "hlt")
+                    if (code[0] == "hlt")
                         opcode = "76";
-                    if (word[0] == "rlc")
+                    if (code[0] == "rlc")
                         opcode = "7";
-                    if (word[0] == "rrc")
+                    if (code[0] == "rrc")
                         opcode = "F";
-                    if (word[0] == "ral")
+                    if (code[0] == "ral")
                         opcode = "17";
-                    if (word[0] == "rar")
+                    if (code[0] == "rar")
                         opcode = "1F";
-                    if (word[0] == "ret")
+                    if (code[0] == "ret")
                         opcode = "C9";
-                    if (word[0] == "rnz")
+                    if (code[0] == "rnz")
                         opcode = "C0";
-                    if (word[0] == "rz")
+                    if (code[0] == "rz")
                         opcode = "C8";
-                    if (word[0] == "rnc")
+                    if (code[0] == "rnc")
                         opcode = "D0";
-                    if (word[0] == "rc")
+                    if (code[0] == "rc")
                         opcode = "D8";
-                    if (word[0] == "rpo")
+                    if (code[0] == "rpo")
                         opcode = "E0";
-                    if (word[0] == "rpe")
+                    if (code[0] == "rpe")
                         opcode = "E8";
-                    if (word[0] == "rp")
+                    if (code[0] == "rp")
                         opcode = "F0";
-                    if (word[0] == "rm")
+                    if (code[0] == "rm")
                         opcode = "F8";
-                    if (word[0] == "daa")
+                    if (code[0] == "daa")
                         opcode = "27";
-                    if (word[0] == "cma")
+                    if (code[0] == "cma")
                         opcode = "2F";
-                    if (word[0] == "cmc")
+                    if (code[0] == "cmc")
                         opcode = "3F";
-                    if (word[0] == "stc")
+                    if (code[0] == "stc")
                         opcode = "37";
-                    if (word[0] == "xchg")
+                    if (code[0] == "xchg")
                         opcode = "EB";
-                    if (word[0] == "pchl")
+                    if (code[0] == "pchl")
                         opcode = "E9";
-                    if (word[0] == "xthl")
+                    if (code[0] == "xthl")
                         opcode = "E3";
-                    if (word[0] == "sphl")
+                    if (code[0] == "sphl")
                         opcode = "F9";
-                    if (word[0] == "ei")
+                    if (code[0] == "ei")
                         opcode = "FB";
-                    if (word[0] == "di")
+                    if (code[0] == "di")
                         opcode = "F3";
-                    if (word[0] == "rim")
+                    if (code[0] == "rim")
                         opcode = "20";
-                    if (word[0] == "sim")
+                    if (code[0] == "sim")
                         opcode = "30";
-                    if (word[0] == "nop")
+                    if (code[0] == "nop")
                         opcode = "0";
 
                     memory[start_location] = opcode;
@@ -780,205 +802,205 @@ namespace _8085_Simulator
                     start_location++;
                 } //done
 
-                else if (word[0] == "ora" ||
-                        word[0] == "ana" ||
-                        word[0] == "xra" ||
-                        word[0] == "add" ||
-                        word[0] == "adc" ||
-                        word[0] == "sub" ||
-                        word[0] == "sbb" ||
-                        word[0] == "inr" ||
-                        word[0] == "dcr" ||
-                        word[0] == "cmp")
+                else if (code[0] == "ora" ||
+                        code[0] == "ana" ||
+                        code[0] == "xra" ||
+                        code[0] == "add" ||
+                        code[0] == "adc" ||
+                        code[0] == "sub" ||
+                        code[0] == "sbb" ||
+                        code[0] == "inr" ||
+                        code[0] == "dcr" ||
+                        code[0] == "cmp")
                 {
-                    if (word[0] == "ora")
+                    if (code[0] == "ora")
                     {
-                        if (word[1] == "a")
+                        if (code[1] == "a")
                             opcode = "B7";
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "B0";
-                        if (word[1] == "c")
+                        if (code[1] == "c")
                             opcode = "B1";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "B2";
-                        if (word[1] == "e")
+                        if (code[1] == "e")
                             opcode = "B3";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "B4";
-                        if (word[1] == "l")
+                        if (code[1] == "l")
                             opcode = "B5";
-                        if (word[1] == "m")
+                        if (code[1] == "m")
                             opcode = "B6";
                     }
-                    if (word[0] == "ana")
+                    if (code[0] == "ana")
                     {
-                        if (word[1] == "a")
+                        if (code[1] == "a")
                             opcode = "A7";
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "A0";
-                        if (word[1] == "c")
+                        if (code[1] == "c")
                             opcode = "A1";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "A2";
-                        if (word[1] == "e")
+                        if (code[1] == "e")
                             opcode = "A3";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "A4";
-                        if (word[1] == "l")
+                        if (code[1] == "l")
                             opcode = "A5";
-                        if (word[1] == "m")
+                        if (code[1] == "m")
                             opcode = "A6";
                     }
-                    if (word[0] == "xra")
+                    if (code[0] == "xra")
                     {
-                        if (word[1] == "a")
+                        if (code[1] == "a")
                             opcode = "AF";
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "A8";
-                        if (word[1] == "c")
+                        if (code[1] == "c")
                             opcode = "A9";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "AA";
-                        if (word[1] == "e")
+                        if (code[1] == "e")
                             opcode = "AB";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "AC";
-                        if (word[1] == "l")
+                        if (code[1] == "l")
                             opcode = "AD";
-                        if (word[1] == "m")
+                        if (code[1] == "m")
                             opcode = "AE";
                     }
-                    if (word[0] == "add")
+                    if (code[0] == "add")
                     {
-                        if (word[1] == "a")
+                        if (code[1] == "a")
                             opcode = "87";
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "80";
-                        if (word[1] == "c")
+                        if (code[1] == "c")
                             opcode = "81";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "82";
-                        if (word[1] == "e")
+                        if (code[1] == "e")
                             opcode = "83";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "84";
-                        if (word[1] == "l")
+                        if (code[1] == "l")
                             opcode = "85";
-                        if (word[1] == "m")
+                        if (code[1] == "m")
                             opcode = "86";
                     }
-                    if (word[0] == "adc")
+                    if (code[0] == "adc")
                     {
-                        if (word[1] == "a")
+                        if (code[1] == "a")
                             opcode = "8F";
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "88";
-                        if (word[1] == "c")
+                        if (code[1] == "c")
                             opcode = "89";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "8A";
-                        if (word[1] == "e")
+                        if (code[1] == "e")
                             opcode = "8B";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "8C";
-                        if (word[1] == "l")
+                        if (code[1] == "l")
                             opcode = "8D";
-                        if (word[1] == "m")
+                        if (code[1] == "m")
                             opcode = "8E";
                     }
-                    if (word[0] == "sub")
+                    if (code[0] == "sub")
                     {
-                        if (word[1] == "a")
+                        if (code[1] == "a")
                             opcode = "97";
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "90";
-                        if (word[1] == "c")
+                        if (code[1] == "c")
                             opcode = "91";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "92";
-                        if (word[1] == "e")
+                        if (code[1] == "e")
                             opcode = "93";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "94";
-                        if (word[1] == "l")
+                        if (code[1] == "l")
                             opcode = "95";
-                        if (word[1] == "m")
+                        if (code[1] == "m")
                             opcode = "96";
                     }
-                    if (word[0] == "sbb")
+                    if (code[0] == "sbb")
                     {
-                        if (word[1] == "a")
+                        if (code[1] == "a")
                             opcode = "9F";
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "98";
-                        if (word[1] == "c")
+                        if (code[1] == "c")
                             opcode = "99";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "9A";
-                        if (word[1] == "e")
+                        if (code[1] == "e")
                             opcode = "9B";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "9C";
-                        if (word[1] == "l")
+                        if (code[1] == "l")
                             opcode = "9D";
-                        if (word[1] == "m")
+                        if (code[1] == "m")
                             opcode = "9E";
                     }
-                    if (word[0] == "inr")
+                    if (code[0] == "inr")
                     {
-                        if (word[1] == "a")
+                        if (code[1] == "a")
                             opcode = "3C";
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "4";
-                        if (word[1] == "c")
+                        if (code[1] == "c")
                             opcode = "C";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "14";
-                        if (word[1] == "e")
+                        if (code[1] == "e")
                             opcode = "1C";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "24";
-                        if (word[1] == "l")
+                        if (code[1] == "l")
                             opcode = "2C";
-                        if (word[1] == "m")
+                        if (code[1] == "m")
                             opcode = "34";
                     }
-                    if (word[0] == "dcr")
+                    if (code[0] == "dcr")
                     {
-                        if (word[1] == "a")
+                        if (code[1] == "a")
                             opcode = "3D";
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "5";
-                        if (word[1] == "c")
+                        if (code[1] == "c")
                             opcode = "D";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "15";
-                        if (word[1] == "e")
+                        if (code[1] == "e")
                             opcode = "1D";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "25";
-                        if (word[1] == "l")
+                        if (code[1] == "l")
                             opcode = "2D";
-                        if (word[1] == "m")
+                        if (code[1] == "m")
                             opcode = "35";
                     }
-                    if (word[0] == "cmp")
+                    if (code[0] == "cmp")
                     {
-                        if (word[1] == "a")
+                        if (code[1] == "a")
                             opcode = "BF";
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "B8";
-                        if (word[1] == "c")
+                        if (code[1] == "c")
                             opcode = "B9";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "BA";
-                        if (word[1] == "e")
+                        if (code[1] == "e")
                             opcode = "BB";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "BC";
-                        if (word[1] == "l")
+                        if (code[1] == "l")
                             opcode = "BD";
-                        if (word[1] == "m")
+                        if (code[1] == "m")
                             opcode = "BE";
                     }
                     memory[start_location] = opcode;
@@ -986,116 +1008,116 @@ namespace _8085_Simulator
                     start_location++;
                 } //done
 
-                else if (word[0] == "ani" ||
-                        word[0] == "xri" ||
-                        word[0] == "cpi" ||
-                        word[0] == "ori" ||
-                        word[0] == "adi" ||
-                        word[0] == "sbi" ||
-                        word[0] == "sui" ||
-                        word[0] == "aci" ||
-                        word[0] == "in" ||
-                        word[0] == "out")
+                else if (code[0] == "ani" ||
+                        code[0] == "xri" ||
+                        code[0] == "cpi" ||
+                        code[0] == "ori" ||
+                        code[0] == "adi" ||
+                        code[0] == "sbi" ||
+                        code[0] == "sui" ||
+                        code[0] == "aci" ||
+                        code[0] == "in" ||
+                        code[0] == "out")
                 {
-                    if (word[0] == "ori")
+                    if (code[0] == "ori")
                         opcode = "F6";
-                    if (word[0] == "adi")
+                    if (code[0] == "adi")
                         opcode = "C6";
-                    if (word[0] == "sbi")
+                    if (code[0] == "sbi")
                         opcode = "DE";
-                    if (word[0] == "sui")
+                    if (code[0] == "sui")
                         opcode = "D6";
-                    if (word[0] == "aci")
+                    if (code[0] == "aci")
                         opcode = "CE";
-                    if (word[0] == "ani")
+                    if (code[0] == "ani")
                         opcode = "E6";
-                    if (word[0] == "xri")
+                    if (code[0] == "xri")
                         opcode = "EE";
-                    if (word[0] == "cpi")
+                    if (code[0] == "cpi")
                         opcode = "FE";
-                    if (word[0] == "in")
+                    if (code[0] == "in")
                         opcode = "DB";
-                    if (word[0] == "out")
+                    if (code[0] == "out")
                         opcode = "D3";
 
                     memory[start_location] = opcode;
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
 
-                    if (word[1].EndsWith("h") || word[1].EndsWith("H"))
+                    if (code[1].EndsWith("h") || code[1].EndsWith("H"))
                     {
-                        word[1] = word[1].Remove(word[1].Length - 1);
+                        code[1] = code[1].Remove(code[1].Length - 1);
                     }
                     else
                     {
-                        int data = Convert.ToInt32(word[1], 16);
-                        word[1] = data.ToString("X");
+                        int data = Convert.ToInt32(code[1], 16);
+                        code[1] = data.ToString("X");
                     }
 
-                    memory[start_location] = word[1].ToUpper();
-                    memorybox.Items[start_location].SubItems[1].Text = word[1].ToUpper();
+                    memory[start_location] = code[1].ToUpper();
+                    memorybox.Items[start_location].SubItems[1].Text = code[1].ToUpper();
                     start_location++;
                 } //done
 
-                else if (word[0] == "dad" ||
-                        word[0] == "inx" ||
-                        word[0] == "dcx" ||
-                        word[0] == "push" ||
-                        word[0] == "pop")
+                else if (code[0] == "dad" ||
+                        code[0] == "inx" ||
+                        code[0] == "dcx" ||
+                        code[0] == "push" ||
+                        code[0] == "pop")
                 {
-                    if (word[0] == "dad")
+                    if (code[0] == "dad")
                     {
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "9";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "19";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "29";
-                        if (word[1] == "sp")
+                        if (code[1] == "sp")
                             opcode = "39";
                     }
-                    if (word[0] == "inx")
+                    if (code[0] == "inx")
                     {
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "3";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "13";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "23";
-                        if (word[1] == "sp")
+                        if (code[1] == "sp")
                             opcode = "33";
                     }
-                    if (word[0] == "dcx")
+                    if (code[0] == "dcx")
                     {
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "B";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "1B";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "2B";
-                        if (word[1] == "sp")
+                        if (code[1] == "sp")
                             opcode = "3B";
                     }
-                    if (word[0] == "push")
+                    if (code[0] == "push")
                     {
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "C5";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "D5";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "E5";
-                        if (word[1] == "psw")
+                        if (code[1] == "psw")
                             opcode = "F5";
                     }
-                    if (word[0] == "pop")
+                    if (code[0] == "pop")
                     {
-                        if (word[1] == "b")
+                        if (code[1] == "b")
                             opcode = "C1";
-                        if (word[1] == "d")
+                        if (code[1] == "d")
                             opcode = "D1";
-                        if (word[1] == "h")
+                        if (code[1] == "h")
                             opcode = "E1";
-                        if (word[1] == "psw")
+                        if (code[1] == "psw")
                             opcode = "F1";
                     }
                     memory[start_location] = opcode;
@@ -1103,23 +1125,23 @@ namespace _8085_Simulator
                     start_location++;
                 }
 
-                else if(word[0]=="rst")
+                else if(code[0]=="rst")
                 {
-                    if (word[1] == "0")
+                    if (code[1] == "0")
                         opcode = "C7";
-                    if (word[1] == "1")
+                    if (code[1] == "1")
                         opcode = "CF";
-                    if (word[1] == "2")
+                    if (code[1] == "2")
                         opcode = "D7";
-                    if (word[1] == "3")
+                    if (code[1] == "3")
                         opcode = "DF";
-                    if (word[1] == "4")
+                    if (code[1] == "4")
                         opcode = "E7";
-                    if (word[1] == "5")
+                    if (code[1] == "5")
                         opcode = "EF";
-                    if (word[1] == "6")
+                    if (code[1] == "6")
                         opcode = "F7";
-                    if (word[1] == "7")
+                    if (code[1] == "7")
                         opcode = "FF";
                 } //done
             }
@@ -1144,8 +1166,128 @@ namespace _8085_Simulator
                 }
         }
 
+        public void read_labels()
+        {
+            labels.Clear();
+            int start_location = 0;
+            string lineF = "";
+            foreach(string line in codeEditor.Lines)
+            {
+                lineF = Regex.Replace(line, @",+", " ");
+                lineF = Regex.Replace(lineF, @"\s+", " ");
+                lineF = lineF.Trim(' ');
+                if (lineF == "")
+                    continue;
+                string[] code = lineF.ToLower().Split(' ');
+                if(code[0].EndsWith(":"))
+                {
+                    code[0] = code[0].Remove(code[0].Length - 1);
+                    labels.Add(new LabelAddress(code[0], start_location));
+                    start_location += 1;
+                }
+                else
+                {
+                    if (code[0] == "mov" ||
+                        code[0] == "add" ||
+                        code[0] == "sub" ||
+                        code[0] == "adc" ||
+                        code[0] == "sbb" ||
+                        code[0] == "inr" ||
+                        code[0] == "dcr" ||
+                        code[0] == "ana" ||
+                        code[0] == "ora" ||
+                        code[0] == "xra" ||
+                        code[0] == "cmp" ||
+                        code[0] == "stc" ||
+                        code[0] == "cma" ||
+                        code[0] == "daa" ||
+                        code[0] == "cmc" ||
+                        code[0] == "rlc" ||
+                        code[0] == "rrc" ||
+                        code[0] == "ral" ||
+                        code[0] == "rar" ||
+                        code[0] == "ret" ||
+                        code[0] == "rnz" ||
+                        code[0] == "rz" ||
+                        code[0] == "rnc" ||
+                        code[0] == "rc" ||
+                        code[0] == "rpo" ||
+                        code[0] == "rpe" ||
+                        code[0] == "rp" ||
+                        code[0] == "rm" ||
+                        code[0] == "pchl" ||
+                        code[0] == "xthl" ||
+                        code[0] == "sphl" ||
+                        code[0] == "ei" ||
+                        code[0] == "di" ||
+                        code[0] == "rim" ||
+                        code[0] == "sim" ||
+                        code[0] == "nop" ||
+                        code[0] == "hlt" ||
+                        code[0] == "xchg" ||
+                        code[0] == "ldax" ||
+                        code[0] == "stax" ||
+                        code[0] == "dad" ||
+                        code[0] == "inx" ||
+                        code[0] == "dcx" ||
+                        code[0] == "rst" ||
+                        code[0] == "push" ||
+                        code[0] == "pop")
+                        start_location += 1;
+
+                    else if (code[0] == "mvi" ||
+                        code[0] == "adi" ||
+                        code[0] == "aci" ||
+                        code[0] == "sui" ||
+                        code[0] == "sbi" ||
+                        code[0] == "ani" ||
+                        code[0] == "xri" ||
+                        code[0] == "ori" ||
+                        code[0] == "cpi" ||
+                        code[0] == "in" ||
+                        code[0] == "out"
+                        )
+                        start_location += 2;
+
+                    else if (code[0] == "jmp" ||
+                        code[0] == "jnz" ||
+                        code[0] == "jz" ||
+                        code[0] == "jnc" ||
+                        code[0] == "jc" ||
+                        code[0] == "jpo" ||
+                        code[0] == "jpe" ||
+                        code[0] == "jp" ||
+                        code[0] == "jm" ||
+                        code[0] == "call" ||
+                        code[0] == "cnz" ||
+                        code[0] == "cz" ||
+                        code[0] == "cnc" ||
+                        code[0] == "lda" ||
+                        code[0] == "sta" ||
+                        code[0] == "cc" ||
+                        code[0] == "cpo" ||
+                        code[0] == "cpe" ||
+                        code[0] == "cp" ||
+                        code[0] == "cm"||
+                        code[0] == "lxi" ||
+                        code[0] == "lhld" ||
+                        code[0] == "shld")
+                        start_location += 3;
+                }
+            }
+        }
+
+        public bool isLabel(string lbl)
+        {
+            foreach (LabelAddress ad in labels)
+                if (ad.name == lbl)
+                    return true;
+            return false;
+        }
+
         private bool code_inspect(bool run_code)
         {
+            read_labels();
             clear_registers();
             errors.Clear();
             output_box.Items.Clear();
@@ -1168,7 +1310,16 @@ namespace _8085_Simulator
                     halt = true;
                 
                 string[] code = lineF.Split(' ');
-                string error_string = check_error(code);
+                string error_string = "";
+                if (code[0].EndsWith(":"))
+                {
+                    code[0] = code[0].Remove(code[0].Length - 1);
+                    for (int i = 1; i < code.Length; i++)
+                    {
+                        code[i-1] = code[i];
+                    }
+                }
+                error_string = check_error(code);
                 if (error_string != "")
                 {
                     if (error_level >= 50)
@@ -1211,7 +1362,18 @@ namespace _8085_Simulator
         {
             if (hex == "CE") //ACI data8
             {
-
+                int data = Convert.ToInt32(memory[pc.counter + 1], 16);
+                Register temp = new Register();
+                if (f.carry == true)
+                    data += 1;
+                temp.setData(data);
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                a.setData(data);
+                f.update(a);
+                pc.incrementBy(1);
             }
             else if (hex == "8F") // ADC A
             {
@@ -1557,7 +1719,11 @@ namespace _8085_Simulator
             }
             else if (hex == "C3") // JMP label16
             {
-
+                string label = "";
+                label = memory[pc.counter + 2];
+                label = memory[pc.counter + 1];
+                pc.counter = Convert.ToInt32(label,16);
+                pc.counter -= 1;
             }
             else if (hex == "D2") // JNC label16
             {
@@ -2595,7 +2761,9 @@ namespace _8085_Simulator
                 code[0] == "cm")
             {
                 if (code.Length > 1)
-                    if (code[1].EndsWith("h") || code[1].EndsWith("H"))
+                {
+                    if (isLabel(code[1])) { }
+                    else if (code[1].EndsWith("h") || code[1].EndsWith("H"))
                         try
                         {
                             code[1] = code[1].Remove(code[1].Length - 1);
@@ -2616,6 +2784,7 @@ namespace _8085_Simulator
                         {
                             error_string = $"\"{code[1]}\" is not valid value";
                         }
+                }
                 else
                     error_string = "not enough parameters";
             } //done
@@ -2664,6 +2833,7 @@ namespace _8085_Simulator
 
         private void loading(object sender, EventArgs e)
         {
+            labels = new List<LabelAddress>();
             errors = new List<string>();
             memory = new List<string>(new string[65535]);
             stack = new List<string>(new string[255]);
@@ -2723,6 +2893,7 @@ namespace _8085_Simulator
 
         private void code_editor_key_press(object sender, KeyPressEventArgs e)
         {
+            int start = codeEditor.GetLineFromCharIndex(codeEditor.SelectionStart);
         }
 
         private void memory_box_click(object sender, KeyPressEventArgs e)
@@ -2780,7 +2951,15 @@ namespace _8085_Simulator
 
         private void show_conv_tooltip(object sender, EventArgs e)
         {
+            Label temp = (Label)sender;
+            reg_name.Text = temp.Tag.ToString();
+            int data = Convert.ToInt32(temp.Text, 16);
+            conv_lbl.Text = $"BIN : {Convert.ToString(data, 2).PadLeft(8, '0')}\nHEX : {temp.Text}\nDEC : {data}";
+        }
 
+        private void checkErrorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            code_inspect(false);
         }
     }
 }
