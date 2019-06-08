@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ScintillaNET;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,7 +17,7 @@ namespace _8085_Simulator
 {
     public partial class main : Form
     {
-        
+
 
         //Custom class
 
@@ -120,9 +121,9 @@ namespace _8085_Simulator
             public void checkParity(string binary)
             {
                 int eo = 0;
-                for(int i=0;i<8;i++)
+                for (int i = 0; i < 8; i++)
                 {
-                    if(binary[i]=='1')
+                    if (binary[i] == '1')
                     {
                         eo++;
                     }
@@ -132,7 +133,7 @@ namespace _8085_Simulator
                 else
                     parity = false;
             }
-            public void checkAuxilary(string f1,string f2)
+            public void checkAuxilary(string f1, string f2)
             {
                 int a = Convert.ToInt32(f1.Substring(4), 2);
                 int b = Convert.ToInt32(f2.Substring(4), 2);
@@ -208,14 +209,12 @@ namespace _8085_Simulator
         {
             public string name = "";
             public int address = 0;
-            public LabelAddress(string name,int address)
+            public LabelAddress(string name, int address)
             {
                 this.name = name;
                 this.address = address;
             }
         };
-
-
 
         //Variables
 
@@ -229,20 +228,32 @@ namespace _8085_Simulator
 
         Flags f = new Flags();
 
-        Stack<int> sp;
-
         ProgramCounter pc;
 
         string psw;
         string m;
 
-        bool containsError = false;
+        bool stop_run = false;
 
-        private List<string> memory;
-        private List<string> port;
-        private List<string> stack;
+        private List<ushort> memory;
+        private List<ushort> port;
+
+        private List<ushort> stack;
+        int sp = 65535;
+
+
+
         private List<string> errors;
         private List<LabelAddress> labels;
+
+        ListViewItem[] memory_items;
+        ListViewItem[] stack_items;
+        ListViewItem[] port_items;
+        int m_first;
+        int s_first;
+        int p_first;
+
+        ListViewItem[] m_items;
 
         public main()
         {
@@ -271,11 +282,10 @@ namespace _8085_Simulator
             pswreg.Text = psw.ToString();
             mreg.Text = m.ToString();
             pcreg.Text = pc.getAddress().PadLeft(4, '0');
-            if (sp.Count > 0)
-                spreg.Text = sp.Peek().ToString("X");
-            else
-                spreg.Text = "0";
-            spreg.Text = spreg.Text.PadLeft(4, '0');
+            spreg.Text = sp.ToString("X").PadLeft(4, '0');
+            memorybox.Invalidate();
+            stackbox.Invalidate();
+            portbox.Invalidate();
         }
 
         public void clear_registers()
@@ -291,73 +301,51 @@ namespace _8085_Simulator
             psw = "0";
             f.Clear();
             pc.Clear();
-            sp.Clear();
+            sp = 65535;
             update_variables();
         }
 
         public void reset_memory()
         {
-            memorybox.Items.Clear();
             ListViewItem item;
-            ListViewItem[] items = new ListViewItem[memory.Capacity];
-            for (int i = 0; i < items.Length; i++)
+            memorybox.VirtualListSize = memory.Count;
+            memory_items = new ListViewItem[memory.Count];
+            m_items = new ListViewItem[memory.Count];
+            for (int i = 0; i < memory_items.Length; i++)
             {
-                memory[i] = "0";
-                item = new ListViewItem($"{i.ToString("X")}", i);
-                item.SubItems.Add($"{memory[i]}");
-                items[i] = item;
-                Application.DoEvents();
+                memory[i] = Convert.ToByte(0);
+                item = new ListViewItem($"{i.ToString("X").PadLeft(4,'0')}", i);
+                item.SubItems.Add($"{memory[i].ToString("X").PadLeft(2,'0')}");
+                memory_items[i] = m_items[i] = item;
             }
-            memorybox.Items.AddRange(items);
         }
 
         public void reset_stack()
         {
-            stackbox.Items.Clear();
-            sp.Clear();
             ListViewItem item;
-            ListViewItem[] items = new ListViewItem[sp.Count];
-            for (int i = 0; i < items.Length; i++)
+            stackbox.VirtualListSize = stack.Count;
+            stack_items = new ListViewItem[stack.Count];
+            for (int i = stack_items.Length - 1; i >= 0; i--)
             {
-                stack[i] = "0";
-                item = new ListViewItem($"{i.ToString("X")}", i);
-                item.SubItems.Add($"{stack[i]}");
-                items[i] = item;
-                Application.DoEvents();
+                stack[i] = Convert.ToByte(0);
+                item = new ListViewItem($"{i.ToString("X").PadLeft(4,'0')}", i);
+                item.SubItems.Add($"{stack[i].ToString("X").PadLeft(2,'0')}");
+                stack_items[i] = item;
             }
-            stackbox.Items.AddRange(items);
-        }
-
-        public void load_stack()
-        {
-            stackbox.Items.Clear();
-            ListViewItem item;
-            ListViewItem[] items = new ListViewItem[sp.Count];
-            for (int i = 0; i < items.Length; i++)
-            {
-                stack[i] = sp.ElementAt<int>(i).ToString("X").PadLeft(4, '0');
-                item = new ListViewItem($"{i.ToString("X")}", i);
-                item.SubItems.Add($"{stack[i]}");
-                items[i] = item;
-                Application.DoEvents();
-            }
-            stackbox.Items.AddRange(items);
         }
 
         public void reset_port()
         {
-            portbox.Items.Clear();
             ListViewItem item;
-            ListViewItem[] items = new ListViewItem[port.Capacity];
-            for (int i=0;i<items.Length;i++)
+            portbox.VirtualListSize = port.Count;
+            port_items = new ListViewItem[port.Count];
+            for (int i = 0; i < port_items.Length; i++)
             {
-                port[i] = "0";
-                item = new ListViewItem($"{i.ToString("X")}", i);
-                item.SubItems.Add($"{port[i]}");
-                items[i] = item;
-                Application.DoEvents();
+                port[i] = Convert.ToByte(0);
+                item = new ListViewItem($"{i.ToString("X").PadLeft(2,'0')}", i);
+                item.SubItems.Add($"{port[i].ToString("X").PadLeft(2,'0')}");
+                port_items[i] = item;
             }
-            portbox.Items.AddRange(items);
         }
 
         public int load_into_memory()
@@ -366,9 +354,9 @@ namespace _8085_Simulator
             int start_location = for_pc = 0;
             string opcode = "";
             string lineF = "";
-            foreach (string line in codeEditor.Lines)
+            foreach (Line line in codeEditor.Lines)
             {
-                lineF = Regex.Replace(line, @",+", " ");
+                lineF = Regex.Replace(line.Text, @",+", " ");
                 lineF = Regex.Replace(lineF, @"\s+", " ");
                 lineF = lineF.Trim(' ');
                 if (lineF == "")
@@ -534,7 +522,7 @@ namespace _8085_Simulator
                         if (code[2] == "l")
                             opcode = "75";
                     }
-                    memory[start_location] = opcode;
+                    memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                 } //done
@@ -564,10 +552,10 @@ namespace _8085_Simulator
                         int data = Convert.ToInt32(code[2]);
                         code[2] = data.ToString("X");
                     }
-                    memory[start_location] = opcode;
+                    memory[start_location] = Convert.ToByte(opcode,16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
-                    memory[start_location] = code[2].ToUpper();
+                    memory[start_location] = Convert.ToByte(code[2].ToUpper(),16);
                     memorybox.Items[start_location].SubItems[1].Text = code[2].ToUpper();
                     start_location++;
                 } //done
@@ -582,7 +570,7 @@ namespace _8085_Simulator
                         opcode = "21";
                     if (code[1] == "sp")
                         opcode = "31";
-                    memory[start_location] = opcode;
+                    memory[start_location] = Convert.ToByte(opcode,16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                     if (code[2].EndsWith("h"))
@@ -593,10 +581,10 @@ namespace _8085_Simulator
                         code[2] = data.ToString("X");
                     }
                     code[2] = code[2].PadLeft(4, '0');
-                    memory[start_location] = code[2].Substring(2, 2).ToUpper();
+                    memory[start_location] = Convert.ToByte(code[2].Substring(2, 2),16);
                     memorybox.Items[start_location].SubItems[1].Text = code[2].Substring(2, 2).ToUpper();
                     start_location++;
-                    memory[start_location] = code[2].Substring(0, 2);
+                    memory[start_location] = Convert.ToByte(code[2].Substring(0, 2), 16);
                     memorybox.Items[start_location].SubItems[1].Text = code[2].Substring(0, 2).ToUpper();
                     start_location++;
                 } //done
@@ -614,7 +602,7 @@ namespace _8085_Simulator
                             opcode = "2";
                         else if (code[1] == "d")
                             opcode = "12";
-                    memory[start_location] = opcode;
+                    memory[start_location] = Convert.ToByte(opcode,16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                 } //done
@@ -688,13 +676,13 @@ namespace _8085_Simulator
                     if (code[0] == "cm")
                         opcode = "FC";
 
-                        foreach(LabelAddress ad in labels)
-                            if(ad.name==code[1])
+                    foreach (LabelAddress ad in labels)
+                        if (ad.name == code[1])
                         {
                             code[1] = ad.address.ToString("X").PadLeft(4, '0');
                         }
 
-                    memory[start_location] = opcode;
+                    memory[start_location] = Convert.ToByte(opcode,16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                     if (code[1].EndsWith("h"))
@@ -705,10 +693,10 @@ namespace _8085_Simulator
                         code[1] = data.ToString("X");
                     }
                     code[1] = code[1].PadLeft(4, '0');
-                    memory[start_location] = code[1].Substring(2, 2).ToUpper();
+                    memory[start_location] = Convert.ToByte(code[1].Substring(2, 2),16);
                     memorybox.Items[start_location].SubItems[1].Text = code[1].Substring(2, 2).ToUpper();
                     start_location++;
-                    memory[start_location] = code[1].Substring(0, 2).ToUpper();
+                    memory[start_location] = Convert.ToByte(code[1].Substring(0, 2), 16);
                     memorybox.Items[start_location].SubItems[1].Text = code[1].Substring(0, 2).ToUpper();
                     start_location++;
                 } //done
@@ -797,7 +785,7 @@ namespace _8085_Simulator
                     if (code[0] == "nop")
                         opcode = "0";
 
-                    memory[start_location] = opcode;
+                    memory[start_location] = Convert.ToByte(opcode,16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                 } //done
@@ -1003,7 +991,7 @@ namespace _8085_Simulator
                         if (code[1] == "m")
                             opcode = "BE";
                     }
-                    memory[start_location] = opcode;
+                    memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                 } //done
@@ -1040,7 +1028,7 @@ namespace _8085_Simulator
                     if (code[0] == "out")
                         opcode = "D3";
 
-                    memory[start_location] = opcode;
+                    memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
 
@@ -1054,7 +1042,7 @@ namespace _8085_Simulator
                         code[1] = data.ToString("X");
                     }
 
-                    memory[start_location] = code[1].ToUpper();
+                    memory[start_location] = Convert.ToByte(code[1],16);
                     memorybox.Items[start_location].SubItems[1].Text = code[1].ToUpper();
                     start_location++;
                 } //done
@@ -1120,12 +1108,12 @@ namespace _8085_Simulator
                         if (code[1] == "psw")
                             opcode = "F1";
                     }
-                    memory[start_location] = opcode;
+                    memory[start_location] = Convert.ToByte(opcode,16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                 }
 
-                else if(code[0]=="rst")
+                else if (code[0] == "rst")
                 {
                     if (code[1] == "0")
                         opcode = "C7";
@@ -1143,6 +1131,9 @@ namespace _8085_Simulator
                         opcode = "F7";
                     if (code[1] == "7")
                         opcode = "FF";
+                    memory[start_location] = Convert.ToByte(opcode, 16);
+                    memorybox.Items[start_location].SubItems[1].Text = opcode;
+                    start_location++;
                 } //done
             }
             return for_pc;
@@ -1155,15 +1146,7 @@ namespace _8085_Simulator
 
         public void step_next_code()
         {
-                containsError = code_inspect(false);
-                if (containsError)
-                {
-                    if(memory[pc.counter]!="76" && pc.counter==0)
-                        pc.counter = load_into_memory();
-                    code_execute(memory[pc.counter]);
-                    pc.increment();
-                    update_variables();
-                }
+            
         }
 
         public void read_labels()
@@ -1171,15 +1154,15 @@ namespace _8085_Simulator
             labels.Clear();
             int start_location = 0;
             string lineF = "";
-            foreach(string line in codeEditor.Lines)
+            foreach (Line line in codeEditor.Lines)
             {
-                lineF = Regex.Replace(line, @",+", " ");
+                lineF = Regex.Replace(line.Text, @",+", " ");
                 lineF = Regex.Replace(lineF, @"\s+", " ");
                 lineF = lineF.Trim(' ');
                 if (lineF == "")
                     continue;
                 string[] code = lineF.ToLower().Split(' ');
-                if(code[0].EndsWith(":"))
+                if (code[0].EndsWith(":"))
                 {
                     code[0] = code[0].Remove(code[0].Length - 1);
                     labels.Add(new LabelAddress(code[0], start_location));
@@ -1268,7 +1251,7 @@ namespace _8085_Simulator
                         code[0] == "cpo" ||
                         code[0] == "cpe" ||
                         code[0] == "cp" ||
-                        code[0] == "cm"||
+                        code[0] == "cm" ||
                         code[0] == "lxi" ||
                         code[0] == "lhld" ||
                         code[0] == "shld")
@@ -1294,11 +1277,10 @@ namespace _8085_Simulator
             int error_level = 0;
             int line_number = 1;
             bool halt = false;
-            string[] lines = codeEditor.Lines;
             string lineF = "";
-            foreach (string line in lines)
+            foreach (Line line in codeEditor.Lines)
             {
-                lineF = Regex.Replace(line, @",+", " ");
+                lineF = Regex.Replace(line.Text, @",+", " ");
                 lineF = Regex.Replace(lineF, @"\s+", " ");
                 lineF = lineF.Trim(' ');
                 if (lineF == "")
@@ -1308,7 +1290,7 @@ namespace _8085_Simulator
                 }
                 if (lineF.ToLower() == "hlt")
                     halt = true;
-                
+
                 string[] code = lineF.Split(' ');
                 string error_string = "";
                 if (code[0].EndsWith(":"))
@@ -1316,7 +1298,7 @@ namespace _8085_Simulator
                     code[0] = code[0].Remove(code[0].Length - 1);
                     for (int i = 1; i < code.Length; i++)
                     {
-                        code[i-1] = code[i];
+                        code[i - 1] = code[i];
                     }
                 }
                 error_string = check_error(code);
@@ -1340,6 +1322,11 @@ namespace _8085_Simulator
                 {
                     output_box.Items.Add(error);
                 }
+                codeEditor.Enabled = true;
+                stop_button.Enabled = false;
+                step_button.Enabled = true;
+                play_button.Enabled = true;
+                stop_run = false;
                 return false;
             }
             else
@@ -1347,13 +1334,34 @@ namespace _8085_Simulator
                 if (run_code == true)
                 {
                     pc.counter = load_into_memory();
-                    while (memory[pc.counter] != "76")
+                    while (memory[pc.counter] != 118)
                     {
-                        code_execute(memory[pc.counter]);
+                        code_execute(memory[pc.counter].ToString("X"));
                         pc.increment();
                         update_variables();
+                        stackbox.TopItem = stackbox.Items[sp - 1];
+                        if (stop_run == true)
+                        {
+                            break;
+                        }
+                        Application.DoEvents();
                     }
+                    if (stop_run)
+                    {
+                        foreach (string error in errors)
+                        {
+                            output_box.Items.Add(error);
+                        }
+                    }
+                    codeEditor.Enabled = true;
+                    stop_button.Enabled = false;
+                    step_button.Enabled = true;
+                    play_button.Enabled = true;
+                    stop_run = false;
+                    output_box.Items.Add("Program successfully terminated!");
                 }
+                else
+                    output_box.Items.Add("No errors found in the code!");
                 return true;
             }
         }
@@ -1362,10 +1370,13 @@ namespace _8085_Simulator
         {
             if (hex == "CE") //ACI data8
             {
-                int data = Convert.ToInt32(memory[pc.counter + 1], 16);
+                int data = memory[pc.counter + 1];
                 Register temp = new Register();
                 if (f.carry == true)
+                {
                     data += 1;
+                    f.carry = false;
+                }
                 temp.setData(data);
                 f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
                 data += a.getInt();
@@ -1377,133 +1388,383 @@ namespace _8085_Simulator
             }
             else if (hex == "8F") // ADC A
             {
-
-            }
-            else if (hex == "88") // ADC B
-            {
-
-            }
-            else if (hex == "89") // ADC C
-            {
-
-            }
-            else if (hex == "8A") // ADC D
-            {
-
-            }
-            else if (hex == "8B") // ADC E
-            {
-
-            }
-            else if (hex == "8C") // ADC H
-            {
-
-            }
-            else if (hex == "8D") // ADC L
-            {
-
-            }
-            else if (hex == "8E") // ADC M
-            {
-
-            }
-            else if (hex == "87") // ADD A
-            {
-                a.setData(a.getInt() + a.getInt());
-            }
-            else if (hex == "80") // ADD B
-            {
-                a.setData(a.getInt() + b.getInt());
-            }
-            else if (hex == "81") // ADD C
-            {
-                a.setData(a.getInt() + c.getInt());
-            }
-            else if (hex == "82") // ADD D
-            {
-                a.setData(a.getInt() + d.getInt());
-            }
-            else if (hex == "83") // ADD E
-            {
-                a.setData(a.getInt() + e.getInt());
-            }
-            else if (hex == "84") // ADD H
-            {
-                a.setData(a.getInt() + h.getInt());
-            }
-            else if (hex == "85") // ADD L
-            {
-                a.setData(a.getInt() + l.getInt());
-            }
-            else if (hex == "86") // ADD M
-            {
-                int index = Convert.ToInt32(m, 16);
-                int data = Convert.ToInt32(memory[index], 16);
-                a.setData(a.getInt() + data);
-            }
-            else if (hex == "C6") // ADI data8
-            {
-                int data = Convert.ToInt32(memory[pc.counter + 1], 16);
                 Register temp = new Register();
+                temp.setData(a.getInt());
+                int data = temp.getInt();
+                if (f.carry == true)
+                {
+                    data += 1;
+                    f.carry = false;
+                }
                 temp.setData(data);
                 f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
-                if(f.sign)
-                {
-
-                }
-                else
-                {
-                    data = a.getInt() + data;
-                }
+                data += a.getInt();
                 if (data > 255)
                     f.carry = true;
                 a.setData(data);
                 f.update(a);
-                pc.incrementBy(1); 
+            }
+            else if (hex == "88") // ADC B
+            {
+                Register temp = new Register();
+                temp.setData(b.getInt());
+                int data = temp.getInt();
+                if (f.carry == true)
+                {
+                    data += 1;
+                    f.carry = false;
+                }
+                temp.setData(data);
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "89") // ADC C
+            {
+                Register temp = new Register();
+                temp.setData(c.getInt());
+                int data = temp.getInt();
+                if (f.carry == true)
+                {
+                    data += 1;
+                    f.carry = false;
+                }
+                temp.setData(data);
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "8A") // ADC D
+            {
+                Register temp = new Register();
+                temp.setData(d.getInt());
+                int data = temp.getInt();
+                if (f.carry == true)
+                {
+                    data += 1;
+                    f.carry = false;
+                }
+                temp.setData(data);
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "8B") // ADC E
+            {
+                Register temp = new Register();
+                temp.setData(e.getInt());
+                int data = temp.getInt();
+                if (f.carry == true)
+                {
+                    data += 1;
+                    f.carry = false;
+                }
+                temp.setData(data);
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "8C") // ADC H
+            {
+                Register temp = new Register();
+                temp.setData(h.getInt());
+                int data = temp.getInt();
+                if (f.carry == true)
+                {
+                    data += 1;
+                    f.carry = false;
+                }
+                temp.setData(data);
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "8D") // ADC L
+            {
+                Register temp = new Register();
+                temp.setData(l.getInt());
+                int data = temp.getInt();
+                if (f.carry == true)
+                {
+                    data += 1;
+                    f.carry = false;
+                }
+                temp.setData(data);
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "8E") // ADC M
+            {
+                int index = Convert.ToInt32(m, 16);
+                int data = memory[index];
+                Register temp = new Register();
+                if (f.carry == true)
+                {
+                    data += 1;
+                    f.carry = false;
+                }
+                temp.setData(data);
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "87") // ADD A
+            {
+                Register temp = new Register();
+                int data = a.getInt();
+                temp.setData(data);
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "80") // ADD B
+            {
+                Register temp = new Register();
+                int data = b.getInt();
+                temp.setData(data);
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "81") // ADD C
+            {
+                Register temp = new Register();
+                int data = c.getInt();
+                temp.setData(data);
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "82") // ADD D
+            {
+                Register temp = new Register();
+                int data = d.getInt();
+                temp.setData(data);
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "83") // ADD E
+            {
+                Register temp = new Register();
+                int data = e.getInt();
+                temp.setData(data);
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "84") // ADD H
+            {
+                Register temp = new Register();
+                int data = h.getInt();
+                temp.setData(data);
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "85") // ADD L
+            {
+                Register temp = new Register();
+                int data = l.getInt();
+                temp.setData(data);
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "86") // ADD M
+            {
+                int index = Convert.ToInt32(m, 16);
+                int data = memory[index];
+                Register temp = new Register();
+                temp.setData(data);
+                data += a.getInt();
+                if (data > 255)
+                    f.carry = true;
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
+            }
+            else if (hex == "C6") // ADI data8
+            {
+                int data = Convert.ToInt32(memory[pc.counter + 1]);
+                Register temp = new Register();
+                temp.setData(data);
+                data = a.getInt() + data;
+                if (data > 255)
+                    f.carry = true;
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
+                pc.incrementBy(1);
             }
             else if (hex == "A7") // ANA A
             {
+                Register temp = new Register();
+                int data = a.getInt();
+                temp.setData(data);
+                data = data & a.getInt();
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
 
             }
             else if (hex == "A0") // ANA B
             {
-
+                Register temp = new Register();
+                int data = b.getInt();
+                temp.setData(data);
+                data = data & a.getInt();
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "A1") // ANA C
             {
-
+                Register temp = new Register();
+                int data = c.getInt();
+                temp.setData(data);
+                data = data & a.getInt();
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "A2") // ANA D
             {
-
+                Register temp = new Register();
+                int data = d.getInt();
+                temp.setData(data);
+                data = data & a.getInt();
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "A3") // ANA E
             {
-
+                Register temp = new Register();
+                int data = e.getInt();
+                temp.setData(data);
+                data = data & a.getInt();
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "A4") // ANA H
             {
-
+                Register temp = new Register();
+                int data = h.getInt();
+                temp.setData(data);
+                data = data & a.getInt();
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "A5") // ANA L
             {
-
+                Register temp = new Register();
+                int data = l.getInt();
+                temp.setData(data);
+                data = data & a.getInt();
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "A6") // ANA M
             {
-
+                Register temp = new Register();
+                int index = Convert.ToInt32(m, 16);
+                int data = memory[index];
+                temp.setData(data);
+                data = data & a.getInt();
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "E6") // ANI data8
             {
-
+                Register temp = new Register();
+                int data = memory[pc.counter+1];
+                temp.setData(data);
+                data = data & a.getInt();
+                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
+                pc.incrementBy(1);
             }
             else if (hex == "CD") // CALL label16
             {
-
+                string pchex = Convert.ToString(pc.counter + 2, 16).PadLeft(4, '0');
+                sp--;
+                stack[sp] = Convert.ToByte(pchex.Substring(2, 2), 16);
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                sp--;
+                stack[sp] = Convert.ToByte(pchex.Substring(0, 2), 16);
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                string address = "";
+                address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                pc.counter = Convert.ToInt32(address)-1;
             }
             else if (hex == "DC") // CC label16
             {
-
+                if (f.carry == true)
+                {
+                    string pchex = Convert.ToString(pc.counter + 2, 16).PadLeft(4, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(2, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(0, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    string address = "";
+                    address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                    address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(address) - 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "FC") // CM label16
             {
@@ -1720,18 +1981,32 @@ namespace _8085_Simulator
             else if (hex == "C3") // JMP label16
             {
                 string label = "";
-                label = memory[pc.counter + 2];
-                label = memory[pc.counter + 1];
-                pc.counter = Convert.ToInt32(label,16);
+                label += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                label += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                pc.counter = Convert.ToInt32(label);
                 pc.counter -= 1;
             }
             else if (hex == "D2") // JNC label16
             {
-
+                if(f.carry==false)
+                {
+                    string label = "";
+                    label += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                    label += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(label);
+                    pc.counter -= 1;
+                }
             }
             else if (hex == "C2") // JNZ label16
             {
-
+                if(f.zero==false)
+                {
+                    string label = "";
+                    label += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                    label += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(label);
+                    pc.counter -= 1;
+                }
             }
             else if (hex == "F2") // JP label16
             {
@@ -1752,10 +2027,10 @@ namespace _8085_Simulator
             else if (hex == "3A") // LDA address16
             {
                 string addr = "";
-                addr += memory[pc.counter + 2];
-                addr += memory[pc.counter + 1];
-                int index = Convert.ToInt32(addr, 16);
-                a.setData(memory[index]);
+                addr += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                addr += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                int index = Convert.ToInt32(addr);
+                a.setData(Convert.ToInt32(memory[index]));
                 pc.incrementBy(2);
             }
             else if (hex == "A") // LDAX B [C]
@@ -1763,16 +2038,16 @@ namespace _8085_Simulator
                 string addr = "";
                 addr += b.getHex();
                 addr += c.getHex();
-                int index = Convert.ToInt32(addr, 16);
-                a.setData(memory[index]);
+                int index = Convert.ToInt32(addr,16);
+                a.setData(Convert.ToInt32(memory[index]));
             }
             else if (hex == "1A") // LDAX D [E]
             {
                 string addr = "";
                 addr += d.getHex();
                 addr += e.getHex();
-                int index = Convert.ToInt32(addr, 16);
-                a.setData(memory[index]);
+                int index = Convert.ToInt32(addr,16);
+                a.setData(Convert.ToInt32(memory[index]));
             }
             else if (hex == "2A") // LHLD address16
             {
@@ -1780,19 +2055,29 @@ namespace _8085_Simulator
             }
             else if (hex == "1") // LXI B [C]
             {
-
+                b.setData(Convert.ToInt32(memory[pc.counter + 2]));
+                c.setData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.incrementBy(2);
             }
             else if (hex == "11") // LXI D [E]
             {
-
+                d.setData(Convert.ToInt32(memory[pc.counter + 2]));
+                e.setData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.incrementBy(2);
             }
             else if (hex == "21") // LXI H [L]
             {
-
+                h.setData(Convert.ToInt32(memory[pc.counter + 2]));
+                l.setData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.incrementBy(2);
             }
             else if (hex == "31") // LXI SP
             {
-
+                string data = "";
+                data += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                data += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                sp = Convert.ToInt32(data,16);
+                pc.incrementBy(2);
             }
             else if (hex == "7F") // MOV A A
             {
@@ -1825,7 +2110,7 @@ namespace _8085_Simulator
             else if (hex == "7E") // MOV A M
             {
                 int index = Convert.ToInt32(m, 16);
-                a.setData(memory[index]);
+                a.setData(Convert.ToInt32(memory[index]));
             }
             else if (hex == "47") // MOV B A
             {
@@ -1858,7 +2143,7 @@ namespace _8085_Simulator
             else if (hex == "46") // MOV B M
             {
                 int index = Convert.ToInt32(m, 16);
-                b.setData(memory[index]);
+                b.setData(Convert.ToInt32(memory[index]));
             }
             else if (hex == "4F") // MOV C A
             {
@@ -1891,7 +2176,7 @@ namespace _8085_Simulator
             else if (hex == "4E") // MOV C M
             {
                 int index = Convert.ToInt32(m, 16);
-                c.setData(memory[index]);
+                c.setData(Convert.ToInt32(memory[index]));
             }
             else if (hex == "57") // MOV D A
             {
@@ -1924,7 +2209,7 @@ namespace _8085_Simulator
             else if (hex == "56") // MOV D M
             {
                 int index = Convert.ToInt32(m, 16);
-                d.setData(memory[index]);
+                d.setData(Convert.ToInt32(memory[index]));
             }
             else if (hex == "5F") // MOV E A
             {
@@ -1957,7 +2242,7 @@ namespace _8085_Simulator
             else if (hex == "5E") // MOV E M
             {
                 int index = Convert.ToInt32(m, 16);
-                e.setData(memory[index]);
+                e.setData(Convert.ToInt32(memory[index]));
             }
             else if (hex == "67") // MOV H A
             {
@@ -1990,7 +2275,7 @@ namespace _8085_Simulator
             else if (hex == "66") // MOV H M
             {
                 int index = Convert.ToInt32(m, 16);
-                h.setData(memory[index]);
+                h.setData(Convert.ToInt32(memory[index]));
             }
             else if (hex == "6F") // MOV L A
             {
@@ -2023,90 +2308,90 @@ namespace _8085_Simulator
             else if (hex == "6E") // MOV L M
             {
                 int index = Convert.ToInt32(m, 16);
-                l.setData(memory[index]);
+                l.setData(Convert.ToInt32(memory[index]));
             }
             else if (hex == "77") // MOV M A
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = a.getHex();
+                memory[index] = Convert.ToByte(a.getInt());
                 memorybox.Items[index].SubItems[1].Text = a.getHex();
             }
             else if (hex == "70") // MOV M B
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = b.getHex();
+                memory[index] = Convert.ToByte(b.getInt());
                 memorybox.Items[index].SubItems[1].Text = b.getHex();
             }
             else if (hex == "71") // MOV M C
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = c.getHex();
+                memory[index] = Convert.ToByte(c.getInt());
                 memorybox.Items[index].SubItems[1].Text = c.getHex();
             }
             else if (hex == "72") // MOV M D
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = d.getHex();
+                memory[index] = Convert.ToByte(d.getInt());
                 memorybox.Items[index].SubItems[1].Text = d.getHex();
             }
             else if (hex == "73") // MOV M E
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = e.getHex();
+                memory[index] = Convert.ToByte(e.getInt());
                 memorybox.Items[index].SubItems[1].Text = e.getHex();
             }
             else if (hex == "74") // MOV M H
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = h.getHex();
+                memory[index] = Convert.ToByte(h.getInt());
                 memorybox.Items[index].SubItems[1].Text = h.getHex();
             }
             else if (hex == "75") // MOV M L
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = l.getHex();
+                memory[index] = Convert.ToByte(l.getInt());
                 memorybox.Items[index].SubItems[1].Text = l.getHex();
             }
             else if (hex == "3E") // MVI A data8
             {
-                a.setData(memory[pc.counter + 1]);
+                a.setData(Convert.ToInt32(memory[pc.counter + 1]));
                 pc.incrementBy(1);
             }
             else if (hex == "6") // MVI B data8
             {
-                b.setData(memory[pc.counter + 1]);
+                b.setData(Convert.ToInt32(memory[pc.counter + 1]));
                 pc.incrementBy(1);
             }
             else if (hex == "E") // MVI C data8
             {
-                c.setData(memory[pc.counter + 1]);
+                c.setData(Convert.ToInt32(memory[pc.counter + 1]));
                 pc.incrementBy(1);
             }
             else if (hex == "16") // MVI D data8
             {
-                d.setData(memory[pc.counter + 1]);
+                d.setData(Convert.ToInt32(memory[pc.counter + 1]));
                 pc.incrementBy(1);
             }
             else if (hex == "1E") // MVI E data8
             {
-                e.setData(memory[pc.counter + 1]);
+                e.setData(Convert.ToInt32(memory[pc.counter + 1]));
                 pc.incrementBy(1);
             }
             else if (hex == "26") // MVI H data8
             {
-                h.setData(memory[pc.counter + 1]);
+                h.setData(Convert.ToInt32(memory[pc.counter + 1]));
                 pc.incrementBy(1);
             }
             else if (hex == "2E") // MVI L data8
             {
-                l.setData(memory[pc.counter + 1]);
+                l.setData(Convert.ToInt32(memory[pc.counter + 1]));
                 pc.incrementBy(1);
             }
             else if (hex == "36") // MVI M data8
             {
                 int index = Convert.ToInt32(m, 16);
                 memory[index] = memory[pc.counter + 1];
-                memorybox.Items[index].SubItems[1].Text = memory[pc.counter + 1];
+                memorybox.Items[index].SubItems[1].Text = memory[pc.counter + 1].ToString("X").PadLeft(2,'0');
                 pc.incrementBy(1);
             }
             else if (hex == "0") // NOP
@@ -2150,12 +2435,12 @@ namespace _8085_Simulator
             }
             else if (hex == "B6") // ORA M
             {
-                int ora = a.getInt() | Convert.ToInt32(memory[Convert.ToInt32(m, 16)], 16);
+                int ora = a.getInt() | Convert.ToInt32(memory[Convert.ToInt32(m, 16)]);
                 a.setData(ora);
             }
             else if (hex == "F6") // ORI data8
             {
-                int ora = a.getInt() | Convert.ToInt32(memory[pc.counter + 1], 16);
+                int ora = a.getInt() | Convert.ToInt32(memory[pc.counter + 1]);
                 a.setData(ora);
             }
             else if (hex == "D3") // OUT port8
@@ -2184,23 +2469,39 @@ namespace _8085_Simulator
             }
             else if (hex == "C5") // PUSH B [C]
             {
-                string data = "";
-                data += b.getHex();
-                data += c.getHex();
-                sp.Push(Convert.ToInt32(data, 16));
-                load_stack();
+                sp--;
+                stack[sp] = Convert.ToByte(c.getInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                sp--;
+                stack[sp] = Convert.ToByte(b.getInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
             }
             else if (hex == "D5") // PUSH D [E]
             {
-
+                sp--;
+                stack[sp] = Convert.ToByte(e.getInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                sp--;
+                stack[sp] = Convert.ToByte(d.getInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
             }
             else if (hex == "E5") // PUSH H [L]
             {
-
+                sp--;
+                stack[sp] = Convert.ToByte(l.getInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                sp--;
+                stack[sp] = Convert.ToByte(h.getInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
             }
             else if (hex == "F5") // PUSH PSW
             {
-
+                sp--;
+                stack[sp] = Convert.ToByte(f.getInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                sp--;
+                stack[sp] = Convert.ToByte(a.getInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
             }
             else if (hex == "17") // RAL
             {
@@ -2216,7 +2517,22 @@ namespace _8085_Simulator
             }
             else if (hex == "C9") // RET
             {
-
+                if (sp <= 65533)
+                {
+                    string address = "";
+                    address += stack[sp].ToString().PadLeft(2, '0');
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    sp++;
+                    address += stack[sp].ToString().PadLeft(2, '0');
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    sp++;
+                    pc.counter = Convert.ToInt32(address, 16);
+                }
+                else
+                {
+                    stop_run = true;
+                    errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                }
             }
             else if (hex == "20") // RIM
             {
@@ -2341,10 +2657,10 @@ namespace _8085_Simulator
             else if (hex == "32") // STA address16
             {
                 string addr = "";
-                addr += memory[pc.counter + 2];
-                addr += memory[pc.counter + 1];
+                addr += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                addr += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
                 int index = Convert.ToInt32(addr, 16);
-                memory[index] = a.getHex();
+                memory[index] = Convert.ToByte(a.getInt());
                 memorybox.Items[index].SubItems[1].Text = a.getHex();
                 pc.incrementBy(2);
             }
@@ -2354,7 +2670,7 @@ namespace _8085_Simulator
                 addr += b.getHex();
                 addr += c.getHex();
                 int index = Convert.ToInt32(addr, 16);
-                memory[index] = a.getHex();
+                memory[index] = Convert.ToByte(a.getInt());
                 memorybox.Items[index].SubItems[1].Text = a.getHex();
             }
             else if (hex == "12") // STAX D [E]
@@ -2363,7 +2679,7 @@ namespace _8085_Simulator
                 addr += d.getHex();
                 addr += e.getHex();
                 int index = Convert.ToInt32(addr, 16);
-                memory[index] = a.getHex();
+                memory[index] = Convert.ToByte(a.getInt());
                 memorybox.Items[index].SubItems[1].Text = a.getHex();
             }
             else if (hex == "37") // STC
@@ -2835,41 +3151,58 @@ namespace _8085_Simulator
         {
             labels = new List<LabelAddress>();
             errors = new List<string>();
-            memory = new List<string>(new string[65535]);
-            stack = new List<string>(new string[255]);
-            port = new List<string>(new string[255]);
-            sp = new Stack<int>(255);
+
+            memory = new List<ushort>(new ushort[65535]);
+            stack = new List<ushort>(new ushort[65535]);
+            port = new List<ushort>(new ushort[255]);
+            
+
             pc = new ProgramCounter();
-            lines_indicator.Font = codeEditor.Font;
+
             reset_memory();
+            reset_stack();
             reset_port();
             update_variables();
+
             WindowState = FormWindowState.Maximized;
+
+
+            
+            codeEditor.Lexer = ScintillaNET.Lexer.Asm;
+            codeEditor.Styles[Style.Default].Font = "Consolas";
+            codeEditor.Styles[Style.Default].Size = 14;
+            codeEditor.Styles[Style.Asm.Comment].ForeColor = Color.Green;
+            codeEditor.Styles[Style.Asm.CpuInstruction].ForeColor = Color.DarkOrange;
+            codeEditor.Styles[Style.Asm.Number].ForeColor = Color.Blue;
+            codeEditor.Styles[Style.Asm.Register].ForeColor = Color.MediumVioletRed;
+            codeEditor.Styles[Style.Asm.Operator].ForeColor = Color.Purple;
+            codeEditor.Styles[Style.Asm.DirectiveOperand].ForeColor = Color.DarkSeaGreen;
+            codeEditor.SetKeywords(0, "mov mvi lxi ldax stax lda sta lhld shld xchg add adc sub sbb adi aci sui sbi dad inr dcr inx dcx daa cma cmc stc adi aci sui sbi ana ora xra cmp rlc rrc ral rar ani xri ori cpi jmp jnz jz jnc jc jpo jpe jp jm call cnz cz cnc cc cpo cpe cp cm ret rnz rz rnc rc rpo rpe rp rm pchl in out push pop xthl sphl ei di rim sim nop hlt rst");
+            codeEditor.SetKeywords(2, "a b c d e h l m psw sp");
+            codeEditor.Margins[0].Width = 40;
+            codeEditor.Margins[1].Width = 10;
+
+
             codeEditor.Select();
         }
 
         private void find_address_Click(object sender, EventArgs e)
         {
-            ListViewItem f = null;
-            f = memorybox.FindItemWithText(address_to_find.Text);
-            if (f != null)
-            {
-                data_tabs.SelectedTab = memoryTab;
-                memorybox.TopItem = f;
-            }
+            memorybox.TopItem = memorybox.FindItemWithText(address_to_find.Text);
         }
 
         //Menu section
 
-
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FontDialog fd = new FontDialog();
-            fd.Font = codeEditor.Font;
             if (fd.ShowDialog() == DialogResult.OK)
             {
-                codeEditor.Font = fd.Font;
-                lines_indicator.Font = fd.Font;
+                codeEditor.Styles[Style.Asm.Default].Font = Font.Name;
+                codeEditor.Styles[Style.Asm.Default].SizeF = Font.Size;
+                codeEditor.Styles[Style.Asm.Default].Bold = Font.Bold;
+                codeEditor.Styles[Style.Asm.Default].Italic = Font.Italic;
+                codeEditor.Styles[Style.Asm.Default].Underline = Font.Underline;
             }
         }
 
@@ -2885,54 +3218,10 @@ namespace _8085_Simulator
 
         private void clearEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            codeEditor.Clear();
+            codeEditor.ClearAll();
         }
-
 
         //key events
-
-        private void code_editor_key_press(object sender, KeyPressEventArgs e)
-        {
-            int start = codeEditor.GetLineFromCharIndex(codeEditor.SelectionStart);
-        }
-
-        private void memory_box_click(object sender, KeyPressEventArgs e)
-        {
-            if (memorybox.SelectedItems.Count > 0)
-            {
-                if (e.KeyChar >= (char)Keys.D0 && e.KeyChar <= (char)Keys.D9)
-                {
-                    if (memorybox.SelectedItems[0].SubItems[1].Text == "0")
-                        memorybox.SelectedItems[0].SubItems[1].Text = "";
-                    memorybox.SelectedItems[0].SubItems[1].Text += e.KeyChar;
-                    e.Handled = true;
-                }
-                else if (e.KeyChar == (char)Keys.Return)
-                {
-                    int data;
-                    try
-                    {
-                        data = Convert.ToInt32(memorybox.SelectedItems[0].SubItems[1].Text);
-                    }
-                    catch { data = 0; }
-                    if (data > 255)
-                    {
-                        data = 255;
-                        MessageBox.Show("No value can be stored bigger than 255 [FF] in memory address!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    memory[Convert.ToInt32(memorybox.SelectedItems[0].SubItems[0].Text,16)] = memorybox.SelectedItems[0].SubItems[1].Text = data.ToString("X");
-                    e.Handled = true;
-                }
-                else if (e.KeyChar == (char)Keys.Back)
-                {
-                    if (memorybox.SelectedItems[0].SubItems[1].Text.Length > 0)
-                        memorybox.SelectedItems[0].SubItems[1].Text = memorybox.SelectedItems[0].SubItems[1].Text.Remove(memorybox.SelectedItems[0].SubItems[1].Text.Length - 1);
-                }
-                else
-                    e.Handled = false;
-            }
-            
-        }
 
         private void runToolStripMenuItem1_Click(object sender, EventArgs e)
         {
@@ -2960,6 +3249,154 @@ namespace _8085_Simulator
         private void checkErrorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             code_inspect(false);
+        }
+
+        private void warning_click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Software is in ALPHA state!\nCan't guarantee software will work in every situation!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void run_program(object sender, EventArgs e)
+        {
+                codeEditor.Enabled = false;
+                stop_button.Enabled = true;
+                play_button.Enabled = false;
+                step_button.Enabled = false;
+                stop_run = false;
+                code_inspect(true);
+        }
+
+        private void stop_program(object sender, EventArgs e)
+        {
+            stop_run = true;
+        }
+
+        private void step_program(object sender, EventArgs e)
+        {
+            codeEditor.SelectionStart= codeEditor.Lines[codeEditor.CurrentLine].Position;
+            codeEditor.SelectionEnd = codeEditor.Lines[codeEditor.CurrentLine].Position + codeEditor.Lines[codeEditor.CurrentLine].Length;
+        }
+
+        private void code_editor_keypress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar<32)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void find_text_keypress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Return)
+            {
+                memorybox.TopItem = memorybox.FindItemWithText(address_to_find.Text);
+            }
+        }
+
+        private void memory_retrieve_items(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            if (memory_items != null && e.ItemIndex >= m_first && e.ItemIndex < m_first + memory_items.Length)
+                e.Item = memory_items[e.ItemIndex - m_first];
+            else
+            {
+                int x = e.ItemIndex * e.ItemIndex;
+                e.Item = new ListViewItem(x.ToString());
+            }
+        }
+        private void memory_cache_items(object sender, CacheVirtualItemsEventArgs e)
+        {
+            if (memory_items != null && e.StartIndex >= m_first && e.EndIndex <= m_first + memory_items.Length)
+                return;
+            m_first = e.StartIndex;
+            int length = e.EndIndex - e.StartIndex + 1;
+            memory_items = new ListViewItem[length];
+            int x = 0;
+            for (int i = 0; i < length; i++)
+            {
+                x = (i + m_first) * (i + m_first);
+                memory_items[i] = new ListViewItem(x.ToString());
+            }
+        }
+
+        private void stack_retrieve_items(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            if (stack_items != null && e.ItemIndex >= s_first && e.ItemIndex < s_first + stack_items.Length)
+                e.Item = stack_items[e.ItemIndex - s_first];
+            else
+            {
+                int x = e.ItemIndex * e.ItemIndex;
+                e.Item = new ListViewItem(x.ToString());
+            }
+        }
+        private void stack_cache_items(object sender, CacheVirtualItemsEventArgs e)
+        {
+            if (stack_items != null && e.StartIndex >= s_first && e.EndIndex <= s_first + stack_items.Length)
+                return;
+            s_first = e.StartIndex;
+            int length = e.EndIndex - e.StartIndex + 1;
+            stack_items = new ListViewItem[length];
+            int x = 0;
+            for (int i = 0; i < length; i++)
+            {
+                x = (i + s_first) * (i + s_first);
+                stack_items[i] = new ListViewItem(x.ToString());
+            }
+        }
+
+        private void port_retrieve_items(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            if (port_items != null && e.ItemIndex >= p_first && e.ItemIndex < p_first + port_items.Length)
+                e.Item = port_items[e.ItemIndex - p_first];
+            else
+            {
+                int x = e.ItemIndex * e.ItemIndex;
+                e.Item = new ListViewItem(x.ToString());
+            }
+        }
+        private void port_cache_items(object sender, CacheVirtualItemsEventArgs e)
+        {
+            if (port_items != null && e.StartIndex >= p_first && e.EndIndex <= p_first + port_items.Length)
+                return;
+            p_first = e.StartIndex;
+            int length = e.EndIndex - e.StartIndex + 1;
+            port_items = new ListViewItem[length];
+            int x = 0;
+            for (int i = 0; i < length; i++)
+            {
+                x = (i + p_first) * (i + p_first);
+                port_items[i] = new ListViewItem(x.ToString());
+            }
+        }
+
+        private void memory_search_item(object sender, SearchForVirtualItemEventArgs e)
+        {
+            int x = 0;
+            foreach(ListViewItem it in m_items)
+            {
+                if (it.Text.Contains(e.Text))
+                {
+                    e.Index = x;
+                    return;
+                }
+                x++;
+            }
+        }
+
+        private void memory_box_keypress(object sender, KeyPressEventArgs e)
+        {
+        }
+
+        private void memory_double_click(object sender, EventArgs e)
+        {
+            ListView.SelectedIndexCollection lic = memorybox.SelectedIndices;
+            address_editbox address_Editbox = new address_editbox(memorybox.Items[lic[0]].SubItems[1].Text);
+            address_Editbox.Text = memorybox.Items[lic[0]].Text;
+            if (address_Editbox.ShowDialog() == DialogResult.OK)
+            {
+                memory[Convert.ToInt32(memorybox.Items[lic[0]].Text, 16)] = Convert.ToByte(address_Editbox.int_value);
+                memorybox.Items[lic[0]].SubItems[1].Text = memory[Convert.ToInt32(memorybox.Items[lic[0]].Text, 16)].ToString("X").PadLeft(2, '0');
+                memorybox.Invalidate();
+            }
         }
     }
 }

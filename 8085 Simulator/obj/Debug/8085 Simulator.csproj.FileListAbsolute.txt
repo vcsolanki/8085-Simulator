@@ -8,3 +8,7 @@ C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\808
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.exe
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.pdb
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.main.resources
+C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\bin\Debug\ScintillaNET.dll
+C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\bin\Debug\ScintillaNET.xml
+C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.CopyComplete
+C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.address_editbox.resources

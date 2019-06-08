@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(main));
             this.albl = new System.Windows.Forms.Label();
             this.blbl = new System.Windows.Forms.Label();
             this.clbl = new System.Windows.Forms.Label();
@@ -39,9 +39,7 @@
             this.creg = new System.Windows.Forms.Label();
             this.breg = new System.Windows.Forms.Label();
             this.areg = new System.Windows.Forms.Label();
-            this.codeEditor = new System.Windows.Forms.RichTextBox();
             this.output_box = new System.Windows.Forms.ListBox();
-            this.lines_indicator = new System.Windows.Forms.RichTextBox();
             this.flagclbl = new System.Windows.Forms.Label();
             this.flagzlbl = new System.Windows.Forms.Label();
             this.flagslbl = new System.Windows.Forms.Label();
@@ -80,6 +78,7 @@
             this.portData = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.code_input_layout = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.codeEditor = new ScintillaNET.Scintilla();
             this.status_group_layout = new System.Windows.Forms.TableLayoutPanel();
             this.pcandsp = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -91,6 +90,10 @@
             this.mreg = new System.Windows.Forms.Label();
             this.pswlbl = new System.Windows.Forms.Label();
             this.pswreg = new System.Windows.Forms.Label();
+            this.conv_group_box = new System.Windows.Forms.GroupBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.reg_name = new System.Windows.Forms.Label();
+            this.conv_lbl = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newASMFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -108,16 +111,16 @@
             this.stepNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.runToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkErrorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label4 = new System.Windows.Forms.Label();
-            this.conv_group_box = new System.Windows.Forms.GroupBox();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.reg_name = new System.Windows.Forms.Label();
-            this.conv_lbl = new System.Windows.Forms.Label();
-            this.checkErrorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.play_button = new System.Windows.Forms.ToolStripButton();
+            this.step_button = new System.Windows.Forms.ToolStripButton();
+            this.stop_button = new System.Windows.Forms.ToolStripButton();
             this.registers_box.SuspendLayout();
             this.register_layout.SuspendLayout();
             this.flag_box.SuspendLayout();
@@ -134,21 +137,11 @@
             this.status_group_layout.SuspendLayout();
             this.pcandsp.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             this.conv_group_box.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // button1
-            // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button1.Location = new System.Drawing.Point(3, 739);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(280, 53);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Run";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.run_click);
             // 
             // albl
             // 
@@ -317,18 +310,6 @@
             this.areg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.areg.MouseHover += new System.EventHandler(this.show_conv_tooltip);
             // 
-            // codeEditor
-            // 
-            this.codeEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.codeEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.codeEditor.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.codeEditor.Location = new System.Drawing.Point(54, 3);
-            this.codeEditor.Name = "codeEditor";
-            this.codeEditor.Size = new System.Drawing.Size(922, 624);
-            this.codeEditor.TabIndex = 12;
-            this.codeEditor.Text = "";
-            this.codeEditor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.code_editor_key_press);
-            // 
             // output_box
             // 
             this.output_box.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -339,19 +320,6 @@
             this.output_box.Name = "output_box";
             this.output_box.Size = new System.Drawing.Size(979, 153);
             this.output_box.TabIndex = 13;
-            // 
-            // lines_indicator
-            // 
-            this.lines_indicator.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lines_indicator.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lines_indicator.Location = new System.Drawing.Point(3, 3);
-            this.lines_indicator.Name = "lines_indicator";
-            this.lines_indicator.ReadOnly = true;
-            this.lines_indicator.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lines_indicator.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.lines_indicator.Size = new System.Drawing.Size(45, 624);
-            this.lines_indicator.TabIndex = 14;
-            this.lines_indicator.Text = "";
             // 
             // flagclbl
             // 
@@ -663,6 +631,7 @@
             // 
             // main_layout
             // 
+            this.main_layout.AutoSize = true;
             this.main_layout.ColumnCount = 3;
             this.main_layout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.main_layout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.2683F));
@@ -682,16 +651,14 @@
             // 
             this.tableLayoutPanel3.ColumnCount = 1;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Controls.Add(this.button1, 0, 2);
             this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.data_tabs, 0, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(1200, 3);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 3;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5.963939F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 86.76057F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.323944F));
+            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel3.Size = new System.Drawing.Size(286, 795);
             this.tableLayoutPanel3.TabIndex = 28;
             // 
@@ -720,6 +687,7 @@
             this.address_to_find.Name = "address_to_find";
             this.address_to_find.Size = new System.Drawing.Size(134, 35);
             this.address_to_find.TabIndex = 0;
+            this.address_to_find.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.find_text_keypress);
             // 
             // find_address
             // 
@@ -741,7 +709,7 @@
             this.data_tabs.Location = new System.Drawing.Point(3, 50);
             this.data_tabs.Name = "data_tabs";
             this.data_tabs.SelectedIndex = 0;
-            this.data_tabs.Size = new System.Drawing.Size(280, 683);
+            this.data_tabs.Size = new System.Drawing.Size(280, 742);
             this.data_tabs.TabIndex = 4;
             // 
             // memoryTab
@@ -750,7 +718,7 @@
             this.memoryTab.Location = new System.Drawing.Point(4, 32);
             this.memoryTab.Name = "memoryTab";
             this.memoryTab.Padding = new System.Windows.Forms.Padding(3);
-            this.memoryTab.Size = new System.Drawing.Size(272, 647);
+            this.memoryTab.Size = new System.Drawing.Size(272, 706);
             this.memoryTab.TabIndex = 0;
             this.memoryTab.Text = "Memory";
             this.memoryTab.UseVisualStyleBackColor = true;
@@ -764,11 +732,16 @@
             this.memorybox.HideSelection = false;
             this.memorybox.Location = new System.Drawing.Point(3, 3);
             this.memorybox.Name = "memorybox";
-            this.memorybox.Size = new System.Drawing.Size(266, 641);
+            this.memorybox.Size = new System.Drawing.Size(266, 700);
             this.memorybox.TabIndex = 2;
             this.memorybox.UseCompatibleStateImageBehavior = false;
             this.memorybox.View = System.Windows.Forms.View.Details;
-            this.memorybox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.memory_box_click);
+            this.memorybox.VirtualListSize = 255;
+            this.memorybox.VirtualMode = true;
+            this.memorybox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.memory_cache_items);
+            this.memorybox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.memory_retrieve_items);
+            this.memorybox.SearchForVirtualItem += new System.Windows.Forms.SearchForVirtualItemEventHandler(this.memory_search_item);
+            this.memorybox.DoubleClick += new System.EventHandler(this.memory_double_click);
             // 
             // address
             // 
@@ -787,7 +760,7 @@
             this.stackTab.Location = new System.Drawing.Point(4, 32);
             this.stackTab.Name = "stackTab";
             this.stackTab.Padding = new System.Windows.Forms.Padding(3);
-            this.stackTab.Size = new System.Drawing.Size(272, 647);
+            this.stackTab.Size = new System.Drawing.Size(272, 706);
             this.stackTab.TabIndex = 1;
             this.stackTab.Text = "Stack";
             this.stackTab.UseVisualStyleBackColor = true;
@@ -801,10 +774,14 @@
             this.stackbox.HideSelection = false;
             this.stackbox.Location = new System.Drawing.Point(3, 3);
             this.stackbox.Name = "stackbox";
-            this.stackbox.Size = new System.Drawing.Size(266, 641);
+            this.stackbox.Size = new System.Drawing.Size(266, 700);
             this.stackbox.TabIndex = 0;
             this.stackbox.UseCompatibleStateImageBehavior = false;
             this.stackbox.View = System.Windows.Forms.View.Details;
+            this.stackbox.VirtualListSize = 255;
+            this.stackbox.VirtualMode = true;
+            this.stackbox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.stack_cache_items);
+            this.stackbox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.stack_retrieve_items);
             // 
             // index
             // 
@@ -822,7 +799,7 @@
             this.portTab.Controls.Add(this.portbox);
             this.portTab.Location = new System.Drawing.Point(4, 32);
             this.portTab.Name = "portTab";
-            this.portTab.Size = new System.Drawing.Size(272, 647);
+            this.portTab.Size = new System.Drawing.Size(272, 706);
             this.portTab.TabIndex = 2;
             this.portTab.Text = "Port";
             this.portTab.UseVisualStyleBackColor = true;
@@ -836,10 +813,14 @@
             this.portbox.HideSelection = false;
             this.portbox.Location = new System.Drawing.Point(0, 0);
             this.portbox.Name = "portbox";
-            this.portbox.Size = new System.Drawing.Size(272, 647);
+            this.portbox.Size = new System.Drawing.Size(272, 706);
             this.portbox.TabIndex = 0;
             this.portbox.UseCompatibleStateImageBehavior = false;
             this.portbox.View = System.Windows.Forms.View.Details;
+            this.portbox.VirtualListSize = 255;
+            this.portbox.VirtualMode = true;
+            this.portbox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.port_cache_items);
+            this.portbox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.port_retrieve_items);
             // 
             // portAddress
             // 
@@ -869,11 +850,10 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 5.21327F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 94.78673F));
-            this.tableLayoutPanel1.Controls.Add(this.lines_indicator, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.codeEditor, 1, 0);
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Controls.Add(this.codeEditor, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -881,6 +861,20 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(979, 630);
             this.tableLayoutPanel1.TabIndex = 14;
+            // 
+            // codeEditor
+            // 
+            this.codeEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.codeEditor.CaretWidth = 2;
+            this.codeEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.codeEditor.EdgeMode = ScintillaNET.EdgeMode.Line;
+            this.codeEditor.Location = new System.Drawing.Point(3, 3);
+            this.codeEditor.Name = "codeEditor";
+            this.codeEditor.Size = new System.Drawing.Size(973, 624);
+            this.codeEditor.TabIndex = 30;
+            this.codeEditor.Text = ";8085 Simulator ALPHA state!\r\n;Developed by Vishal Solanki\r\n\r\njmp start\r\n\r\n\r\nstar" +
+    "t: nop\r\n\r\n;start here\r\n\r\nhlt";
+            this.codeEditor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.code_editor_keypress);
             // 
             // status_group_layout
             // 
@@ -911,7 +905,7 @@
             this.pcandsp.Size = new System.Drawing.Size(194, 160);
             this.pcandsp.TabIndex = 27;
             this.pcandsp.TabStop = false;
-            this.pcandsp.Text = "16 bit Register";
+            this.pcandsp.Text = "16 bit Registers";
             // 
             // tableLayoutPanel2
             // 
@@ -1065,6 +1059,52 @@
             this.pswreg.Text = "0";
             this.pswreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // conv_group_box
+            // 
+            this.conv_group_box.AutoSize = true;
+            this.conv_group_box.Controls.Add(this.flowLayoutPanel1);
+            this.conv_group_box.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.conv_group_box.Location = new System.Drawing.Point(3, 551);
+            this.conv_group_box.Name = "conv_group_box";
+            this.conv_group_box.Size = new System.Drawing.Size(194, 112);
+            this.conv_group_box.TabIndex = 28;
+            this.conv_group_box.TabStop = false;
+            this.conv_group_box.Text = "Conversion";
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel1.Controls.Add(this.reg_name);
+            this.flowLayoutPanel1.Controls.Add(this.conv_lbl);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 26);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(188, 83);
+            this.flowLayoutPanel1.TabIndex = 0;
+            // 
+            // reg_name
+            // 
+            this.reg_name.AutoSize = true;
+            this.reg_name.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.reg_name.Location = new System.Drawing.Point(3, 0);
+            this.reg_name.Name = "reg_name";
+            this.reg_name.Size = new System.Drawing.Size(100, 23);
+            this.reg_name.TabIndex = 0;
+            this.reg_name.Text = "<Register>";
+            // 
+            // conv_lbl
+            // 
+            this.conv_lbl.AutoSize = true;
+            this.flowLayoutPanel1.SetFlowBreak(this.conv_lbl, true);
+            this.conv_lbl.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.conv_lbl.Location = new System.Drawing.Point(3, 23);
+            this.conv_lbl.Name = "conv_lbl";
+            this.conv_lbl.Size = new System.Drawing.Size(126, 60);
+            this.conv_lbl.TabIndex = 1;
+            this.conv_lbl.Text = "BIN : <value>\r\nHEX : <value>\r\nDEC : <value>";
+            // 
             // menuStrip1
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -1179,22 +1219,30 @@
             // stepNextToolStripMenuItem
             // 
             this.stepNextToolStripMenuItem.Name = "stepNextToolStripMenuItem";
-            this.stepNextToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.stepNextToolStripMenuItem.Size = new System.Drawing.Size(189, 26);
             this.stepNextToolStripMenuItem.Text = "Step Next";
             this.stepNextToolStripMenuItem.Click += new System.EventHandler(this.stepNextToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(213, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(186, 6);
             // 
             // runToolStripMenuItem1
             // 
             this.runToolStripMenuItem1.Name = "runToolStripMenuItem1";
             this.runToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.runToolStripMenuItem1.Size = new System.Drawing.Size(216, 26);
+            this.runToolStripMenuItem1.Size = new System.Drawing.Size(189, 26);
             this.runToolStripMenuItem1.Text = "Run";
             this.runToolStripMenuItem1.Click += new System.EventHandler(this.runToolStripMenuItem1_Click);
+            // 
+            // checkErrorsToolStripMenuItem
+            // 
+            this.checkErrorsToolStripMenuItem.Name = "checkErrorsToolStripMenuItem";
+            this.checkErrorsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
+            this.checkErrorsToolStripMenuItem.Size = new System.Drawing.Size(189, 26);
+            this.checkErrorsToolStripMenuItem.Text = "Check Errors";
+            this.checkErrorsToolStripMenuItem.Click += new System.EventHandler(this.checkErrorsToolStripMenuItem_Click);
             // 
             // formatToolStripMenuItem
             // 
@@ -1228,77 +1276,81 @@
             // 
             // label4
             // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
-            this.label4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.label4.Location = new System.Drawing.Point(404, 0);
+            this.label4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.label4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.label4.Location = new System.Drawing.Point(1235, 2);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(453, 23);
+            this.label4.Size = new System.Drawing.Size(251, 23);
             this.label4.TabIndex = 29;
-            this.label4.Text = "Flags needs to be worked, Instruction coding still in works!\r\n";
+            this.label4.Text = "Instruction coding still in works!\r\n";
+            this.label4.Click += new System.EventHandler(this.warning_click);
             // 
-            // conv_group_box
+            // toolStrip1
             // 
-            this.conv_group_box.AutoSize = true;
-            this.conv_group_box.Controls.Add(this.flowLayoutPanel1);
-            this.conv_group_box.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.conv_group_box.Location = new System.Drawing.Point(3, 551);
-            this.conv_group_box.Name = "conv_group_box";
-            this.conv_group_box.Size = new System.Drawing.Size(194, 112);
-            this.conv_group_box.TabIndex = 28;
-            this.conv_group_box.TabStop = false;
-            this.conv_group_box.Text = "Conversion";
+            this.toolStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.toolStrip1.AutoSize = false;
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.play_button,
+            this.step_button,
+            this.stop_button});
+            this.toolStrip1.Location = new System.Drawing.Point(452, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStrip1.Size = new System.Drawing.Size(480, 27);
+            this.toolStrip1.TabIndex = 30;
+            this.toolStrip1.Text = "tool_strip";
             // 
-            // flowLayoutPanel1
+            // play_button
             // 
-            this.flowLayoutPanel1.AutoSize = true;
-            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel1.Controls.Add(this.reg_name);
-            this.flowLayoutPanel1.Controls.Add(this.conv_lbl);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 26);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(188, 83);
-            this.flowLayoutPanel1.TabIndex = 0;
+            this.play_button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.play_button.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.play_button.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.play_button.Name = "play_button";
+            this.play_button.Size = new System.Drawing.Size(49, 24);
+            this.play_button.Text = "Run";
+            this.play_button.ToolTipText = "Compile and Run whole program to the end!";
+            this.play_button.Click += new System.EventHandler(this.run_program);
             // 
-            // reg_name
+            // step_button
             // 
-            this.reg_name.AutoSize = true;
-            this.reg_name.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.reg_name.Location = new System.Drawing.Point(3, 0);
-            this.reg_name.Name = "reg_name";
-            this.reg_name.Size = new System.Drawing.Size(100, 23);
-            this.reg_name.TabIndex = 0;
-            this.reg_name.Text = "<Register>";
+            this.step_button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.step_button.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.step_button.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.step_button.Name = "step_button";
+            this.step_button.Size = new System.Drawing.Size(52, 24);
+            this.step_button.Text = "Step";
+            this.step_button.ToolTipText = "Compile and run program wth Stepping!";
+            this.step_button.Click += new System.EventHandler(this.step_program);
             // 
-            // conv_lbl
+            // stop_button
             // 
-            this.conv_lbl.AutoSize = true;
-            this.flowLayoutPanel1.SetFlowBreak(this.conv_lbl, true);
-            this.conv_lbl.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.conv_lbl.Location = new System.Drawing.Point(3, 23);
-            this.conv_lbl.Name = "conv_lbl";
-            this.conv_lbl.Size = new System.Drawing.Size(126, 60);
-            this.conv_lbl.TabIndex = 1;
-            this.conv_lbl.Text = "BIN : <value>\r\nHEX : <value>\r\nDEC : <value>";
-            // 
-            // checkErrorsToolStripMenuItem
-            // 
-            this.checkErrorsToolStripMenuItem.Name = "checkErrorsToolStripMenuItem";
-            this.checkErrorsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.checkErrorsToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
-            this.checkErrorsToolStripMenuItem.Text = "Check Errors";
-            this.checkErrorsToolStripMenuItem.Click += new System.EventHandler(this.checkErrorsToolStripMenuItem_Click);
+            this.stop_button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.stop_button.Enabled = false;
+            this.stop_button.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.stop_button.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.stop_button.Name = "stop_button";
+            this.stop_button.Size = new System.Drawing.Size(53, 24);
+            this.stop_button.Text = "Stop";
+            this.stop_button.ToolTipText = "Stop running program! Useful if program goes into infinite loop!";
+            this.stop_button.Click += new System.EventHandler(this.stop_program);
             // 
             // main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1489, 829);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.main_layout);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "main";
@@ -1329,19 +1381,20 @@
             this.pcandsp.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.conv_group_box.ResumeLayout(false);
             this.conv_group_box.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label albl;
         private System.Windows.Forms.Label blbl;
         private System.Windows.Forms.Label clbl;
@@ -1352,9 +1405,7 @@
         private System.Windows.Forms.Label creg;
         private System.Windows.Forms.Label breg;
         private System.Windows.Forms.Label areg;
-        private System.Windows.Forms.RichTextBox codeEditor;
         private System.Windows.Forms.ListBox output_box;
-        private System.Windows.Forms.RichTextBox lines_indicator;
         private System.Windows.Forms.Label flagclbl;
         private System.Windows.Forms.Label flagzlbl;
         private System.Windows.Forms.Label flagslbl;
@@ -1431,6 +1482,11 @@
         private System.Windows.Forms.Label reg_name;
         private System.Windows.Forms.Label conv_lbl;
         private System.Windows.Forms.ToolStripMenuItem checkErrorsToolStripMenuItem;
+        private ScintillaNET.Scintilla codeEditor;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton play_button;
+        private System.Windows.Forms.ToolStripButton step_button;
+        private System.Windows.Forms.ToolStripButton stop_button;
     }
 }
 
