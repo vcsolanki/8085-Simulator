@@ -28,15 +28,25 @@ namespace _8085_Simulator
             {
                 Clear();
             }
-            public string getBinaryString()
+            public string getBinaryString(bool not=false)
             {
                 string data_string = "";
                 for (int i = 0; i < 8; i++)
                 {
-                    if (data[i] == true)
-                        data_string += '1';
+                    if (not)
+                    {
+                        if (data[i] == false)
+                            data_string += '1';
+                        else
+                            data_string += '0';
+                    }
                     else
-                        data_string += '0';
+                    {
+                        if (data[i] == true)
+                            data_string += '1';
+                        else
+                            data_string += '0';
+                    }
                 }
                 return data_string;
             }
@@ -44,6 +54,16 @@ namespace _8085_Simulator
             {
                 int data = Convert.ToInt32(getBinaryString(), 2);
                 return data;
+            }
+            public int getNInt()
+            {
+                int data = Convert.ToInt32(getBinaryString(true), 2);
+                return data;
+            }
+            public int get2SInt()
+            {
+                int data = Convert.ToInt32(getBinaryString(), 2);
+                return (data+1);
             }
             public string getHex()
             {
@@ -53,8 +73,10 @@ namespace _8085_Simulator
             public void setData(int data)
             {
                 Clear();
-                if (data > 255)
-                    data -= 256;
+                    if (data > 255)
+                        data -= 256;
+                    if (data < 0)
+                        data += 256;
                 int i = 7;
                 foreach (char c in Convert.ToString(data, 2).Reverse<char>())
                 {
@@ -121,9 +143,9 @@ namespace _8085_Simulator
             public void checkParity(string binary)
             {
                 int eo = 0;
-                for (int i = 0; i < 8; i++)
+                foreach(char c in binary)
                 {
-                    if (binary[i] == '1')
+                    if(c=='1')
                     {
                         eo++;
                     }
@@ -139,6 +161,13 @@ namespace _8085_Simulator
                 int b = Convert.ToInt32(f2.Substring(4), 2);
                 if ((a + b) >= 16)
                     auxilary = true;
+            }
+            public void checkSign(string binary)
+            {
+                if (binary[0] == '1')
+                    sign = true;
+                if (binary[0] == '0')
+                    sign = false;
             }
             public void update(Register temp)
             {
@@ -258,7 +287,6 @@ namespace _8085_Simulator
         public main()
         {
             InitializeComponent();
-
         }
 
         //General functions
@@ -314,8 +342,8 @@ namespace _8085_Simulator
             for (int i = 0; i < memory_items.Length; i++)
             {
                 memory[i] = Convert.ToByte(0);
-                item = new ListViewItem($"{i.ToString("X").PadLeft(4,'0')}", i);
-                item.SubItems.Add($"{memory[i].ToString("X").PadLeft(2,'0')}");
+                item = new ListViewItem($"{i.ToString("X").PadLeft(4, '0')}", i);
+                item.SubItems.Add($"{memory[i].ToString("X").PadLeft(2, '0')}");
                 memory_items[i] = m_items[i] = item;
             }
         }
@@ -328,8 +356,8 @@ namespace _8085_Simulator
             for (int i = stack_items.Length - 1; i >= 0; i--)
             {
                 stack[i] = Convert.ToByte(0);
-                item = new ListViewItem($"{i.ToString("X").PadLeft(4,'0')}", i);
-                item.SubItems.Add($"{stack[i].ToString("X").PadLeft(2,'0')}");
+                item = new ListViewItem($"{i.ToString("X").PadLeft(4, '0')}", i);
+                item.SubItems.Add($"{stack[i].ToString("X").PadLeft(2, '0')}");
                 stack_items[i] = item;
             }
         }
@@ -342,8 +370,8 @@ namespace _8085_Simulator
             for (int i = 0; i < port_items.Length; i++)
             {
                 port[i] = Convert.ToByte(0);
-                item = new ListViewItem($"{i.ToString("X").PadLeft(2,'0')}", i);
-                item.SubItems.Add($"{port[i].ToString("X").PadLeft(2,'0')}");
+                item = new ListViewItem($"{i.ToString("X").PadLeft(2, '0')}", i);
+                item.SubItems.Add($"{port[i].ToString("X").PadLeft(2, '0')}");
                 port_items[i] = item;
             }
         }
@@ -545,6 +573,10 @@ namespace _8085_Simulator
                         opcode = "2E";
                     if (code[1] == "m")
                         opcode = "36";
+
+                    if (code[2].StartsWith("0"))
+                        code[2] = code[2].TrimStart('0');
+
                     if (code[2].EndsWith("h"))
                         code[2] = code[2].Remove(code[2].Length - 1);
                     else
@@ -552,10 +584,10 @@ namespace _8085_Simulator
                         int data = Convert.ToInt32(code[2]);
                         code[2] = data.ToString("X");
                     }
-                    memory[start_location] = Convert.ToByte(opcode,16);
+                    memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
-                    memory[start_location] = Convert.ToByte(code[2].ToUpper(),16);
+                    memory[start_location] = Convert.ToByte(code[2].ToUpper(), 16);
                     memorybox.Items[start_location].SubItems[1].Text = code[2].ToUpper();
                     start_location++;
                 } //done
@@ -570,9 +602,13 @@ namespace _8085_Simulator
                         opcode = "21";
                     if (code[1] == "sp")
                         opcode = "31";
-                    memory[start_location] = Convert.ToByte(opcode,16);
+                    memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
+
+                    if (code[2].StartsWith("0"))
+                        code[2] = code[2].TrimStart('0');
+
                     if (code[2].EndsWith("h"))
                         code[2] = code[2].Remove(code[2].Length - 1);
                     else
@@ -581,7 +617,7 @@ namespace _8085_Simulator
                         code[2] = data.ToString("X");
                     }
                     code[2] = code[2].PadLeft(4, '0');
-                    memory[start_location] = Convert.ToByte(code[2].Substring(2, 2),16);
+                    memory[start_location] = Convert.ToByte(code[2].Substring(2, 2), 16);
                     memorybox.Items[start_location].SubItems[1].Text = code[2].Substring(2, 2).ToUpper();
                     start_location++;
                     memory[start_location] = Convert.ToByte(code[2].Substring(0, 2), 16);
@@ -602,7 +638,7 @@ namespace _8085_Simulator
                             opcode = "2";
                         else if (code[1] == "d")
                             opcode = "12";
-                    memory[start_location] = Convert.ToByte(opcode,16);
+                    memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                 } //done
@@ -682,9 +718,13 @@ namespace _8085_Simulator
                             code[1] = ad.address.ToString("X").PadLeft(4, '0');
                         }
 
-                    memory[start_location] = Convert.ToByte(opcode,16);
+                    memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
+
+                    if (code[1].StartsWith("0"))
+                        code[1] = code[1].TrimStart('0');
+
                     if (code[1].EndsWith("h"))
                         code[1] = code[1].Remove(code[1].Length - 1);
                     else
@@ -693,7 +733,7 @@ namespace _8085_Simulator
                         code[1] = data.ToString("X");
                     }
                     code[1] = code[1].PadLeft(4, '0');
-                    memory[start_location] = Convert.ToByte(code[1].Substring(2, 2),16);
+                    memory[start_location] = Convert.ToByte(code[1].Substring(2, 2), 16);
                     memorybox.Items[start_location].SubItems[1].Text = code[1].Substring(2, 2).ToUpper();
                     start_location++;
                     memory[start_location] = Convert.ToByte(code[1].Substring(0, 2), 16);
@@ -785,7 +825,7 @@ namespace _8085_Simulator
                     if (code[0] == "nop")
                         opcode = "0";
 
-                    memory[start_location] = Convert.ToByte(opcode,16);
+                    memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                 } //done
@@ -1032,6 +1072,9 @@ namespace _8085_Simulator
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
 
+                    if (code[1].StartsWith("0"))
+                        code[1] = code[1].TrimStart('0');
+
                     if (code[1].EndsWith("h") || code[1].EndsWith("H"))
                     {
                         code[1] = code[1].Remove(code[1].Length - 1);
@@ -1042,7 +1085,7 @@ namespace _8085_Simulator
                         code[1] = data.ToString("X");
                     }
 
-                    memory[start_location] = Convert.ToByte(code[1],16);
+                    memory[start_location] = Convert.ToByte(code[1], 16);
                     memorybox.Items[start_location].SubItems[1].Text = code[1].ToUpper();
                     start_location++;
                 } //done
@@ -1108,7 +1151,7 @@ namespace _8085_Simulator
                         if (code[1] == "psw")
                             opcode = "F1";
                     }
-                    memory[start_location] = Convert.ToByte(opcode,16);
+                    memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                 }
@@ -1146,7 +1189,7 @@ namespace _8085_Simulator
 
         public void step_next_code()
         {
-            
+
         }
 
         public void read_labels()
@@ -1725,7 +1768,7 @@ namespace _8085_Simulator
             else if (hex == "E6") // ANI data8
             {
                 Register temp = new Register();
-                int data = memory[pc.counter+1];
+                int data = memory[pc.counter + 1];
                 temp.setData(data);
                 data = data & a.getInt();
                 f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
@@ -1745,7 +1788,7 @@ namespace _8085_Simulator
                 string address = "";
                 address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
                 address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
-                pc.counter = Convert.ToInt32(address)-1;
+                pc.counter = Convert.ToInt32(address) - 1;
             }
             else if (hex == "DC") // CC label16
             {
@@ -1768,11 +1811,26 @@ namespace _8085_Simulator
             }
             else if (hex == "FC") // CM label16
             {
-
+                if (f.sign == true)
+                {
+                    string pchex = Convert.ToString(pc.counter + 2, 16).PadLeft(4, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(2, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(0, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    string address = "";
+                    address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                    address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(address) - 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "2F") // CMA
             {
-
+                a.setData(a.getNInt());
             }
             else if (hex == "3F") // CMC
             {
@@ -1780,35 +1838,181 @@ namespace _8085_Simulator
             }
             else if (hex == "BF") // CMP A
             {
-
+                Register temp = new Register();
+                temp.setData(a.getInt() - a.getInt());
+                if (a.getInt() < a.getInt())
+                {
+                    f.carry = true;
+                    f.zero = false;
+                }
+                if (a.getInt() == a.getInt())
+                {
+                    f.carry = false;
+                    f.zero = true;
+                }
+                if (a.getInt() > a.getInt())
+                {
+                    f.carry = false;
+                    f.zero = false;
+                }
+                f.checkParity(temp.getBinaryString());
+                f.checkSign(temp.getBinaryString());
             }
             else if (hex == "B8") // CMP B
             {
-
+                Register temp = new Register();
+                temp.setData(a.getInt() - b.getInt());
+                if(a.getInt() < b.getInt())
+                {
+                    f.carry = true;
+                    f.zero = false;
+                }
+                if(a.getInt() == b.getInt())
+                {
+                    f.carry = false;
+                    f.zero = true;
+                }
+                if(a.getInt() > b.getInt())
+                {
+                    f.carry = false;
+                    f.zero = false;
+                }
+                f.checkParity(temp.getBinaryString());
+                f.checkSign(temp.getBinaryString());
             }
             else if (hex == "B9") // CMP C
             {
-
+                Register temp = new Register();
+                temp.setData(a.getInt() - c.getInt());
+                if (a.getInt() < c.getInt())
+                {
+                    f.carry = true;
+                    f.zero = false;
+                }
+                if (a.getInt() == c.getInt())
+                {
+                    f.carry = false;
+                    f.zero = true;
+                }
+                if (a.getInt() > c.getInt())
+                {
+                    f.carry = false;
+                    f.zero = false;
+                }
+                f.checkParity(temp.getBinaryString());
+                f.checkSign(temp.getBinaryString());
             }
             else if (hex == "BA") // CMP D
             {
-
+                Register temp = new Register();
+                temp.setData(a.getInt() - d.getInt());
+                if (a.getInt() < d.getInt())
+                {
+                    f.carry = true;
+                    f.zero = false;
+                }
+                if (a.getInt() == d.getInt())
+                {
+                    f.carry = false;
+                    f.zero = true;
+                }
+                if (a.getInt() > d.getInt())
+                {
+                    f.carry = false;
+                    f.zero = false;
+                }
+                f.checkParity(temp.getBinaryString());
+                f.checkSign(temp.getBinaryString());
             }
             else if (hex == "BB") // CMP E
             {
-
+                Register temp = new Register();
+                temp.setData(a.getInt() - e.getInt());
+                if (a.getInt() < e.getInt())
+                {
+                    f.carry = true;
+                    f.zero = false;
+                }
+                if (a.getInt() == e.getInt())
+                {
+                    f.carry = false;
+                    f.zero = true;
+                }
+                if (a.getInt() > e.getInt())
+                {
+                    f.carry = false;
+                    f.zero = false;
+                }
+                f.checkParity(temp.getBinaryString());
+                f.checkSign(temp.getBinaryString());
             }
             else if (hex == "BC") // CMP H
             {
-
+                Register temp = new Register();
+                temp.setData(a.getInt() - h.getInt());
+                if (a.getInt() < h.getInt())
+                {
+                    f.carry = true;
+                    f.zero = false;
+                }
+                if (a.getInt() == h.getInt())
+                {
+                    f.carry = false;
+                    f.zero = true;
+                }
+                if (a.getInt() > h.getInt())
+                {
+                    f.carry = false;
+                    f.zero = false;
+                }
+                f.checkParity(temp.getBinaryString());
+                f.checkSign(temp.getBinaryString());
             }
             else if (hex == "BD") // CMP L
             {
-
+                Register temp = new Register();
+                temp.setData(a.getInt() - l.getInt());
+                if (a.getInt() < l.getInt())
+                {
+                    f.carry = true;
+                    f.zero = false;
+                }
+                if (a.getInt() == l.getInt())
+                {
+                    f.carry = false;
+                    f.zero = true;
+                }
+                if (a.getInt() > l.getInt())
+                {
+                    f.carry = false;
+                    f.zero = false;
+                }
+                f.checkParity(temp.getBinaryString());
+                f.checkSign(temp.getBinaryString());
             }
             else if (hex == "BE") // CMP M
             {
-
+                int index = Convert.ToInt32(m, 16);
+                int data = Convert.ToInt32(memory[index]);
+                Register temp = new Register();
+                temp.setData(a.getInt() - data);
+                if (a.getInt() < data)
+                {
+                    f.carry = true;
+                    f.zero = false;
+                }
+                if (a.getInt() == data)
+                {
+                    f.carry = false;
+                    f.zero = true;
+                }
+                if (a.getInt() > data)
+                {
+                    f.carry = false;
+                    f.zero = false;
+                }
+                f.checkParity(temp.getBinaryString());
+                f.checkSign(temp.getBinaryString());
             }
             else if (hex == "D4") // CNC label16
             {
@@ -1972,64 +2176,122 @@ namespace _8085_Simulator
             }
             else if (hex == "DA") // JC label16
             {
-
+                if (f.carry == true)
+                {
+                    string label = "";
+                    label += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                    label += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(label, 16);
+                    pc.counter -= 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "FA") // JM label16
             {
-
+                if (f.sign == true)
+                {
+                    string label = "";
+                    label += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                    label += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(label, 16);
+                    pc.counter -= 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "C3") // JMP label16
             {
                 string label = "";
-                label += memory[pc.counter + 2].ToString().PadLeft(2, '0');
-                label += memory[pc.counter + 1].ToString().PadLeft(2, '0');
-                pc.counter = Convert.ToInt32(label);
+                label += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                label += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                pc.counter = Convert.ToInt32(label, 16);
                 pc.counter -= 1;
             }
             else if (hex == "D2") // JNC label16
             {
-                if(f.carry==false)
+                if (f.carry == false)
                 {
                     string label = "";
-                    label += memory[pc.counter + 2].ToString().PadLeft(2, '0');
-                    label += memory[pc.counter + 1].ToString().PadLeft(2, '0');
-                    pc.counter = Convert.ToInt32(label);
+                    label += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                    label += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(label, 16);
                     pc.counter -= 1;
                 }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "C2") // JNZ label16
             {
-                if(f.zero==false)
+                if (f.zero == false)
                 {
                     string label = "";
-                    label += memory[pc.counter + 2].ToString().PadLeft(2, '0');
-                    label += memory[pc.counter + 1].ToString().PadLeft(2, '0');
-                    pc.counter = Convert.ToInt32(label);
+                    label += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                    label += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(label, 16);
                     pc.counter -= 1;
                 }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "F2") // JP label16
             {
-
+                if (f.sign == false)
+                {
+                    string label = "";
+                    label += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                    label += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(label, 16);
+                    pc.counter -= 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "EA") // JPE label16
             {
-
+                if (f.parity == true)
+                {
+                    string label = "";
+                    label += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                    label += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(label, 16);
+                    pc.counter -= 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "D2") // JPO label16
             {
-
+                if (f.parity == false)
+                {
+                    string label = "";
+                    label += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                    label += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(label, 16);
+                    pc.counter -= 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "CA") // JZ label16
             {
-
+                if (f.zero == true)
+                {
+                    string label = "";
+                    label += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                    label += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(label, 16);
+                    pc.counter -= 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "3A") // LDA address16
             {
                 string addr = "";
-                addr += memory[pc.counter + 2].ToString().PadLeft(2, '0');
-                addr += memory[pc.counter + 1].ToString().PadLeft(2, '0');
-                int index = Convert.ToInt32(addr);
+                addr += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
+                addr += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                int index = Convert.ToInt32(addr, 16);
                 a.setData(Convert.ToInt32(memory[index]));
                 pc.incrementBy(2);
             }
@@ -2038,7 +2300,7 @@ namespace _8085_Simulator
                 string addr = "";
                 addr += b.getHex();
                 addr += c.getHex();
-                int index = Convert.ToInt32(addr,16);
+                int index = Convert.ToInt32(addr, 16);
                 a.setData(Convert.ToInt32(memory[index]));
             }
             else if (hex == "1A") // LDAX D [E]
@@ -2046,37 +2308,37 @@ namespace _8085_Simulator
                 string addr = "";
                 addr += d.getHex();
                 addr += e.getHex();
-                int index = Convert.ToInt32(addr,16);
+                int index = Convert.ToInt32(addr, 16);
                 a.setData(Convert.ToInt32(memory[index]));
             }
             else if (hex == "2A") // LHLD address16
             {
 
             }
-            else if (hex == "1") // LXI B [C]
+            else if (hex == "1") // LXI B [C] data16
             {
                 b.setData(Convert.ToInt32(memory[pc.counter + 2]));
                 c.setData(Convert.ToInt32(memory[pc.counter + 1]));
                 pc.incrementBy(2);
             }
-            else if (hex == "11") // LXI D [E]
+            else if (hex == "11") // LXI D [E] data16
             {
                 d.setData(Convert.ToInt32(memory[pc.counter + 2]));
                 e.setData(Convert.ToInt32(memory[pc.counter + 1]));
                 pc.incrementBy(2);
             }
-            else if (hex == "21") // LXI H [L]
+            else if (hex == "21") // LXI H [L] data16
             {
                 h.setData(Convert.ToInt32(memory[pc.counter + 2]));
                 l.setData(Convert.ToInt32(memory[pc.counter + 1]));
                 pc.incrementBy(2);
             }
-            else if (hex == "31") // LXI SP
+            else if (hex == "31") // LXI SP data16
             {
                 string data = "";
                 data += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
                 data += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
-                sp = Convert.ToInt32(data,16);
+                sp = Convert.ToInt32(data, 16);
                 pc.incrementBy(2);
             }
             else if (hex == "7F") // MOV A A
@@ -2391,7 +2653,7 @@ namespace _8085_Simulator
             {
                 int index = Convert.ToInt32(m, 16);
                 memory[index] = memory[pc.counter + 1];
-                memorybox.Items[index].SubItems[1].Text = memory[pc.counter + 1].ToString("X").PadLeft(2,'0');
+                memorybox.Items[index].SubItems[1].Text = memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
                 pc.incrementBy(1);
             }
             else if (hex == "0") // NOP
@@ -2823,8 +3085,14 @@ namespace _8085_Simulator
                         code[1] == "l" ||
                         code[1] == "m")
                     {
-                        if (code[2].EndsWith("h") || code[2].EndsWith("H"))
+                        if(code[2].StartsWith("-"))
                         {
+                            error_string = $"\"{code[2]}\" is not valid value";
+                        }
+                        else if (code[2].EndsWith("h") || code[2].EndsWith("H"))
+                        {
+                            if (code[2].StartsWith("0"))
+                                code[2] = code[2].TrimStart('0');
                             code[2] = code[2].Remove(code[2].Length - 1);
                             try
                             {
@@ -2843,6 +3111,8 @@ namespace _8085_Simulator
                         {
                             try
                             {
+                                if (code[2].StartsWith("0"))
+                                    code[2] = code[2].TrimStart('0');
                                 Int32.Parse(code[2]);
                                 if (Int32.Parse(code[2]) > 255)
                                 {
@@ -2904,8 +3174,14 @@ namespace _8085_Simulator
                 code[0] == "out")
             {
                 if (code.Length > 1)
-                    if (code[1].EndsWith("h") || code[1].EndsWith("H"))
+                    if (code[1].StartsWith("-"))
                     {
+                        error_string = $"\"{code[2]}\" is not valid value";
+                    }
+                    else if (code[1].EndsWith("h") || code[1].EndsWith("H"))
+                    {
+                        if (code[1].StartsWith("0"))
+                            code[1] = code[1].TrimStart('0');
                         code[1] = code[1].Remove(code[1].Length - 1);
                         try
                         {
@@ -2920,6 +3196,8 @@ namespace _8085_Simulator
                     else
                         try
                         {
+                            if (code[1].StartsWith("0"))
+                                code[1] = code[1].TrimStart('0');
                             if (Int32.Parse(code[1]) > 255)
                                 error_string = $"\"{code[1]}\" is not valid value";
                         }
@@ -2966,8 +3244,14 @@ namespace _8085_Simulator
                         code[1] == "d" ||
                         code[1] == "h" ||
                         code[1] == "sp")
-                        if (code[2].EndsWith("h") || code[2].EndsWith("H"))
+                        if (code[2].StartsWith("-"))
                         {
+                            error_string = $"\"{code[2]}\" is not valid value";
+                        }
+                        else if (code[2].EndsWith("h") || code[2].EndsWith("H"))
+                        {
+                            if (code[2].StartsWith("0"))
+                                code[2] = code[2].TrimStart('0');
                             code[2] = code[2].Remove(code[2].Length - 1);
                             try
                             {
@@ -2984,6 +3268,8 @@ namespace _8085_Simulator
                         else
                             try
                             {
+                                if (code[2].StartsWith("0"))
+                                    code[2] = code[2].TrimStart('0');
                                 if (Int32.Parse(code[2]) > 65535)
                                 {
                                     error_string = $"\"{code[2]}\" is not valid value";
@@ -3017,9 +3303,15 @@ namespace _8085_Simulator
                 code[0] == "shld")
             {
                 if (code.Length > 1)
-                    if (code[1].EndsWith("h") || code[1].EndsWith("H"))
+                    if (code[1].StartsWith("-"))
+                    {
+                        error_string = $"\"{code[1]}\" is not valid value";
+                    }
+                    else if (code[1].EndsWith("h") || code[1].EndsWith("H"))
                         try
                         {
+                            if (code[1].StartsWith("0"))
+                                code[1] = code[2].TrimStart('0');
                             code[1] = code[1].Remove(code[1].Length - 1);
                             if (Convert.ToInt32(code[1], 16) > 65335)
                                 error_string = $"\"{code[1]}\" is not valid value";
@@ -3031,6 +3323,8 @@ namespace _8085_Simulator
                     else
                         try
                         {
+                            if (code[1].StartsWith("0"))
+                                code[1] = code[2].TrimStart('0');
                             if (Int32.Parse(code[1]) > 65335)
                                 error_string = $"\"{code[1]}\" is not valid value";
                         }
@@ -3079,6 +3373,10 @@ namespace _8085_Simulator
                 if (code.Length > 1)
                 {
                     if (isLabel(code[1])) { }
+                    else if (code[1].StartsWith("-"))
+                    {
+                        error_string = $"\"{code[1]}\" is not valid value";
+                    }
                     else if (code[1].EndsWith("h") || code[1].EndsWith("H"))
                         try
                         {
@@ -3110,6 +3408,8 @@ namespace _8085_Simulator
                 if (code.Length > 1)
                     try
                     {
+                        if (code[1].StartsWith("0"))
+                            code[1] = code[1].TrimStart('0');
                         if (Convert.ToInt32(code[1], 16) > 7 || Convert.ToInt32(code[1], 16) < 1)
                             error_string = $"\"{code[1]}\" is not valid value";
                     }
@@ -3149,13 +3449,14 @@ namespace _8085_Simulator
 
         private void loading(object sender, EventArgs e)
         {
+
             labels = new List<LabelAddress>();
             errors = new List<string>();
 
             memory = new List<ushort>(new ushort[65535]);
             stack = new List<ushort>(new ushort[65535]);
             port = new List<ushort>(new ushort[255]);
-            
+
 
             pc = new ProgramCounter();
 
@@ -3167,7 +3468,7 @@ namespace _8085_Simulator
             WindowState = FormWindowState.Maximized;
 
 
-            
+
             codeEditor.Lexer = ScintillaNET.Lexer.Asm;
             codeEditor.Styles[Style.Default].Font = "Consolas";
             codeEditor.Styles[Style.Default].Size = 14;
@@ -3186,10 +3487,6 @@ namespace _8085_Simulator
             codeEditor.Select();
         }
 
-        private void find_address_Click(object sender, EventArgs e)
-        {
-            memorybox.TopItem = memorybox.FindItemWithText(address_to_find.Text);
-        }
 
         //Menu section
 
@@ -3250,7 +3547,7 @@ namespace _8085_Simulator
         {
             code_inspect(false);
         }
-
+      
         private void warning_click(object sender, EventArgs e)
         {
             MessageBox.Show("Software is in ALPHA state!\nCan't guarantee software will work in every situation!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -3289,8 +3586,13 @@ namespace _8085_Simulator
         {
             if (e.KeyChar == (char)Keys.Return)
             {
-                memorybox.TopItem = memorybox.FindItemWithText(address_to_find.Text);
+                memorybox.TopItem = memorybox.FindItemWithText(address_to_find.Text.ToUpper());
+                e.Handled = true;
             }
+        }
+        private void find_address_Click(object sender, EventArgs e)
+        {
+            memorybox.TopItem = memorybox.FindItemWithText(address_to_find.Text.ToUpper());
         }
 
         private void memory_retrieve_items(object sender, RetrieveVirtualItemEventArgs e)

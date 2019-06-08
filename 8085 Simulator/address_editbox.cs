@@ -15,8 +15,10 @@ namespace _8085_Simulator
 
         public int int_value = 0;
 
+
         public address_editbox(string hex)
         {
+            
             InitializeComponent();
             int_value = Convert.ToInt32(hex, 16);
             value.Text = hex;

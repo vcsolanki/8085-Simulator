@@ -316,9 +316,9 @@
             this.output_box.Dock = System.Windows.Forms.DockStyle.Fill;
             this.output_box.FormattingEnabled = true;
             this.output_box.ItemHeight = 23;
-            this.output_box.Location = new System.Drawing.Point(3, 639);
+            this.output_box.Location = new System.Drawing.Point(3, 535);
             this.output_box.Name = "output_box";
-            this.output_box.Size = new System.Drawing.Size(979, 153);
+            this.output_box.Size = new System.Drawing.Size(739, 128);
             this.output_box.TabIndex = 13;
             // 
             // flagclbl
@@ -644,7 +644,7 @@
             this.main_layout.Name = "main_layout";
             this.main_layout.RowCount = 1;
             this.main_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.main_layout.Size = new System.Drawing.Size(1489, 801);
+            this.main_layout.Size = new System.Drawing.Size(1179, 672);
             this.main_layout.TabIndex = 27;
             // 
             // tableLayoutPanel3
@@ -654,20 +654,20 @@
             this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.data_tabs, 0, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(1200, 3);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(960, 3);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(286, 795);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(216, 666);
             this.tableLayoutPanel3.TabIndex = 28;
             // 
             // tableLayoutPanel4
             // 
             this.tableLayoutPanel4.AutoSize = true;
             this.tableLayoutPanel4.ColumnCount = 2;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60.35714F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 39.64286F));
             this.tableLayoutPanel4.Controls.Add(this.address_to_find, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.find_address, 1, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -676,7 +676,7 @@
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 41F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(280, 41);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(210, 41);
             this.tableLayoutPanel4.TabIndex = 3;
             // 
             // address_to_find
@@ -685,16 +685,16 @@
             this.address_to_find.Location = new System.Drawing.Point(3, 3);
             this.address_to_find.Multiline = true;
             this.address_to_find.Name = "address_to_find";
-            this.address_to_find.Size = new System.Drawing.Size(134, 35);
+            this.address_to_find.Size = new System.Drawing.Size(120, 35);
             this.address_to_find.TabIndex = 0;
             this.address_to_find.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.find_text_keypress);
             // 
             // find_address
             // 
             this.find_address.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.find_address.Location = new System.Drawing.Point(143, 3);
+            this.find_address.Location = new System.Drawing.Point(129, 3);
             this.find_address.Name = "find_address";
-            this.find_address.Size = new System.Drawing.Size(134, 35);
+            this.find_address.Size = new System.Drawing.Size(78, 35);
             this.find_address.TabIndex = 1;
             this.find_address.Text = "Find";
             this.find_address.UseVisualStyleBackColor = true;
@@ -709,7 +709,7 @@
             this.data_tabs.Location = new System.Drawing.Point(3, 50);
             this.data_tabs.Name = "data_tabs";
             this.data_tabs.SelectedIndex = 0;
-            this.data_tabs.Size = new System.Drawing.Size(280, 742);
+            this.data_tabs.Size = new System.Drawing.Size(210, 742);
             this.data_tabs.TabIndex = 4;
             // 
             // memoryTab
@@ -718,13 +718,14 @@
             this.memoryTab.Location = new System.Drawing.Point(4, 32);
             this.memoryTab.Name = "memoryTab";
             this.memoryTab.Padding = new System.Windows.Forms.Padding(3);
-            this.memoryTab.Size = new System.Drawing.Size(272, 706);
+            this.memoryTab.Size = new System.Drawing.Size(202, 706);
             this.memoryTab.TabIndex = 0;
             this.memoryTab.Text = "Memory";
             this.memoryTab.UseVisualStyleBackColor = true;
             // 
             // memorybox
             // 
+            this.memorybox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.memorybox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.address,
             this.memoryData});
@@ -732,7 +733,7 @@
             this.memorybox.HideSelection = false;
             this.memorybox.Location = new System.Drawing.Point(3, 3);
             this.memorybox.Name = "memorybox";
-            this.memorybox.Size = new System.Drawing.Size(266, 700);
+            this.memorybox.Size = new System.Drawing.Size(196, 700);
             this.memorybox.TabIndex = 2;
             this.memorybox.UseCompatibleStateImageBehavior = false;
             this.memorybox.View = System.Windows.Forms.View.Details;
@@ -746,7 +747,7 @@
             // address
             // 
             this.address.Text = "Address";
-            this.address.Width = 100;
+            this.address.Width = 88;
             // 
             // memoryData
             // 
@@ -760,13 +761,14 @@
             this.stackTab.Location = new System.Drawing.Point(4, 32);
             this.stackTab.Name = "stackTab";
             this.stackTab.Padding = new System.Windows.Forms.Padding(3);
-            this.stackTab.Size = new System.Drawing.Size(272, 706);
+            this.stackTab.Size = new System.Drawing.Size(202, 706);
             this.stackTab.TabIndex = 1;
             this.stackTab.Text = "Stack";
             this.stackTab.UseVisualStyleBackColor = true;
             // 
             // stackbox
             // 
+            this.stackbox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.stackbox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.index,
             this.stackData});
@@ -774,7 +776,7 @@
             this.stackbox.HideSelection = false;
             this.stackbox.Location = new System.Drawing.Point(3, 3);
             this.stackbox.Name = "stackbox";
-            this.stackbox.Size = new System.Drawing.Size(266, 700);
+            this.stackbox.Size = new System.Drawing.Size(196, 700);
             this.stackbox.TabIndex = 0;
             this.stackbox.UseCompatibleStateImageBehavior = false;
             this.stackbox.View = System.Windows.Forms.View.Details;
@@ -786,7 +788,7 @@
             // index
             // 
             this.index.Text = "Index";
-            this.index.Width = 100;
+            this.index.Width = 86;
             // 
             // stackData
             // 
@@ -799,13 +801,14 @@
             this.portTab.Controls.Add(this.portbox);
             this.portTab.Location = new System.Drawing.Point(4, 32);
             this.portTab.Name = "portTab";
-            this.portTab.Size = new System.Drawing.Size(272, 706);
+            this.portTab.Size = new System.Drawing.Size(202, 706);
             this.portTab.TabIndex = 2;
             this.portTab.Text = "Port";
             this.portTab.UseVisualStyleBackColor = true;
             // 
             // portbox
             // 
+            this.portbox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.portbox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.portAddress,
             this.portData});
@@ -813,7 +816,7 @@
             this.portbox.HideSelection = false;
             this.portbox.Location = new System.Drawing.Point(0, 0);
             this.portbox.Name = "portbox";
-            this.portbox.Size = new System.Drawing.Size(272, 706);
+            this.portbox.Size = new System.Drawing.Size(202, 706);
             this.portbox.TabIndex = 0;
             this.portbox.UseCompatibleStateImageBehavior = false;
             this.portbox.View = System.Windows.Forms.View.Details;
@@ -825,7 +828,7 @@
             // portAddress
             // 
             this.portAddress.Text = "Address";
-            this.portAddress.Width = 100;
+            this.portAddress.Width = 90;
             // 
             // portData
             // 
@@ -845,7 +848,7 @@
             this.code_input_layout.RowCount = 2;
             this.code_input_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80F));
             this.code_input_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.code_input_layout.Size = new System.Drawing.Size(985, 795);
+            this.code_input_layout.Size = new System.Drawing.Size(745, 666);
             this.code_input_layout.TabIndex = 1;
             // 
             // tableLayoutPanel1
@@ -859,7 +862,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(979, 630);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(739, 526);
             this.tableLayoutPanel1.TabIndex = 14;
             // 
             // codeEditor
@@ -870,7 +873,7 @@
             this.codeEditor.EdgeMode = ScintillaNET.EdgeMode.Line;
             this.codeEditor.Location = new System.Drawing.Point(3, 3);
             this.codeEditor.Name = "codeEditor";
-            this.codeEditor.Size = new System.Drawing.Size(973, 624);
+            this.codeEditor.Size = new System.Drawing.Size(973, 520);
             this.codeEditor.TabIndex = 30;
             this.codeEditor.Text = ";8085 Simulator ALPHA state!\r\n;Developed by Vishal Solanki\r\n\r\njmp start\r\n\r\n\r\nstar" +
     "t: nop\r\n\r\n;start here\r\n\r\nhlt";
@@ -1116,7 +1119,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1489, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1179, 28);
             this.menuStrip1.TabIndex = 28;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -1280,7 +1283,7 @@
             this.label4.AutoSize = true;
             this.label4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.label4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label4.Location = new System.Drawing.Point(1235, 2);
+            this.label4.Location = new System.Drawing.Point(925, 2);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(251, 23);
             this.label4.TabIndex = 29;
@@ -1302,7 +1305,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(452, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(480, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(170, 27);
             this.toolStrip1.TabIndex = 30;
             this.toolStrip1.Text = "tool_strip";
             // 
@@ -1344,7 +1347,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1489, 829);
+            this.ClientSize = new System.Drawing.Size(1179, 700);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.main_layout);
@@ -1352,7 +1355,9 @@
             this.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
+            this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MinimumSize = new System.Drawing.Size(1197, 747);
             this.Name = "main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "8085 Simulator And Assembler";
