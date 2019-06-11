@@ -152,9 +152,10 @@
             this.albl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.albl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.albl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.albl.Location = new System.Drawing.Point(3, 0);
+            this.albl.Location = new System.Drawing.Point(4, 0);
+            this.albl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.albl.Name = "albl";
-            this.albl.Size = new System.Drawing.Size(88, 26);
+            this.albl.Size = new System.Drawing.Size(106, 32);
             this.albl.TabIndex = 2;
             this.albl.Text = "A";
             this.albl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -168,9 +169,10 @@
             this.blbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.blbl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.blbl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.blbl.Location = new System.Drawing.Point(3, 26);
+            this.blbl.Location = new System.Drawing.Point(4, 32);
+            this.blbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.blbl.Name = "blbl";
-            this.blbl.Size = new System.Drawing.Size(88, 26);
+            this.blbl.Size = new System.Drawing.Size(106, 32);
             this.blbl.TabIndex = 3;
             this.blbl.Text = "B";
             this.blbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -184,9 +186,10 @@
             this.clbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.clbl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.clbl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clbl.Location = new System.Drawing.Point(97, 26);
+            this.clbl.Location = new System.Drawing.Point(118, 32);
+            this.clbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.clbl.Name = "clbl";
-            this.clbl.Size = new System.Drawing.Size(88, 26);
+            this.clbl.Size = new System.Drawing.Size(107, 32);
             this.clbl.TabIndex = 4;
             this.clbl.Text = "C";
             this.clbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -200,9 +203,10 @@
             this.dlbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dlbl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.dlbl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dlbl.Location = new System.Drawing.Point(3, 78);
+            this.dlbl.Location = new System.Drawing.Point(4, 96);
+            this.dlbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.dlbl.Name = "dlbl";
-            this.dlbl.Size = new System.Drawing.Size(88, 26);
+            this.dlbl.Size = new System.Drawing.Size(106, 32);
             this.dlbl.TabIndex = 5;
             this.dlbl.Text = "D";
             this.dlbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -216,10 +220,11 @@
             this.elbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.elbl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.elbl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.elbl.Location = new System.Drawing.Point(97, 78);
+            this.elbl.Location = new System.Drawing.Point(118, 96);
+            this.elbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.elbl.Name = "elbl";
             this.elbl.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.elbl.Size = new System.Drawing.Size(88, 26);
+            this.elbl.Size = new System.Drawing.Size(107, 32);
             this.elbl.TabIndex = 6;
             this.elbl.Text = "E";
             this.elbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -232,15 +237,16 @@
             this.ereg.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ereg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ereg.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.ereg.Location = new System.Drawing.Point(97, 104);
+            this.ereg.Location = new System.Drawing.Point(118, 128);
+            this.ereg.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ereg.Name = "ereg";
             this.ereg.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.ereg.Size = new System.Drawing.Size(88, 26);
+            this.ereg.Size = new System.Drawing.Size(107, 32);
             this.ereg.TabIndex = 11;
             this.ereg.Tag = "E Register";
             this.ereg.Text = "0";
             this.ereg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.ereg.MouseHover += new System.EventHandler(this.show_conv_tooltip);
+            this.ereg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
             // 
             // dreg
             // 
@@ -250,14 +256,15 @@
             this.dreg.Cursor = System.Windows.Forms.Cursors.Hand;
             this.dreg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dreg.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.dreg.Location = new System.Drawing.Point(3, 104);
+            this.dreg.Location = new System.Drawing.Point(4, 128);
+            this.dreg.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.dreg.Name = "dreg";
-            this.dreg.Size = new System.Drawing.Size(88, 26);
+            this.dreg.Size = new System.Drawing.Size(106, 32);
             this.dreg.TabIndex = 10;
             this.dreg.Tag = "D Register";
             this.dreg.Text = "0";
             this.dreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.dreg.MouseHover += new System.EventHandler(this.show_conv_tooltip);
+            this.dreg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
             // 
             // creg
             // 
@@ -267,14 +274,15 @@
             this.creg.Cursor = System.Windows.Forms.Cursors.Hand;
             this.creg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.creg.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.creg.Location = new System.Drawing.Point(97, 52);
+            this.creg.Location = new System.Drawing.Point(118, 64);
+            this.creg.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.creg.Name = "creg";
-            this.creg.Size = new System.Drawing.Size(88, 26);
+            this.creg.Size = new System.Drawing.Size(107, 32);
             this.creg.TabIndex = 9;
             this.creg.Tag = "C Register";
             this.creg.Text = "0";
             this.creg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.creg.MouseHover += new System.EventHandler(this.show_conv_tooltip);
+            this.creg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
             // 
             // breg
             // 
@@ -284,14 +292,15 @@
             this.breg.Cursor = System.Windows.Forms.Cursors.Hand;
             this.breg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.breg.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.breg.Location = new System.Drawing.Point(3, 52);
+            this.breg.Location = new System.Drawing.Point(4, 64);
+            this.breg.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.breg.Name = "breg";
-            this.breg.Size = new System.Drawing.Size(88, 26);
+            this.breg.Size = new System.Drawing.Size(106, 32);
             this.breg.TabIndex = 8;
             this.breg.Tag = "B Register";
             this.breg.Text = "0";
             this.breg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.breg.MouseHover += new System.EventHandler(this.show_conv_tooltip);
+            this.breg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
             // 
             // areg
             // 
@@ -301,24 +310,26 @@
             this.areg.Cursor = System.Windows.Forms.Cursors.Hand;
             this.areg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.areg.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.areg.Location = new System.Drawing.Point(97, 0);
+            this.areg.Location = new System.Drawing.Point(118, 0);
+            this.areg.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.areg.Name = "areg";
-            this.areg.Size = new System.Drawing.Size(88, 26);
+            this.areg.Size = new System.Drawing.Size(107, 32);
             this.areg.TabIndex = 7;
             this.areg.Tag = "A Register";
             this.areg.Text = "0";
             this.areg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.areg.MouseHover += new System.EventHandler(this.show_conv_tooltip);
+            this.areg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
             // 
             // output_box
             // 
             this.output_box.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.output_box.Dock = System.Windows.Forms.DockStyle.Fill;
             this.output_box.FormattingEnabled = true;
-            this.output_box.ItemHeight = 23;
-            this.output_box.Location = new System.Drawing.Point(3, 535);
+            this.output_box.ItemHeight = 28;
+            this.output_box.Location = new System.Drawing.Point(4, 650);
+            this.output_box.Margin = new System.Windows.Forms.Padding(4);
             this.output_box.Name = "output_box";
-            this.output_box.Size = new System.Drawing.Size(739, 128);
+            this.output_box.Size = new System.Drawing.Size(901, 154);
             this.output_box.TabIndex = 13;
             // 
             // flagclbl
@@ -330,9 +341,10 @@
             this.flagclbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flagclbl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.flagclbl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.flagclbl.Location = new System.Drawing.Point(3, 96);
+            this.flagclbl.Location = new System.Drawing.Point(4, 120);
+            this.flagclbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.flagclbl.Name = "flagclbl";
-            this.flagclbl.Size = new System.Drawing.Size(88, 27);
+            this.flagclbl.Size = new System.Drawing.Size(106, 30);
             this.flagclbl.TabIndex = 15;
             this.flagclbl.Text = "C";
             this.flagclbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -346,9 +358,10 @@
             this.flagzlbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flagzlbl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.flagzlbl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.flagzlbl.Location = new System.Drawing.Point(3, 24);
+            this.flagzlbl.Location = new System.Drawing.Point(4, 30);
+            this.flagzlbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.flagzlbl.Name = "flagzlbl";
-            this.flagzlbl.Size = new System.Drawing.Size(88, 24);
+            this.flagzlbl.Size = new System.Drawing.Size(106, 30);
             this.flagzlbl.TabIndex = 16;
             this.flagzlbl.Text = "Z";
             this.flagzlbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -362,9 +375,10 @@
             this.flagslbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flagslbl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.flagslbl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.flagslbl.Location = new System.Drawing.Point(3, 0);
+            this.flagslbl.Location = new System.Drawing.Point(4, 0);
+            this.flagslbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.flagslbl.Name = "flagslbl";
-            this.flagslbl.Size = new System.Drawing.Size(88, 24);
+            this.flagslbl.Size = new System.Drawing.Size(106, 30);
             this.flagslbl.TabIndex = 17;
             this.flagslbl.Text = "S";
             this.flagslbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -378,9 +392,10 @@
             this.flagalbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flagalbl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.flagalbl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.flagalbl.Location = new System.Drawing.Point(3, 48);
+            this.flagalbl.Location = new System.Drawing.Point(4, 60);
+            this.flagalbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.flagalbl.Name = "flagalbl";
-            this.flagalbl.Size = new System.Drawing.Size(88, 24);
+            this.flagalbl.Size = new System.Drawing.Size(106, 30);
             this.flagalbl.TabIndex = 18;
             this.flagalbl.Text = "A";
             this.flagalbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -394,9 +409,10 @@
             this.flagplbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flagplbl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.flagplbl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.flagplbl.Location = new System.Drawing.Point(3, 72);
+            this.flagplbl.Location = new System.Drawing.Point(4, 90);
+            this.flagplbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.flagplbl.Name = "flagplbl";
-            this.flagplbl.Size = new System.Drawing.Size(88, 24);
+            this.flagplbl.Size = new System.Drawing.Size(106, 30);
             this.flagplbl.TabIndex = 19;
             this.flagplbl.Text = "P";
             this.flagplbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -409,9 +425,10 @@
             this.flagp.Cursor = System.Windows.Forms.Cursors.Hand;
             this.flagp.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flagp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.flagp.Location = new System.Drawing.Point(97, 72);
+            this.flagp.Location = new System.Drawing.Point(118, 90);
+            this.flagp.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.flagp.Name = "flagp";
-            this.flagp.Size = new System.Drawing.Size(88, 24);
+            this.flagp.Size = new System.Drawing.Size(107, 30);
             this.flagp.TabIndex = 24;
             this.flagp.Text = "0";
             this.flagp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -424,9 +441,10 @@
             this.flaga.Cursor = System.Windows.Forms.Cursors.Hand;
             this.flaga.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flaga.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.flaga.Location = new System.Drawing.Point(97, 48);
+            this.flaga.Location = new System.Drawing.Point(118, 60);
+            this.flaga.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.flaga.Name = "flaga";
-            this.flaga.Size = new System.Drawing.Size(88, 24);
+            this.flaga.Size = new System.Drawing.Size(107, 30);
             this.flaga.TabIndex = 23;
             this.flaga.Text = "0";
             this.flaga.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -439,9 +457,10 @@
             this.flags.Cursor = System.Windows.Forms.Cursors.Hand;
             this.flags.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flags.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.flags.Location = new System.Drawing.Point(97, 0);
+            this.flags.Location = new System.Drawing.Point(118, 0);
+            this.flags.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.flags.Name = "flags";
-            this.flags.Size = new System.Drawing.Size(88, 24);
+            this.flags.Size = new System.Drawing.Size(107, 30);
             this.flags.TabIndex = 22;
             this.flags.Text = "0";
             this.flags.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -454,10 +473,11 @@
             this.flagz.Cursor = System.Windows.Forms.Cursors.Hand;
             this.flagz.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flagz.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.flagz.Location = new System.Drawing.Point(97, 24);
+            this.flagz.Location = new System.Drawing.Point(118, 30);
+            this.flagz.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.flagz.Name = "flagz";
             this.flagz.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.flagz.Size = new System.Drawing.Size(88, 24);
+            this.flagz.Size = new System.Drawing.Size(107, 30);
             this.flagz.TabIndex = 21;
             this.flagz.Text = "0";
             this.flagz.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -470,9 +490,10 @@
             this.flagc.Cursor = System.Windows.Forms.Cursors.Hand;
             this.flagc.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flagc.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.flagc.Location = new System.Drawing.Point(97, 96);
+            this.flagc.Location = new System.Drawing.Point(118, 120);
+            this.flagc.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.flagc.Name = "flagc";
-            this.flagc.Size = new System.Drawing.Size(88, 27);
+            this.flagc.Size = new System.Drawing.Size(107, 30);
             this.flagc.TabIndex = 20;
             this.flagc.Text = "0";
             this.flagc.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -481,9 +502,11 @@
             // 
             this.registers_box.Controls.Add(this.register_layout);
             this.registers_box.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.registers_box.Location = new System.Drawing.Point(3, 3);
+            this.registers_box.Location = new System.Drawing.Point(4, 4);
+            this.registers_box.Margin = new System.Windows.Forms.Padding(4);
             this.registers_box.Name = "registers_box";
-            this.registers_box.Size = new System.Drawing.Size(194, 218);
+            this.registers_box.Padding = new System.Windows.Forms.Padding(4);
+            this.registers_box.Size = new System.Drawing.Size(237, 265);
             this.registers_box.TabIndex = 25;
             this.registers_box.TabStop = false;
             this.registers_box.Text = "Registers";
@@ -508,7 +531,8 @@
             this.register_layout.Controls.Add(this.dlbl, 0, 3);
             this.register_layout.Controls.Add(this.creg, 1, 2);
             this.register_layout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.register_layout.Location = new System.Drawing.Point(3, 26);
+            this.register_layout.Location = new System.Drawing.Point(4, 31);
+            this.register_layout.Margin = new System.Windows.Forms.Padding(4);
             this.register_layout.Name = "register_layout";
             this.register_layout.RowCount = 7;
             this.register_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
@@ -518,7 +542,7 @@
             this.register_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
             this.register_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
             this.register_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.register_layout.Size = new System.Drawing.Size(188, 189);
+            this.register_layout.Size = new System.Drawing.Size(229, 230);
             this.register_layout.TabIndex = 16;
             // 
             // hreg
@@ -529,15 +553,16 @@
             this.hreg.Cursor = System.Windows.Forms.Cursors.Hand;
             this.hreg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.hreg.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.hreg.Location = new System.Drawing.Point(3, 156);
+            this.hreg.Location = new System.Drawing.Point(4, 192);
+            this.hreg.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.hreg.Name = "hreg";
             this.hreg.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.hreg.Size = new System.Drawing.Size(88, 33);
+            this.hreg.Size = new System.Drawing.Size(106, 38);
             this.hreg.TabIndex = 13;
             this.hreg.Tag = "H Register";
             this.hreg.Text = "0";
             this.hreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.hreg.MouseHover += new System.EventHandler(this.show_conv_tooltip);
+            this.hreg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
             // 
             // lreg
             // 
@@ -547,15 +572,16 @@
             this.lreg.Cursor = System.Windows.Forms.Cursors.Hand;
             this.lreg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lreg.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.lreg.Location = new System.Drawing.Point(97, 156);
+            this.lreg.Location = new System.Drawing.Point(118, 192);
+            this.lreg.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lreg.Name = "lreg";
             this.lreg.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lreg.Size = new System.Drawing.Size(88, 33);
+            this.lreg.Size = new System.Drawing.Size(107, 38);
             this.lreg.TabIndex = 15;
             this.lreg.Tag = "L Register";
             this.lreg.Text = "0";
             this.lreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lreg.MouseHover += new System.EventHandler(this.show_conv_tooltip);
+            this.lreg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
             // 
             // label3
             // 
@@ -566,10 +592,11 @@
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(97, 130);
+            this.label3.Location = new System.Drawing.Point(118, 160);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label3.Size = new System.Drawing.Size(88, 26);
+            this.label3.Size = new System.Drawing.Size(107, 32);
             this.label3.TabIndex = 14;
             this.label3.Text = "L";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -583,10 +610,11 @@
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(3, 130);
+            this.label1.Location = new System.Drawing.Point(4, 160);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label1.Size = new System.Drawing.Size(88, 26);
+            this.label1.Size = new System.Drawing.Size(106, 32);
             this.label1.TabIndex = 12;
             this.label1.Text = "H";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -595,9 +623,11 @@
             // 
             this.flag_box.Controls.Add(this.flag_layout);
             this.flag_box.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flag_box.Location = new System.Drawing.Point(3, 227);
+            this.flag_box.Location = new System.Drawing.Point(4, 277);
+            this.flag_box.Margin = new System.Windows.Forms.Padding(4);
             this.flag_box.Name = "flag_box";
-            this.flag_box.Size = new System.Drawing.Size(194, 152);
+            this.flag_box.Padding = new System.Windows.Forms.Padding(4);
+            this.flag_box.Size = new System.Drawing.Size(237, 185);
             this.flag_box.TabIndex = 26;
             this.flag_box.TabStop = false;
             this.flag_box.Text = "Flags";
@@ -618,7 +648,8 @@
             this.flag_layout.Controls.Add(this.flagplbl, 0, 3);
             this.flag_layout.Controls.Add(this.flagp, 1, 3);
             this.flag_layout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flag_layout.Location = new System.Drawing.Point(3, 26);
+            this.flag_layout.Location = new System.Drawing.Point(4, 31);
+            this.flag_layout.Margin = new System.Windows.Forms.Padding(4);
             this.flag_layout.Name = "flag_layout";
             this.flag_layout.RowCount = 5;
             this.flag_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
@@ -626,7 +657,7 @@
             this.flag_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.flag_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.flag_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.flag_layout.Size = new System.Drawing.Size(188, 123);
+            this.flag_layout.Size = new System.Drawing.Size(229, 150);
             this.flag_layout.TabIndex = 27;
             // 
             // main_layout
@@ -640,11 +671,12 @@
             this.main_layout.Controls.Add(this.code_input_layout, 1, 0);
             this.main_layout.Controls.Add(this.status_group_layout, 0, 0);
             this.main_layout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.main_layout.Location = new System.Drawing.Point(0, 28);
+            this.main_layout.Location = new System.Drawing.Point(0, 36);
+            this.main_layout.Margin = new System.Windows.Forms.Padding(4);
             this.main_layout.Name = "main_layout";
             this.main_layout.RowCount = 1;
             this.main_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.main_layout.Size = new System.Drawing.Size(1179, 672);
+            this.main_layout.Size = new System.Drawing.Size(1441, 816);
             this.main_layout.TabIndex = 27;
             // 
             // tableLayoutPanel3
@@ -654,12 +686,13 @@
             this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.data_tabs, 0, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(960, 3);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(1174, 4);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(216, 666);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(263, 808);
             this.tableLayoutPanel3.TabIndex = 28;
             // 
             // tableLayoutPanel4
@@ -671,34 +704,37 @@
             this.tableLayoutPanel4.Controls.Add(this.address_to_find, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.find_address, 1, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(4, 4);
+            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 41F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(210, 41);
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(255, 51);
             this.tableLayoutPanel4.TabIndex = 3;
             // 
             // address_to_find
             // 
             this.address_to_find.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.address_to_find.Location = new System.Drawing.Point(3, 3);
+            this.address_to_find.Location = new System.Drawing.Point(4, 4);
+            this.address_to_find.Margin = new System.Windows.Forms.Padding(4);
             this.address_to_find.Multiline = true;
             this.address_to_find.Name = "address_to_find";
-            this.address_to_find.Size = new System.Drawing.Size(120, 35);
+            this.address_to_find.Size = new System.Drawing.Size(145, 43);
             this.address_to_find.TabIndex = 0;
-            this.address_to_find.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.find_text_keypress);
+            this.address_to_find.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Find_text_keypress);
             // 
             // find_address
             // 
             this.find_address.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.find_address.Location = new System.Drawing.Point(129, 3);
+            this.find_address.Location = new System.Drawing.Point(157, 4);
+            this.find_address.Margin = new System.Windows.Forms.Padding(4);
             this.find_address.Name = "find_address";
-            this.find_address.Size = new System.Drawing.Size(78, 35);
+            this.find_address.Size = new System.Drawing.Size(94, 43);
             this.find_address.TabIndex = 1;
             this.find_address.Text = "Find";
             this.find_address.UseVisualStyleBackColor = true;
-            this.find_address.Click += new System.EventHandler(this.find_address_Click);
+            this.find_address.Click += new System.EventHandler(this.Find_address_Click);
             // 
             // data_tabs
             // 
@@ -706,19 +742,21 @@
             this.data_tabs.Controls.Add(this.stackTab);
             this.data_tabs.Controls.Add(this.portTab);
             this.data_tabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.data_tabs.Location = new System.Drawing.Point(3, 50);
+            this.data_tabs.Location = new System.Drawing.Point(4, 63);
+            this.data_tabs.Margin = new System.Windows.Forms.Padding(4);
             this.data_tabs.Name = "data_tabs";
             this.data_tabs.SelectedIndex = 0;
-            this.data_tabs.Size = new System.Drawing.Size(210, 613);
+            this.data_tabs.Size = new System.Drawing.Size(255, 741);
             this.data_tabs.TabIndex = 4;
             // 
             // memoryTab
             // 
             this.memoryTab.Controls.Add(this.memorybox);
-            this.memoryTab.Location = new System.Drawing.Point(4, 32);
+            this.memoryTab.Location = new System.Drawing.Point(4, 37);
+            this.memoryTab.Margin = new System.Windows.Forms.Padding(4);
             this.memoryTab.Name = "memoryTab";
-            this.memoryTab.Padding = new System.Windows.Forms.Padding(3);
-            this.memoryTab.Size = new System.Drawing.Size(202, 577);
+            this.memoryTab.Padding = new System.Windows.Forms.Padding(4);
+            this.memoryTab.Size = new System.Drawing.Size(247, 700);
             this.memoryTab.TabIndex = 0;
             this.memoryTab.Text = "Memory";
             this.memoryTab.UseVisualStyleBackColor = true;
@@ -731,18 +769,19 @@
             this.memoryData});
             this.memorybox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.memorybox.HideSelection = false;
-            this.memorybox.Location = new System.Drawing.Point(3, 3);
+            this.memorybox.Location = new System.Drawing.Point(4, 4);
+            this.memorybox.Margin = new System.Windows.Forms.Padding(4);
             this.memorybox.Name = "memorybox";
-            this.memorybox.Size = new System.Drawing.Size(196, 571);
+            this.memorybox.Size = new System.Drawing.Size(239, 692);
             this.memorybox.TabIndex = 2;
             this.memorybox.UseCompatibleStateImageBehavior = false;
             this.memorybox.View = System.Windows.Forms.View.Details;
             this.memorybox.VirtualListSize = 255;
             this.memorybox.VirtualMode = true;
-            this.memorybox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.memory_cache_items);
-            this.memorybox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.memory_retrieve_items);
-            this.memorybox.SearchForVirtualItem += new System.Windows.Forms.SearchForVirtualItemEventHandler(this.memory_search_item);
-            this.memorybox.DoubleClick += new System.EventHandler(this.memory_double_click);
+            this.memorybox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.Memory_cache_items);
+            this.memorybox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.Memory_retrieve_items);
+            this.memorybox.SearchForVirtualItem += new System.Windows.Forms.SearchForVirtualItemEventHandler(this.Memory_search_item);
+            this.memorybox.DoubleClick += new System.EventHandler(this.Memory_double_click);
             // 
             // address
             // 
@@ -758,10 +797,11 @@
             // stackTab
             // 
             this.stackTab.Controls.Add(this.stackbox);
-            this.stackTab.Location = new System.Drawing.Point(4, 32);
+            this.stackTab.Location = new System.Drawing.Point(4, 37);
+            this.stackTab.Margin = new System.Windows.Forms.Padding(4);
             this.stackTab.Name = "stackTab";
-            this.stackTab.Padding = new System.Windows.Forms.Padding(3);
-            this.stackTab.Size = new System.Drawing.Size(202, 577);
+            this.stackTab.Padding = new System.Windows.Forms.Padding(4);
+            this.stackTab.Size = new System.Drawing.Size(247, 708);
             this.stackTab.TabIndex = 1;
             this.stackTab.Text = "Stack";
             this.stackTab.UseVisualStyleBackColor = true;
@@ -774,16 +814,17 @@
             this.stackData});
             this.stackbox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.stackbox.HideSelection = false;
-            this.stackbox.Location = new System.Drawing.Point(3, 3);
+            this.stackbox.Location = new System.Drawing.Point(4, 4);
+            this.stackbox.Margin = new System.Windows.Forms.Padding(4);
             this.stackbox.Name = "stackbox";
-            this.stackbox.Size = new System.Drawing.Size(196, 571);
+            this.stackbox.Size = new System.Drawing.Size(239, 700);
             this.stackbox.TabIndex = 0;
             this.stackbox.UseCompatibleStateImageBehavior = false;
             this.stackbox.View = System.Windows.Forms.View.Details;
             this.stackbox.VirtualListSize = 255;
             this.stackbox.VirtualMode = true;
-            this.stackbox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.stack_cache_items);
-            this.stackbox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.stack_retrieve_items);
+            this.stackbox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.Stack_cache_items);
+            this.stackbox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.Stack_retrieve_items);
             // 
             // index
             // 
@@ -799,9 +840,10 @@
             // portTab
             // 
             this.portTab.Controls.Add(this.portbox);
-            this.portTab.Location = new System.Drawing.Point(4, 32);
+            this.portTab.Location = new System.Drawing.Point(4, 37);
+            this.portTab.Margin = new System.Windows.Forms.Padding(4);
             this.portTab.Name = "portTab";
-            this.portTab.Size = new System.Drawing.Size(202, 577);
+            this.portTab.Size = new System.Drawing.Size(247, 708);
             this.portTab.TabIndex = 2;
             this.portTab.Text = "Port";
             this.portTab.UseVisualStyleBackColor = true;
@@ -815,15 +857,16 @@
             this.portbox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.portbox.HideSelection = false;
             this.portbox.Location = new System.Drawing.Point(0, 0);
+            this.portbox.Margin = new System.Windows.Forms.Padding(4);
             this.portbox.Name = "portbox";
-            this.portbox.Size = new System.Drawing.Size(202, 577);
+            this.portbox.Size = new System.Drawing.Size(247, 708);
             this.portbox.TabIndex = 0;
             this.portbox.UseCompatibleStateImageBehavior = false;
             this.portbox.View = System.Windows.Forms.View.Details;
             this.portbox.VirtualListSize = 255;
             this.portbox.VirtualMode = true;
-            this.portbox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.port_cache_items);
-            this.portbox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.port_retrieve_items);
+            this.portbox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.Port_cache_items);
+            this.portbox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.Port_retrieve_items);
             // 
             // portAddress
             // 
@@ -843,12 +886,13 @@
             this.code_input_layout.Controls.Add(this.output_box, 0, 1);
             this.code_input_layout.Controls.Add(this.code_editors, 0, 0);
             this.code_input_layout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.code_input_layout.Location = new System.Drawing.Point(209, 3);
+            this.code_input_layout.Location = new System.Drawing.Point(257, 4);
+            this.code_input_layout.Margin = new System.Windows.Forms.Padding(4);
             this.code_input_layout.Name = "code_input_layout";
             this.code_input_layout.RowCount = 2;
             this.code_input_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80F));
             this.code_input_layout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.code_input_layout.Size = new System.Drawing.Size(745, 666);
+            this.code_input_layout.Size = new System.Drawing.Size(909, 808);
             this.code_input_layout.TabIndex = 1;
             // 
             // code_editors
@@ -857,12 +901,13 @@
             this.code_editors.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.code_editors.Controls.Add(this.codeEditor, 0, 0);
             this.code_editors.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.code_editors.Location = new System.Drawing.Point(3, 3);
+            this.code_editors.Location = new System.Drawing.Point(4, 4);
+            this.code_editors.Margin = new System.Windows.Forms.Padding(4);
             this.code_editors.Name = "code_editors";
             this.code_editors.RowCount = 1;
             this.code_editors.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.code_editors.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.code_editors.Size = new System.Drawing.Size(739, 526);
+            this.code_editors.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 644F));
+            this.code_editors.Size = new System.Drawing.Size(901, 638);
             this.code_editors.TabIndex = 14;
             // 
             // codeEditor
@@ -871,13 +916,14 @@
             this.codeEditor.CaretWidth = 2;
             this.codeEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.codeEditor.EdgeMode = ScintillaNET.EdgeMode.Line;
-            this.codeEditor.Location = new System.Drawing.Point(3, 3);
+            this.codeEditor.Location = new System.Drawing.Point(4, 4);
+            this.codeEditor.Margin = new System.Windows.Forms.Padding(4);
             this.codeEditor.Name = "codeEditor";
-            this.codeEditor.Size = new System.Drawing.Size(733, 520);
+            this.codeEditor.Size = new System.Drawing.Size(895, 630);
             this.codeEditor.TabIndex = 30;
             this.codeEditor.Text = ";8085 Simulator ALPHA state!\r\n;Developed by Vishal Solanki\r\n\r\njmp start\r\n\r\n\r\nstar" +
     "t: nop\r\n\r\n\r\n\r\nhlt";
-            this.codeEditor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.code_editor_keypress);
+            this.codeEditor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Code_editor_keypress);
             // 
             // status_group_layout
             // 
@@ -889,23 +935,26 @@
             this.status_group_layout.Controls.Add(this.pcandsp, 0, 2);
             this.status_group_layout.Controls.Add(this.conv_group_box, 0, 3);
             this.status_group_layout.Dock = System.Windows.Forms.DockStyle.Top;
-            this.status_group_layout.Location = new System.Drawing.Point(3, 3);
+            this.status_group_layout.Location = new System.Drawing.Point(4, 4);
+            this.status_group_layout.Margin = new System.Windows.Forms.Padding(4);
             this.status_group_layout.Name = "status_group_layout";
             this.status_group_layout.RowCount = 4;
             this.status_group_layout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.status_group_layout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.status_group_layout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.status_group_layout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.status_group_layout.Size = new System.Drawing.Size(200, 666);
+            this.status_group_layout.Size = new System.Drawing.Size(245, 804);
             this.status_group_layout.TabIndex = 0;
             // 
             // pcandsp
             // 
             this.pcandsp.Controls.Add(this.tableLayoutPanel2);
             this.pcandsp.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pcandsp.Location = new System.Drawing.Point(3, 385);
+            this.pcandsp.Location = new System.Drawing.Point(4, 470);
+            this.pcandsp.Margin = new System.Windows.Forms.Padding(4);
             this.pcandsp.Name = "pcandsp";
-            this.pcandsp.Size = new System.Drawing.Size(194, 160);
+            this.pcandsp.Padding = new System.Windows.Forms.Padding(4);
+            this.pcandsp.Size = new System.Drawing.Size(237, 195);
             this.pcandsp.TabIndex = 27;
             this.pcandsp.TabStop = false;
             this.pcandsp.Text = "16 bit Registers";
@@ -924,14 +973,15 @@
             this.tableLayoutPanel2.Controls.Add(this.pswlbl, 0, 3);
             this.tableLayoutPanel2.Controls.Add(this.pswreg, 1, 3);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 26);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(4, 31);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 4;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(188, 131);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(229, 160);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // label2
@@ -943,9 +993,10 @@
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label2.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(3, 0);
+            this.label2.Location = new System.Drawing.Point(4, 0);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(88, 32);
+            this.label2.Size = new System.Drawing.Size(106, 40);
             this.label2.TabIndex = 0;
             this.label2.Text = "PC";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -959,9 +1010,10 @@
             this.s.Dock = System.Windows.Forms.DockStyle.Fill;
             this.s.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.s.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.s.Location = new System.Drawing.Point(3, 32);
+            this.s.Location = new System.Drawing.Point(4, 40);
+            this.s.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.s.Name = "s";
-            this.s.Size = new System.Drawing.Size(88, 32);
+            this.s.Size = new System.Drawing.Size(106, 40);
             this.s.TabIndex = 1;
             this.s.Text = "SP";
             this.s.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -974,9 +1026,10 @@
             this.spreg.Cursor = System.Windows.Forms.Cursors.Hand;
             this.spreg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.spreg.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.spreg.Location = new System.Drawing.Point(97, 32);
+            this.spreg.Location = new System.Drawing.Point(118, 40);
+            this.spreg.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.spreg.Name = "spreg";
-            this.spreg.Size = new System.Drawing.Size(88, 32);
+            this.spreg.Size = new System.Drawing.Size(107, 40);
             this.spreg.TabIndex = 2;
             this.spreg.Tag = "Stack";
             this.spreg.Text = "0";
@@ -990,9 +1043,10 @@
             this.pcreg.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pcreg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pcreg.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.pcreg.Location = new System.Drawing.Point(97, 0);
+            this.pcreg.Location = new System.Drawing.Point(118, 0);
+            this.pcreg.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.pcreg.Name = "pcreg";
-            this.pcreg.Size = new System.Drawing.Size(88, 32);
+            this.pcreg.Size = new System.Drawing.Size(107, 40);
             this.pcreg.TabIndex = 3;
             this.pcreg.Tag = "Program Counter";
             this.pcreg.Text = "0";
@@ -1007,9 +1061,10 @@
             this.mlbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mlbl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.mlbl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mlbl.Location = new System.Drawing.Point(3, 64);
+            this.mlbl.Location = new System.Drawing.Point(4, 80);
+            this.mlbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.mlbl.Name = "mlbl";
-            this.mlbl.Size = new System.Drawing.Size(88, 32);
+            this.mlbl.Size = new System.Drawing.Size(106, 40);
             this.mlbl.TabIndex = 4;
             this.mlbl.Text = "M";
             this.mlbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1022,9 +1077,10 @@
             this.mreg.Cursor = System.Windows.Forms.Cursors.Hand;
             this.mreg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mreg.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.mreg.Location = new System.Drawing.Point(97, 64);
+            this.mreg.Location = new System.Drawing.Point(118, 80);
+            this.mreg.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.mreg.Name = "mreg";
-            this.mreg.Size = new System.Drawing.Size(88, 32);
+            this.mreg.Size = new System.Drawing.Size(107, 40);
             this.mreg.TabIndex = 5;
             this.mreg.Tag = "M Register";
             this.mreg.Text = "0";
@@ -1039,9 +1095,10 @@
             this.pswlbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pswlbl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.pswlbl.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pswlbl.Location = new System.Drawing.Point(3, 96);
+            this.pswlbl.Location = new System.Drawing.Point(4, 120);
+            this.pswlbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.pswlbl.Name = "pswlbl";
-            this.pswlbl.Size = new System.Drawing.Size(88, 35);
+            this.pswlbl.Size = new System.Drawing.Size(106, 40);
             this.pswlbl.TabIndex = 6;
             this.pswlbl.Text = "PSW";
             this.pswlbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1054,9 +1111,10 @@
             this.pswreg.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pswreg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pswreg.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.pswreg.Location = new System.Drawing.Point(97, 96);
+            this.pswreg.Location = new System.Drawing.Point(118, 120);
+            this.pswreg.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.pswreg.Name = "pswreg";
-            this.pswreg.Size = new System.Drawing.Size(88, 35);
+            this.pswreg.Size = new System.Drawing.Size(107, 40);
             this.pswreg.TabIndex = 7;
             this.pswreg.Tag = "Processor Status Word";
             this.pswreg.Text = "0";
@@ -1067,9 +1125,11 @@
             this.conv_group_box.AutoSize = true;
             this.conv_group_box.Controls.Add(this.flowLayoutPanel1);
             this.conv_group_box.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.conv_group_box.Location = new System.Drawing.Point(3, 551);
+            this.conv_group_box.Location = new System.Drawing.Point(4, 673);
+            this.conv_group_box.Margin = new System.Windows.Forms.Padding(4);
             this.conv_group_box.Name = "conv_group_box";
-            this.conv_group_box.Size = new System.Drawing.Size(194, 112);
+            this.conv_group_box.Padding = new System.Windows.Forms.Padding(4);
+            this.conv_group_box.Size = new System.Drawing.Size(237, 127);
             this.conv_group_box.TabIndex = 28;
             this.conv_group_box.TabStop = false;
             this.conv_group_box.Text = "Conversion";
@@ -1082,18 +1142,20 @@
             this.flowLayoutPanel1.Controls.Add(this.conv_lbl);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 26);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(4, 31);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(188, 83);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(229, 92);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // reg_name
             // 
             this.reg_name.AutoSize = true;
-            this.reg_name.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.reg_name.Location = new System.Drawing.Point(3, 0);
+            this.reg_name.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.reg_name.Location = new System.Drawing.Point(4, 0);
+            this.reg_name.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.reg_name.Name = "reg_name";
-            this.reg_name.Size = new System.Drawing.Size(100, 23);
+            this.reg_name.Size = new System.Drawing.Size(120, 23);
             this.reg_name.TabIndex = 0;
             this.reg_name.Text = "<Register>";
             // 
@@ -1101,15 +1163,17 @@
             // 
             this.conv_lbl.AutoSize = true;
             this.flowLayoutPanel1.SetFlowBreak(this.conv_lbl, true);
-            this.conv_lbl.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.conv_lbl.Location = new System.Drawing.Point(3, 23);
+            this.conv_lbl.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.conv_lbl.Location = new System.Drawing.Point(4, 23);
+            this.conv_lbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.conv_lbl.Name = "conv_lbl";
-            this.conv_lbl.Size = new System.Drawing.Size(126, 60);
+            this.conv_lbl.Size = new System.Drawing.Size(153, 69);
             this.conv_lbl.TabIndex = 1;
             this.conv_lbl.Text = "BIN : <value>\r\nHEX : <value>\r\nDEC : <value>";
             // 
             // menuStrip1
             // 
+            this.menuStrip1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
@@ -1119,7 +1183,8 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1179, 28);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(1441, 36);
             this.menuStrip1.TabIndex = 28;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -1134,47 +1199,47 @@
             this.toolStripSeparator2,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(56, 32);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // newASMFileToolStripMenuItem
             // 
             this.newASMFileToolStripMenuItem.Name = "newASMFileToolStripMenuItem";
-            this.newASMFileToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
+            this.newASMFileToolStripMenuItem.Size = new System.Drawing.Size(193, 32);
             this.newASMFileToolStripMenuItem.Text = "New ASM";
             // 
             // openASMToolStripMenuItem
             // 
             this.openASMToolStripMenuItem.Name = "openASMToolStripMenuItem";
-            this.openASMToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
+            this.openASMToolStripMenuItem.Size = new System.Drawing.Size(193, 32);
             this.openASMToolStripMenuItem.Text = "Open ASM";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(152, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(190, 6);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(193, 32);
             this.saveToolStripMenuItem.Text = "Save";
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(193, 32);
             this.saveAsToolStripMenuItem.Text = "Save As";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(152, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(190, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(193, 32);
             this.exitToolStripMenuItem.Text = "Exit";
             // 
             // toolToolStripMenuItem
@@ -1184,29 +1249,29 @@
             this.clearRegistersToolStripMenuItem,
             this.clearEditorToolStripMenuItem});
             this.toolToolStripMenuItem.Name = "toolToolStripMenuItem";
-            this.toolToolStripMenuItem.Size = new System.Drawing.Size(56, 24);
+            this.toolToolStripMenuItem.Size = new System.Drawing.Size(71, 32);
             this.toolToolStripMenuItem.Text = "Tools";
             // 
             // clearMemoryToolStripMenuItem
             // 
             this.clearMemoryToolStripMenuItem.Name = "clearMemoryToolStripMenuItem";
-            this.clearMemoryToolStripMenuItem.Size = new System.Drawing.Size(182, 26);
+            this.clearMemoryToolStripMenuItem.Size = new System.Drawing.Size(225, 32);
             this.clearMemoryToolStripMenuItem.Text = "Clear Memory";
-            this.clearMemoryToolStripMenuItem.Click += new System.EventHandler(this.clearMemoryToolStripMenuItem_Click);
+            this.clearMemoryToolStripMenuItem.Click += new System.EventHandler(this.ClearMemoryToolStripMenuItem_Click);
             // 
             // clearRegistersToolStripMenuItem
             // 
             this.clearRegistersToolStripMenuItem.Name = "clearRegistersToolStripMenuItem";
-            this.clearRegistersToolStripMenuItem.Size = new System.Drawing.Size(182, 26);
+            this.clearRegistersToolStripMenuItem.Size = new System.Drawing.Size(225, 32);
             this.clearRegistersToolStripMenuItem.Text = "Clear Registers";
-            this.clearRegistersToolStripMenuItem.Click += new System.EventHandler(this.clearRegistersToolStripMenuItem_Click);
+            this.clearRegistersToolStripMenuItem.Click += new System.EventHandler(this.ClearRegistersToolStripMenuItem_Click);
             // 
             // clearEditorToolStripMenuItem
             // 
             this.clearEditorToolStripMenuItem.Name = "clearEditorToolStripMenuItem";
-            this.clearEditorToolStripMenuItem.Size = new System.Drawing.Size(182, 26);
+            this.clearEditorToolStripMenuItem.Size = new System.Drawing.Size(225, 32);
             this.clearEditorToolStripMenuItem.Text = "Clear Editor";
-            this.clearEditorToolStripMenuItem.Click += new System.EventHandler(this.clearEditorToolStripMenuItem_Click);
+            this.clearEditorToolStripMenuItem.Click += new System.EventHandler(this.ClearEditorToolStripMenuItem_Click);
             // 
             // runToolStripMenuItem
             // 
@@ -1216,66 +1281,66 @@
             this.runToolStripMenuItem1,
             this.checkErrorsToolStripMenuItem});
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(78, 24);
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(102, 32);
             this.runToolStripMenuItem.Text = "Program";
             // 
             // stepNextToolStripMenuItem
             // 
             this.stepNextToolStripMenuItem.Name = "stepNextToolStripMenuItem";
-            this.stepNextToolStripMenuItem.Size = new System.Drawing.Size(189, 26);
+            this.stepNextToolStripMenuItem.Size = new System.Drawing.Size(239, 32);
             this.stepNextToolStripMenuItem.Text = "Step Next";
-            this.stepNextToolStripMenuItem.Click += new System.EventHandler(this.stepNextToolStripMenuItem_Click);
+            this.stepNextToolStripMenuItem.Click += new System.EventHandler(this.StepNextToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(186, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(236, 6);
             // 
             // runToolStripMenuItem1
             // 
             this.runToolStripMenuItem1.Name = "runToolStripMenuItem1";
             this.runToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.runToolStripMenuItem1.Size = new System.Drawing.Size(189, 26);
+            this.runToolStripMenuItem1.Size = new System.Drawing.Size(239, 32);
             this.runToolStripMenuItem1.Text = "Run";
-            this.runToolStripMenuItem1.Click += new System.EventHandler(this.runToolStripMenuItem1_Click);
+            this.runToolStripMenuItem1.Click += new System.EventHandler(this.RunToolStripMenuItem1_Click);
             // 
             // checkErrorsToolStripMenuItem
             // 
             this.checkErrorsToolStripMenuItem.Name = "checkErrorsToolStripMenuItem";
             this.checkErrorsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.checkErrorsToolStripMenuItem.Size = new System.Drawing.Size(189, 26);
+            this.checkErrorsToolStripMenuItem.Size = new System.Drawing.Size(239, 32);
             this.checkErrorsToolStripMenuItem.Text = "Check Errors";
-            this.checkErrorsToolStripMenuItem.Click += new System.EventHandler(this.checkErrorsToolStripMenuItem_Click);
+            this.checkErrorsToolStripMenuItem.Click += new System.EventHandler(this.CheckErrorsToolStripMenuItem_Click);
             // 
             // formatToolStripMenuItem
             // 
             this.formatToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fontToolStripMenuItem});
             this.formatToolStripMenuItem.Name = "formatToolStripMenuItem";
-            this.formatToolStripMenuItem.Size = new System.Drawing.Size(68, 24);
+            this.formatToolStripMenuItem.Size = new System.Drawing.Size(89, 32);
             this.formatToolStripMenuItem.Text = "Format";
             // 
             // fontToolStripMenuItem
             // 
             this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
-            this.fontToolStripMenuItem.Size = new System.Drawing.Size(113, 26);
+            this.fontToolStripMenuItem.Size = new System.Drawing.Size(138, 32);
             this.fontToolStripMenuItem.Text = "Font";
-            this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
+            this.fontToolStripMenuItem.Click += new System.EventHandler(this.FontToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(67, 32);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(125, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(153, 32);
             this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
             // label4
             // 
@@ -1283,12 +1348,13 @@
             this.label4.AutoSize = true;
             this.label4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.label4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label4.Location = new System.Drawing.Point(925, 2);
+            this.label4.Location = new System.Drawing.Point(1131, 2);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(251, 23);
+            this.label4.Size = new System.Drawing.Size(289, 28);
             this.label4.TabIndex = 29;
             this.label4.Text = "Instruction coding still in works!\r\n";
-            this.label4.Click += new System.EventHandler(this.warning_click);
+            this.label4.Click += new System.EventHandler(this.Warning_click);
             // 
             // toolStrip1
             // 
@@ -1296,16 +1362,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.toolStrip1.AutoSize = false;
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.play_button,
             this.step_button,
             this.stop_button});
-            this.toolStrip1.Location = new System.Drawing.Point(452, 0);
+            this.toolStrip1.Location = new System.Drawing.Point(552, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(170, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(208, 33);
             this.toolStrip1.TabIndex = 30;
             this.toolStrip1.Text = "tool_strip";
             // 
@@ -1315,10 +1382,10 @@
             this.play_button.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.play_button.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.play_button.Name = "play_button";
-            this.play_button.Size = new System.Drawing.Size(49, 24);
+            this.play_button.Size = new System.Drawing.Size(49, 30);
             this.play_button.Text = "Run";
             this.play_button.ToolTipText = "Compile and Run whole program to the end!";
-            this.play_button.Click += new System.EventHandler(this.run_program);
+            this.play_button.Click += new System.EventHandler(this.Run_program);
             // 
             // step_button
             // 
@@ -1326,10 +1393,10 @@
             this.step_button.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.step_button.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.step_button.Name = "step_button";
-            this.step_button.Size = new System.Drawing.Size(52, 24);
+            this.step_button.Size = new System.Drawing.Size(52, 30);
             this.step_button.Text = "Step";
             this.step_button.ToolTipText = "Compile and run program wth Stepping!";
-            this.step_button.Click += new System.EventHandler(this.step_program);
+            this.step_button.Click += new System.EventHandler(this.Step_program);
             // 
             // stop_button
             // 
@@ -1338,31 +1405,31 @@
             this.stop_button.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.stop_button.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.stop_button.Name = "stop_button";
-            this.stop_button.Size = new System.Drawing.Size(53, 24);
+            this.stop_button.Size = new System.Drawing.Size(53, 30);
             this.stop_button.Text = "Stop";
             this.stop_button.ToolTipText = "Stop running program! Useful if program goes into infinite loop!";
-            this.stop_button.Click += new System.EventHandler(this.stop_program);
+            this.stop_button.Click += new System.EventHandler(this.Stop_program);
             // 
             // main
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 28F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1179, 700);
+            this.ClientSize = new System.Drawing.Size(1441, 852);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.main_layout);
             this.Controls.Add(this.menuStrip1);
-            this.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.MinimumSize = new System.Drawing.Size(1197, 747);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MinimumSize = new System.Drawing.Size(1459, 899);
             this.Name = "main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "8085 Simulator And Assembler";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.closing);
-            this.Load += new System.EventHandler(this.loading);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Window_Closing);
+            this.Load += new System.EventHandler(this.Window_Loading);
             this.registers_box.ResumeLayout(false);
             this.register_layout.ResumeLayout(false);
             this.register_layout.PerformLayout();

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -29,7 +30,7 @@ namespace _8085_Simulator
             {
                 Clear();
             }
-            public string getBinaryString(bool not=false)
+            public string GetBinaryString(bool not=false)
             {
                 string data_string = "";
                 for (int i = 0; i < 8; i++)
@@ -51,19 +52,19 @@ namespace _8085_Simulator
                 }
                 return data_string;
             }
-            public int getInt()
+            public int GetInt()
             {
-                int data = Convert.ToInt32(getBinaryString(), 2);
+                int data = Convert.ToInt32(GetBinaryString(), 2);
                 return data;
             }
-            public int getNInt()
+            public int GetNInt()
             {
-                int data = Convert.ToInt32(getBinaryString(true), 2);
+                int data = Convert.ToInt32(GetBinaryString(true), 2);
                 return data;
             }
-            public int get2SInt()
+            public int Get2SInt()
             {
-                int data = Convert.ToInt32(getBinaryString(true), 2);
+                int data = Convert.ToInt32(GetBinaryString(true), 2);
                 data += 1;
                 if (data > 255)
                     overflowed = 1;
@@ -71,12 +72,12 @@ namespace _8085_Simulator
                     overflowed = 0;
                 return data;
             }
-            public string getHex()
+            public string GetHex()
             {
-                string hex = Convert.ToString(getInt(), 16).ToUpper().PadLeft(2,'0');
+                string hex = Convert.ToString(GetInt(), 16).ToUpper().PadLeft(2,'0');
                 return hex;
             }
-            public void setData(int data)
+            public void SetData(int data)
             {
                 Clear();
                 if (data > 255)
@@ -100,12 +101,12 @@ namespace _8085_Simulator
                     i--;
                 }
             }
-            public void setData(string hex)
+            public void SetData(string hex)
             {
                 if (Convert.ToInt32(hex, 16) < 256)
                 {
                     int data = Convert.ToInt32(hex, 16);
-                    setData(data);
+                    SetData(data);
                 }
             }
             public void Clear()
@@ -126,12 +127,12 @@ namespace _8085_Simulator
             {
                 address = new bool[8];
             }
-            public int getInt()
+            public int GetInt()
             {
-                int data = Convert.ToInt32(getBinaryString(), 2);
+                int data = Convert.ToInt32(GetBinaryString(), 2);
                 return data;
             }
-            public string getBinaryString()
+            public string GetBinaryString()
             {
                 string data_string = "";
                 address[7] = carry;
@@ -148,12 +149,12 @@ namespace _8085_Simulator
                 }
                 return data_string;
             }
-            public string getHex()
+            public string GetHex()
             {
-                string hex = Convert.ToString(getInt(), 16).ToUpper();
+                string hex = Convert.ToString(GetInt(), 16).ToUpper();
                 return hex;
             }
-            public void setData(int data)
+            public void SetData(int data)
             {
                 Clear();
                 if (data > 255)
@@ -175,7 +176,7 @@ namespace _8085_Simulator
                 zero = address[1];
                 sign = address[0];
             }
-            public void checkParity(string binary)
+            public void CheckParity(string binary)
             {
                 int eo = 0;
                 foreach(char c in binary)
@@ -190,7 +191,7 @@ namespace _8085_Simulator
                 else
                     parity = false;
             }
-            public void checkAuxiliary(string f1, string f2)
+            public void CheckAuxiliary(string f1, string f2)
             {
                 int a = Convert.ToInt32(f1.Substring(4), 2);
                 int b = Convert.ToInt32(f2.Substring(4), 2);
@@ -199,21 +200,21 @@ namespace _8085_Simulator
                 else
                     auxiliary = false;
             }
-            public void checkSign(string binary)
+            public void CheckSign(string binary)
             {
                 if (binary[0] == '1')
                     sign = true;
                 if (binary[0] == '0')
                     sign = false;
             }
-            public void update(Register temp)
+            public void Update(Register temp)
             {
                 sign = temp.data[0];
-                if (temp.getInt() == 0)
+                if (temp.GetInt() == 0)
                     zero = true;
                 else
                     zero = false;
-                checkParity(temp.getBinaryString());
+                CheckParity(temp.GetBinaryString());
             }
             public void Clear()
             {
@@ -229,46 +230,30 @@ namespace _8085_Simulator
             {
                 counter = 0;
             }
-            public void increment()
+            public void Increment()
             {
                 counter++;
             }
-            public void incrementBy(int by)
+            public void IncrementBy(int by)
             {
                 counter += by;
             }
-            public void decrement()
+            public void Decrement()
             {
                 counter--;
             }
-            public void decrementBy(int by)
+            public void DecrementBy(int by)
             {
                 counter -= by;
             }
-            public string getAddress()
+            public string GetAddress()
             {
                 string hexadr = counter.ToString("X");
                 return hexadr;
             }
-            public void setAddress(string hex)
+            public void SetAddress(string hex)
             {
                 counter = Convert.ToInt32(hex, 16);
-            }
-            public void setLowerByte(string hex)
-            {
-
-            }
-            public string getLowerByte()
-            {
-                return "";
-            }
-            public void setHigherByte()
-            {
-
-            }
-            public string getHigherByte()
-            {
-                return "";
             }
             public void Clear()
             {
@@ -288,15 +273,15 @@ namespace _8085_Simulator
 
         //Variables
 
-        Register a = new Register();
-        Register b = new Register();
-        Register c = new Register();
-        Register d = new Register();
-        Register e = new Register();
-        Register h = new Register();
-        Register l = new Register();
+        readonly Register a = new Register();
+        readonly Register b = new Register();
+        readonly Register c = new Register();
+        readonly Register d = new Register();
+        readonly Register e = new Register();
+        readonly Register h = new Register();
+        readonly Register l = new Register();
 
-        Flags f = new Flags();
+        readonly Flags f = new Flags();
 
         ProgramCounter pc;
 
@@ -334,32 +319,29 @@ namespace _8085_Simulator
 
         //General functions
 
-        public void update_variables()
+        public void Update_variables()
         {
-            areg.Text = a.getHex().PadLeft(2, '0');
-            breg.Text = b.getHex().PadLeft(2, '0');
-            creg.Text = c.getHex().PadLeft(2, '0');
-            dreg.Text = d.getHex().PadLeft(2, '0');
-            ereg.Text = e.getHex().PadLeft(2, '0');
-            hreg.Text = h.getHex().PadLeft(2, '0');
-            lreg.Text = l.getHex().PadLeft(2, '0');
+            areg.Text = a.GetHex().PadLeft(2, '0');
+            breg.Text = b.GetHex().PadLeft(2, '0');
+            creg.Text = c.GetHex().PadLeft(2, '0');
+            dreg.Text = d.GetHex().PadLeft(2, '0');
+            ereg.Text = e.GetHex().PadLeft(2, '0');
+            hreg.Text = h.GetHex().PadLeft(2, '0');
+            lreg.Text = l.GetHex().PadLeft(2, '0');
             flagc.Text = f.carry ? "1" : "0";
             flagz.Text = f.zero ? "1" : "0";
             flags.Text = f.sign ? "1" : "0";
             flaga.Text = f.auxiliary ? "1" : "0";
             flagp.Text = f.parity ? "1" : "0";
-            psw = $"{a.getHex().PadLeft(2, '0')}{f.getHex().PadLeft(2, '0')}";
-            m = $"{h.getHex().PadLeft(2, '0')}{l.getHex().PadLeft(2, '0')}";
+            psw = $"{a.GetHex().PadLeft(2, '0')}{f.GetHex().PadLeft(2, '0')}";
+            m = $"{h.GetHex().PadLeft(2, '0')}{l.GetHex().PadLeft(2, '0')}";
             pswreg.Text = psw.ToString();
             mreg.Text = m.ToString();
-            pcreg.Text = pc.getAddress().PadLeft(4, '0');
+            pcreg.Text = pc.GetAddress().PadLeft(4, '0');
             spreg.Text = sp.ToString("X").PadLeft(4, '0');
-            memorybox.Invalidate();
-            stackbox.Invalidate();
-            portbox.Invalidate();
         }
 
-        public void clear_registers()
+        public void Clear_registers()
         {
             a.Clear();
             b.Clear();
@@ -373,10 +355,10 @@ namespace _8085_Simulator
             f.Clear();
             pc.Clear();
             sp = 65535;
-            update_variables();
+            Update_variables();
         }
 
-        public void reset_memory()
+        public void Reset_memory()
         {
             ListViewItem item;
             memorybox.VirtualListSize = memory.Count;
@@ -389,9 +371,10 @@ namespace _8085_Simulator
                 item.SubItems.Add($"{memory[i].ToString("X").PadLeft(2, '0')}");
                 memory_items[i] = m_items[i] = item;
             }
+            memorybox.Invalidate();
         }
 
-        public void reset_stack()
+        public void Reset_stack()
         {
             ListViewItem item;
             stackbox.VirtualListSize = stack.Count;
@@ -403,9 +386,10 @@ namespace _8085_Simulator
                 item.SubItems.Add($"{stack[i].ToString("X").PadLeft(2, '0')}");
                 stack_items[i] = item;
             }
+            stackbox.Invalidate();
         }
 
-        public void reset_port()
+        public void Reset_port()
         {
             ListViewItem item;
             portbox.VirtualListSize = port.Count;
@@ -417,17 +401,17 @@ namespace _8085_Simulator
                 item.SubItems.Add($"{port[i].ToString("X").PadLeft(2, '0')}");
                 port_items[i] = item;
             }
+            portbox.Update();
         }
 
-        public int load_into_memory()
+        public int Load_into_memory()
         {
             int for_pc;
             int start_location = for_pc = 0;
             string opcode = "";
-            string lineF = "";
             foreach (Line line in codeEditor.Lines)
             {
-                lineF = Regex.Replace(line.Text, @",+", " ");
+                string lineF = Regex.Replace(line.Text, @",+", " ");
                 lineF = Regex.Replace(lineF, @"\s+", " ");
                 lineF = lineF.Trim(' ');
                 if (lineF == "")
@@ -1239,7 +1223,7 @@ namespace _8085_Simulator
                     memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
-                }
+                }  //done
 
                 else if (code[0] == "rst")
                 {
@@ -1264,27 +1248,27 @@ namespace _8085_Simulator
                     start_location++;
                 } //done
             }
+            memorybox.Invalidate();
             return for_pc;
         }
 
-        private void run_click(object sender, EventArgs e)
+        private void Run_click(object sender, EventArgs e)
         {
-            code_inspect(true);
+            Code_inspect(true);
         }
 
-        public void step_next_code()
+        public void Step_next_code()
         {
 
         }
 
-        public void read_labels()
+        public void Read_labels()
         {
             labels.Clear();
             int start_location = 0;
-            string lineF = "";
             foreach (Line line in codeEditor.Lines)
             {
-                lineF = Regex.Replace(line.Text, @",+", " ");
+                string lineF = Regex.Replace(line.Text, @",+", " ");
                 lineF = Regex.Replace(lineF, @"\s+", " ");
                 lineF = lineF.Trim(' ');
                 if (lineF == "")
@@ -1388,7 +1372,7 @@ namespace _8085_Simulator
             }
         }
 
-        public bool isLabel(string lbl)
+        public bool IsLabel(string lbl)
         {
             foreach (LabelAddress ad in labels)
                 if (ad.name == lbl)
@@ -1396,19 +1380,18 @@ namespace _8085_Simulator
             return false;
         }
 
-        private bool code_inspect(bool run_code)
+        private bool Code_inspect(bool run_code)
         {
-            read_labels();
-            clear_registers();
+            Read_labels();
+            Clear_registers();
             errors.Clear();
             output_box.Items.Clear();
             int error_level = 0;
             int line_number = 1;
             bool halt = false;
-            string lineF = "";
             foreach (Line line in codeEditor.Lines)
             {
-                lineF = Regex.Replace(line.Text, @",+", " ");
+                string lineF = Regex.Replace(line.Text, @",+", " ");
                 lineF = Regex.Replace(lineF, @"\s+", " ");
                 lineF = lineF.Trim(' ');
                 if (lineF == "")
@@ -1429,7 +1412,7 @@ namespace _8085_Simulator
                         code[i - 1] = code[i];
                     }
                 }
-                error_string = check_error(code);
+                error_string = Check_error(code);
                 if (error_string != "")
                 {
                     if (error_level >= 50)
@@ -1461,12 +1444,12 @@ namespace _8085_Simulator
             {
                 if (run_code == true)
                 {
-                    pc.counter = load_into_memory();
+                    pc.counter = Load_into_memory();
                     while (memory[pc.counter] != 118)
                     {
-                        code_execute(memory[pc.counter].ToString("X"));
-                        pc.increment();
-                        update_variables();
+                        Code_execute(memory[pc.counter].ToString("X"));
+                        pc.Increment();
+                        Update_variables();
                         if (sp == 0)
                             sp += 1;
                         stackbox.TopItem = stackbox.Items[sp-1];
@@ -1496,419 +1479,429 @@ namespace _8085_Simulator
             }
         }
 
-        private void code_execute(string hex)
+        private void Code_execute(string hex)
         {
-            if (hex == "CE") //ACI data8
+            // ACI data8
+            if (hex == "CE")
             {
-                int data = memory[pc.counter + 1];
                 Register temp = new Register();
-                if (f.carry == true)
-                {
-                    data += 1;
+                int data = memory[pc.counter + 1] + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
+                if (data > 255)
+                    f.carry = true;
+                else
                     f.carry = false;
-                }
-                temp.setData(data);
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                data += a.getInt();
-                if (data > 255)
-                    f.carry = true;
-                a.setData(data);
-                f.update(a);
-                pc.incrementBy(1);
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
+                pc.IncrementBy(1);
             }
-            else if (hex == "8F") // ADC A
+            // ADC A
+            else if (hex == "8F")
             {
                 Register temp = new Register();
-                temp.setData(a.getInt());
-                int data = temp.getInt();
-                if (f.carry == true)
-                {
-                    data += 1;
+                int data = a.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
+                if (data > 255)
+                    f.carry = true;
+                else
                     f.carry = false;
-                }
-                temp.setData(data);
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                data += a.getInt();
-                if (data > 255)
-                    f.carry = true;
-                a.setData(data);
-                f.update(a);
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "88") // ADC B
+            // ADC B
+            else if (hex == "88")
             {
                 Register temp = new Register();
-                temp.setData(b.getInt());
-                int data = temp.getInt();
-                if (f.carry == true)
-                {
-                    data += 1;
+                int data = b.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
+                if (data > 255)
+                    f.carry = true;
+                else
                     f.carry = false;
-                }
-                temp.setData(data);
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                data += a.getInt();
-                if (data > 255)
-                    f.carry = true;
-                a.setData(data);
-                f.update(a);
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "89") // ADC C
+            // ADC C
+            else if (hex == "89")
             {
                 Register temp = new Register();
-                temp.setData(c.getInt());
-                int data = temp.getInt();
-                if (f.carry == true)
-                {
-                    data += 1;
+                int data = c.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
+                if (data > 255)
+                    f.carry = true;
+                else
                     f.carry = false;
-                }
-                temp.setData(data);
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                data += a.getInt();
-                if (data > 255)
-                    f.carry = true;
-                a.setData(data);
-                f.update(a);
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "8A") // ADC D
+            // ADC D
+            else if (hex == "8A")
             {
                 Register temp = new Register();
-                temp.setData(d.getInt());
-                int data = temp.getInt();
-                if (f.carry == true)
-                {
-                    data += 1;
+                int data = d.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
+                if (data > 255)
+                    f.carry = true;
+                else
                     f.carry = false;
-                }
-                temp.setData(data);
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                data += a.getInt();
-                if (data > 255)
-                    f.carry = true;
-                a.setData(data);
-                f.update(a);
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "8B") // ADC E
+            // ADC E
+            else if (hex == "8B")
             {
                 Register temp = new Register();
-                temp.setData(e.getInt());
-                int data = temp.getInt();
-                if (f.carry == true)
-                {
-                    data += 1;
+                int data = e.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
+                if (data > 255)
+                    f.carry = true;
+                else
                     f.carry = false;
-                }
-                temp.setData(data);
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                data += a.getInt();
-                if (data > 255)
-                    f.carry = true;
-                a.setData(data);
-                f.update(a);
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "8C") // ADC H
+            // ADC H
+            else if (hex == "8C")
             {
                 Register temp = new Register();
-                temp.setData(h.getInt());
-                int data = temp.getInt();
-                if (f.carry == true)
-                {
-                    data += 1;
+                int data = h.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
+                if (data > 255)
+                    f.carry = true;
+                else
                     f.carry = false;
-                }
-                temp.setData(data);
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                data += a.getInt();
-                if (data > 255)
-                    f.carry = true;
-                a.setData(data);
-                f.update(a);
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "8D") // ADC L
+            // ADC L
+            else if (hex == "8D")
             {
                 Register temp = new Register();
-                temp.setData(l.getInt());
-                int data = temp.getInt();
-                if (f.carry == true)
-                {
-                    data += 1;
+                int data = l.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
+                if (data > 255)
+                    f.carry = true;
+                else
                     f.carry = false;
-                }
-                temp.setData(data);
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                data += a.getInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(data);
+                f.Update(a);
+            }
+            // ADC M
+            else if (hex == "8E")
+            {
+                Register temp = new Register();
+                int data = memory[Convert.ToInt32(m, 16)] + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
                 if (data > 255)
                     f.carry = true;
-                a.setData(data);
-                f.update(a);
-            }
-            else if (hex == "8E") // ADC M
-            {
-                int index = Convert.ToInt32(m, 16);
-                int data = memory[index];
-                Register temp = new Register();
-                if (f.carry == true)
-                {
-                    data += 1;
+                else
                     f.carry = false;
-                }
-                temp.setData(data);
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                data += a.getInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(data);
+                f.Update(a);
+            }
+            // ADD A
+            else if (hex == "87")
+            {
+                Register temp = new Register();
+                int data = a.GetInt();
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
                 if (data > 255)
                     f.carry = true;
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = false;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "87") // ADD A
+            // ADD B
+            else if (hex == "80")
             {
                 Register temp = new Register();
-                int data = a.getInt();
-                temp.setData(data);
-                data += a.getInt();
+                int data = b.GetInt();
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = false;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "80") // ADD B
+            // ADD C
+            else if (hex == "81")
             {
                 Register temp = new Register();
-                int data = b.getInt();
-                temp.setData(data);
-                data += a.getInt();
+                int data = c.GetInt();
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = false;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "81") // ADD C
+            // ADD D
+            else if (hex == "82")
             {
                 Register temp = new Register();
-                int data = c.getInt();
-                temp.setData(data);
-                data += a.getInt();
+                int data = d.GetInt();
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = false;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "82") // ADD D
+            // ADD E
+            else if (hex == "83")
             {
                 Register temp = new Register();
-                int data = d.getInt();
-                temp.setData(data);
-                data += a.getInt();
+                int data = e.GetInt();
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = false;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "83") // ADD E
+            // ADD H
+            else if (hex == "84")
             {
                 Register temp = new Register();
-                int data = e.getInt();
-                temp.setData(data);
-                data += a.getInt();
+                int data = h.GetInt();
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = false;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "84") // ADD H
+            // ADD L
+            else if (hex == "85")
             {
                 Register temp = new Register();
-                int data = h.getInt();
-                temp.setData(data);
-                data += a.getInt();
+                int data = l.GetInt();
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = false;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "85") // ADD L
+            // ADD M
+            else if (hex == "86")
             {
                 Register temp = new Register();
-                int data = l.getInt();
-                temp.setData(data);
-                data += a.getInt();
+                int data = memory[Convert.ToInt32(m, 16)];
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = false;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
+                f.Update(a);
             }
-            else if (hex == "86") // ADD M
-            {
-                int index = Convert.ToInt32(m, 16);
-                int data = memory[index];
-                Register temp = new Register();
-                temp.setData(data);
-                data += a.getInt();
-                if (data > 255)
-                    f.carry = true;
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
-            }
-            else if (hex == "C6") // ADI data8
-            {
-                int data = Convert.ToInt32(memory[pc.counter + 1]);
-                Register temp = new Register();
-                temp.setData(data);
-                data = a.getInt() + data;
-                if (data > 255)
-                    f.carry = true;
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
-                pc.incrementBy(1);
-            }
-            else if (hex == "A7") // ANA A
-            {
-                Register temp = new Register();
-                int data = a.getInt();
-                temp.setData(data);
-                data = data & a.getInt();
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                //ana resets carry flag by default
-                f.carry = false;
-                //ana sets auxiliary flag by default
-                f.auxiliary = true;
-                //
-                a.setData(data);
-                f.update(a);
-
-            }
-            else if (hex == "A0") // ANA B
-            {
-                Register temp = new Register();
-                int data = b.getInt();
-                temp.setData(data);
-                data = data & a.getInt();
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                //ana resets carry flag by default
-                f.carry = false;
-                //ana sets auxiliary flag by default
-                f.auxiliary = true;
-                //
-                a.setData(data);
-                f.update(a);
-            }
-            else if (hex == "A1") // ANA C
-            {
-                Register temp = new Register();
-                int data = c.getInt();
-                temp.setData(data);
-                data = data & a.getInt();
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                //ana resets carry flag by default
-                f.carry = false;
-                //ana sets auxiliary flag by default
-                f.auxiliary = true;
-                //
-                a.setData(data);
-                f.update(a);
-            }
-            else if (hex == "A2") // ANA D
-            {
-                Register temp = new Register();
-                int data = d.getInt();
-                temp.setData(data);
-                data = data & a.getInt();
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                //ana resets carry flag by default
-                f.carry = false;
-                //ana sets auxiliary flag by default
-                f.auxiliary = true;
-                //
-                a.setData(data);
-                f.update(a);
-            }
-            else if (hex == "A3") // ANA E
-            {
-                Register temp = new Register();
-                int data = e.getInt();
-                temp.setData(data);
-                data = data & a.getInt();
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                //ana resets carry flag by default
-                f.carry = false;
-                //ana sets auxiliary flag by default
-                f.auxiliary = true;
-                //
-                a.setData(data);
-                f.update(a);
-            }
-            else if (hex == "A4") // ANA H
-            {
-                Register temp = new Register();
-                int data = h.getInt();
-                temp.setData(data);
-                data = data & a.getInt();
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                //ana resets carry flag by default
-                f.carry = false;
-                //ana sets auxiliary flag by default
-                f.auxiliary = true;
-                //
-                a.setData(data);
-                f.update(a);
-            }
-            else if (hex == "A5") // ANA L
-            {
-                Register temp = new Register();
-                int data = l.getInt();
-                temp.setData(data);
-                data = data & a.getInt();
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                //ana resets carry flag by default
-                f.carry = false;
-                //ana sets auxiliary flag by default
-                f.auxiliary = true;
-                //
-                a.setData(data);
-                f.update(a);
-            }
-            else if (hex == "A6") // ANA M
-            {
-                Register temp = new Register();
-                int index = Convert.ToInt32(m, 16);
-                int data = memory[index];
-                temp.setData(data);
-                data = data & a.getInt();
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                //ana resets carry flag by default
-                f.carry = false;
-                //ana sets auxiliary flag by default
-                f.auxiliary = true;
-                //
-                a.setData(data);
-                f.update(a);
-            }
-            else if (hex == "E6") // ANI data8
+            // ADI data8
+            else if (hex == "C6")
             {
                 Register temp = new Register();
                 int data = memory[pc.counter + 1];
-                temp.setData(data);
-                data = data & a.getInt();
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                temp.SetData(data);
+                data = a.GetInt() + temp.GetInt();
+                if (data > 255)
+                    f.carry = true;
+                else
+                    f.carry = false;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
+                pc.IncrementBy(1);
+            }
+            // ANA A
+            else if (hex == "A7")
+            {
+                Register temp = new Register();
+                int data = a.GetInt();
+                temp.SetData(data);
+                data &= a.GetInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
+                a.SetData(data);
+                f.Update(a);
+            }
+            // ANA B
+            else if (hex == "A0")
+            {
+                Register temp = new Register();
+                int data = b.GetInt();
+                temp.SetData(data);
+                data &= a.GetInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
+                a.SetData(data);
+                f.Update(a);
+            }
+            // ANA C
+            else if (hex == "A1")
+            {
+                Register temp = new Register();
+                int data = c.GetInt();
+                temp.SetData(data);
+                data &= a.GetInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
+                a.SetData(data);
+                f.Update(a);
+            }
+            // ANA D
+            else if (hex == "A2")
+            {
+                Register temp = new Register();
+                int data = d.GetInt();
+                temp.SetData(data);
+                data &= a.GetInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
+                a.SetData(data);
+                f.Update(a);
+            }
+            // ANA E
+            else if (hex == "A3")
+            {
+                Register temp = new Register();
+                int data = e.GetInt();
+                temp.SetData(data);
+                data &= a.GetInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
+                a.SetData(data);
+                f.Update(a);
+            }
+            // ANA H
+            else if (hex == "A4")
+            {
+                Register temp = new Register();
+                int data = h.GetInt();
+                temp.SetData(data);
+                data &= a.GetInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
+                a.SetData(data);
+                f.Update(a);
+            }
+            // ANA L
+            else if (hex == "A5")
+            {
+                Register temp = new Register();
+                int data = l.GetInt();
+                temp.SetData(data);
+                data &= a.GetInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
+                a.SetData(data);
+                f.Update(a);
+            }
+            // ANA M
+            else if (hex == "A6")
+            {
+                Register temp = new Register();
+                int index = Convert.ToInt32(m, 16);
+                int data = memory[index];
+                temp.SetData(data);
+                data &= a.GetInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
+                a.SetData(data);
+                f.Update(a);
+            }
+            // ANI data8
+            else if (hex == "E6")
+            {
+                Register temp = new Register();
+                int data = memory[pc.counter + 1];
+                temp.SetData(data);
+                data &= a.GetInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(data);
+                f.Update(a);
                 //ani resets carry flag by default
                 f.carry = false;
                 //ani sets auxiliary carry by default
                 f.auxiliary = true;
                 //
-                pc.incrementBy(1);
+                pc.IncrementBy(1);
             }
-            else if (hex == "CD") // CALL label16
+            // CALL label16
+            else if (hex == "CD")
             {
                 string pchex = Convert.ToString(pc.counter + 2, 16).PadLeft(4, '0');
                 sp--;
@@ -1921,8 +1914,10 @@ namespace _8085_Simulator
                 address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
                 address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
                 pc.counter = Convert.ToInt32(address) - 1;
+                stackbox.Invalidate();
             }
-            else if (hex == "DC") // CC label16
+            // CC label16
+            else if (hex == "DC")
             {
                 if (f.carry == true)
                 {
@@ -1937,11 +1932,13 @@ namespace _8085_Simulator
                     address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
                     address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
                     pc.counter = Convert.ToInt32(address) - 1;
+                    stackbox.Invalidate();
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "FC") // CM label16
+            // CM label16
+            else if (hex == "FC")
             {
                 if (f.sign == true)
                 {
@@ -1956,109 +1953,137 @@ namespace _8085_Simulator
                     address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
                     address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
                     pc.counter = Convert.ToInt32(address) - 1;
+                    stackbox.Invalidate();
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "2F") // CMA
+            // CMA
+            else if (hex == "2F")
             {
-                a.setData(a.getNInt());
+                a.SetData(a.GetNInt());
             }
-            else if (hex == "3F") // CMC
+            // CMC
+            else if (hex == "3F")
             {
                 f.carry = !f.carry;
             }
-            else if (hex == "BF") // CMP A
+            // CMP A
+            else if (hex == "BF")
             {
                 Register temp = new Register();
-                temp.setData(a.getInt());
-                if (temp.getInt() > a.getInt())
+                temp.SetData(a.GetInt());
+                if (temp.GetInt() > a.GetInt())
                     f.carry = true;
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                temp.setData(a.getInt() + temp.getInt());
-                f.update(temp);
+                else
+                    f.carry = false;
+                temp.SetData(temp.Get2SInt());
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                temp.SetData(a.GetInt() + temp.GetInt());
+                f.Update(temp);
             }
-            else if (hex == "B8") // CMP B
+            // CMP B
+            else if (hex == "B8")
             {
                 Register temp = new Register();
-                temp.setData(b.getInt());
-                if (temp.getInt() > a.getInt())
+                temp.SetData(b.GetInt());
+                if (temp.GetInt() > a.GetInt())
                     f.carry = true;
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                temp.setData(a.getInt() + temp.getInt());
-                f.update(temp);
+                else
+                    f.carry = false;
+                temp.SetData(temp.Get2SInt());
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                temp.SetData(a.GetInt() + temp.GetInt());
+                f.Update(temp);
             }
-            else if (hex == "B9") // CMP C
+            // CMP C
+            else if (hex == "B9")
             {
                 Register temp = new Register();
-                temp.setData(c.getInt());
-                if (temp.getInt() > a.getInt())
+                temp.SetData(c.GetInt());
+                if (temp.GetInt() > a.GetInt())
                     f.carry = true;
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                temp.setData(a.getInt() + temp.getInt());
-                f.update(temp);
+                else
+                    f.carry = false;
+                temp.SetData(temp.Get2SInt());
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                temp.SetData(a.GetInt() + temp.GetInt());
+                f.Update(temp);
             }
-            else if (hex == "BA") // CMP D
+            // CMP D
+            else if (hex == "BA")
             {
                 Register temp = new Register();
-                temp.setData(d.getInt());
-                if (temp.getInt() > a.getInt())
+                temp.SetData(d.GetInt());
+                if (temp.GetInt() > a.GetInt())
                     f.carry = true;
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                temp.setData(a.getInt() + temp.getInt());
-                f.update(temp);
+                else
+                    f.carry = false;
+                temp.SetData(temp.Get2SInt());
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                temp.SetData(a.GetInt() + temp.GetInt());
+                f.Update(temp);
             }
-            else if (hex == "BB") // CMP E
+            // CMP E
+            else if (hex == "BB")
             {
                 Register temp = new Register();
-                temp.setData(e.getInt());
-                if (temp.getInt() > a.getInt())
+                temp.SetData(e.GetInt());
+                if (temp.GetInt() > a.GetInt())
                     f.carry = true;
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                temp.setData(a.getInt() + temp.getInt());
-                f.update(temp);
+                else
+                    f.carry = false;
+                temp.SetData(temp.Get2SInt());
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                temp.SetData(a.GetInt() + temp.GetInt());
+                f.Update(temp);
             }
-            else if (hex == "BC") // CMP H
+            // CMP H
+            else if (hex == "BC")
             {
                 Register temp = new Register();
-                temp.setData(h.getInt());
-                if (temp.getInt() > a.getInt())
+                temp.SetData(h.GetInt());
+                if (temp.GetInt() > a.GetInt())
                     f.carry = true;
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                temp.setData(a.getInt() + temp.getInt());
-                f.update(temp);
+                else
+                    f.carry = false;
+                temp.SetData(temp.Get2SInt());
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                temp.SetData(a.GetInt() + temp.GetInt());
+                f.Update(temp);
             }
-            else if (hex == "BD") // CMP L
+            // CMP L
+            else if (hex == "BD")
             {
                 Register temp = new Register();
-                temp.setData(l.getInt());
-                if (temp.getInt() > a.getInt())
+                temp.SetData(l.GetInt());
+                if (temp.GetInt() > a.GetInt())
                     f.carry = true;
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                temp.setData(a.getInt() + temp.getInt());
-                f.update(temp);
+                else
+                    f.carry = false;
+                temp.SetData(temp.Get2SInt());
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                temp.SetData(a.GetInt() + temp.GetInt());
+                f.Update(temp);
             }
-            else if (hex == "BE") // CMP M
+            // CMP M
+            else if (hex == "BE")
             {
                 int index = Convert.ToInt32(m, 16);
                 int data = Convert.ToInt32(memory[index]);
                 Register temp = new Register();
-                temp.setData(data);
-                if (temp.getInt() > a.getInt())
+                temp.SetData(data);
+                if (temp.GetInt() > a.GetInt())
                     f.carry = true;
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                temp.setData(a.getInt() + temp.getInt());
-                f.update(temp);
+                else
+                    f.carry = false;
+                temp.SetData(temp.Get2SInt());
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                temp.SetData(a.GetInt() + temp.GetInt());
+                f.Update(temp);
             }
-            else if (hex == "D4") // CNC label16
+            // CNC label16
+            else if (hex == "D4")
             {
                 if (f.carry == false)
                 {
@@ -2073,11 +2098,13 @@ namespace _8085_Simulator
                     address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
                     address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
                     pc.counter = Convert.ToInt32(address) - 1;
+                    stackbox.Invalidate();
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "C4") // CNZ label16
+            // CNZ label16
+            else if (hex == "C4")
             {
                 if (f.zero == false)
                 {
@@ -2092,11 +2119,13 @@ namespace _8085_Simulator
                     address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
                     address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
                     pc.counter = Convert.ToInt32(address) - 1;
+                    stackbox.Invalidate();
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "F4") // CP label16
+            // CP label16
+            else if (hex == "F4")
             {
                 if (f.sign == false)
                 {
@@ -2111,11 +2140,13 @@ namespace _8085_Simulator
                     address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
                     address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
                     pc.counter = Convert.ToInt32(address) - 1;
+                    stackbox.Invalidate();
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "EC") // CPE label16
+            // CPE label16
+            else if (hex == "EC")
             {
                 if (f.parity == true)
                 {
@@ -2130,24 +2161,27 @@ namespace _8085_Simulator
                     address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
                     address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
                     pc.counter = Convert.ToInt32(address) - 1;
+                    stackbox.Invalidate();
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "FE") // CPI data8
+            // CPI data8
+            else if (hex == "FE")
             {
                 int data = Convert.ToInt32(memory[pc.counter + 1]);
                 Register temp = new Register();
-                temp.setData(data);
-                if (temp.getInt() > a.getInt())
+                temp.SetData(data);
+                if (temp.GetInt() > a.GetInt())
                     f.carry = true;
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                temp.setData(a.getInt() + temp.getInt());
-                f.update(temp);
-                pc.incrementBy(1);
+                temp.SetData(temp.Get2SInt());
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                temp.SetData(a.GetInt() + temp.GetInt());
+                f.Update(temp);
+                pc.IncrementBy(1);
             }
-            else if (hex == "E4") // CPO label16
+            // CPO label16
+            else if (hex == "E4")
             {
                 if (f.parity == false)
                 {
@@ -2162,11 +2196,13 @@ namespace _8085_Simulator
                     address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
                     address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
                     pc.counter = Convert.ToInt32(address) - 1;
+                    stackbox.Invalidate();
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "CC") // CZ label16
+            // CZ label16
+            else if (hex == "CC")
             {
                 if (f.zero == true)
                 {
@@ -2181,311 +2217,372 @@ namespace _8085_Simulator
                     address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
                     address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
                     pc.counter = Convert.ToInt32(address) - 1;
+                    stackbox.Invalidate();
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "27") // DAA
+            // DAA
+            else if (hex == "27")
             {
 
             }
-            else if (hex == "9") // DAD B [C]
+            // DAD B [C]
+            else if (hex == "9")
             {
-                string t1 = b.getHex() + c.getHex();
-                string t2 = h.getHex() + l.getHex();
-                long data = Convert.ToUInt32(t1, 16) + Convert.ToUInt32(t2, 16);
-                if(data>65535)
-                {
-                    data -= 65536;
-                    f.carry = true;
-                }
-                h.setData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
-                l.setData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
-            }
-            else if (hex == "19") // DAD D [E]
-            {
-                string t1 = d.getHex() + e.getHex();
-                string t2 = h.getHex() + l.getHex();
+                string t1 = b.GetHex() + c.GetHex();
+                string t2 = h.GetHex() + l.GetHex();
                 long data = Convert.ToUInt32(t1, 16) + Convert.ToUInt32(t2, 16);
                 if (data > 65535)
                 {
                     data -= 65536;
                     f.carry = true;
                 }
-                h.setData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
-                l.setData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
+                h.SetData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
+                l.SetData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
             }
-            else if (hex == "29")  // DAD H [L]
+            // DAD D [E]
+            else if (hex == "19")
             {
-                string t1 = h.getHex() + l.getHex();
-                string t2 = h.getHex() + l.getHex();
+                string t1 = d.GetHex() + e.GetHex();
+                string t2 = h.GetHex() + l.GetHex();
                 long data = Convert.ToUInt32(t1, 16) + Convert.ToUInt32(t2, 16);
                 if (data > 65535)
                 {
                     data -= 65536;
                     f.carry = true;
                 }
-                h.setData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
-                l.setData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
+                h.SetData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
+                l.SetData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
             }
-            else if (hex == "39") // DAD SP
+            // DAD H [L]
+            else if (hex == "29")
+            {
+                string t1 = h.GetHex() + l.GetHex();
+                string t2 = h.GetHex() + l.GetHex();
+                long data = Convert.ToUInt32(t1, 16) + Convert.ToUInt32(t2, 16);
+                if (data > 65535)
+                {
+                    data -= 65536;
+                    f.carry = true;
+                }
+                h.SetData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
+                l.SetData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
+            }
+            // DAD SP
+            else if (hex == "39")
             {
                 string t1 = Convert.ToString(sp, 16).PadLeft(4, '0');
-                string t2 = h.getHex() + l.getHex();
+                string t2 = h.GetHex() + l.GetHex();
                 long data = Convert.ToUInt32(t1, 16) + Convert.ToUInt32(t2, 16);
                 if (data > 65535)
                 {
                     data -= 65536;
                     f.carry = true;
                 }
-                h.setData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
-                l.setData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
+                h.SetData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
+                l.SetData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
             }
-            else if (hex == "3D") // DCR A
+            // DCR A
+            else if (hex == "3D")
             {
+                //dcr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                temp.setData(temp.get2SInt());
-                int data = a.getInt() + temp.getInt();
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                temp.SetData(1);
+                temp.SetData(temp.Get2SInt());
+                int data = a.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "5") // DCR B
+            // DCR B
+            else if (hex == "5")
             {
+                //dcr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                temp.setData(temp.get2SInt());
-                int data = b.getInt() + temp.getInt();
-                f.checkAuxiliary(b.getBinaryString(), temp.getBinaryString());
-                b.setData(data);
-                f.update(b);
+                temp.SetData(1);
+                temp.SetData(temp.Get2SInt());
+                int data = b.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(b.GetBinaryString(), temp.GetBinaryString());
+                b.SetData(data);
+                f.Update(b);
             }
-            else if (hex == "D") // DCR C
+            // DCR C
+            else if (hex == "D")
             {
+                //dcr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                temp.setData(temp.get2SInt());
-                int data = c.getInt() + temp.getInt();
-                f.checkAuxiliary(c.getBinaryString(), temp.getBinaryString());
-                c.setData(data);
-                f.update(c);
+                temp.SetData(1);
+                temp.SetData(temp.Get2SInt());
+                int data = c.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(c.GetBinaryString(), temp.GetBinaryString());
+                c.SetData(data);
+                f.Update(c);
             }
-            else if (hex == "15") // DCR D
+            // DCR D
+            else if (hex == "15")
             {
+                //dcr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                temp.setData(temp.get2SInt());
-                int data = d.getInt() + temp.getInt();
-                f.checkAuxiliary(d.getBinaryString(), temp.getBinaryString());
-                d.setData(data);
-                f.update(d);
+                temp.SetData(1);
+                temp.SetData(temp.Get2SInt());
+                int data = d.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(d.GetBinaryString(), temp.GetBinaryString());
+                d.SetData(data);
+                f.Update(d);
             }
-            else if (hex == "1D") // DCR E
+            // DCR E
+            else if (hex == "1D")
             {
+                //dcr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                temp.setData(temp.get2SInt());
-                int data = e.getInt() + temp.getInt();
-                f.checkAuxiliary(e.getBinaryString(), temp.getBinaryString());
-                e.setData(data);
-                f.update(e);
+                temp.SetData(1);
+                temp.SetData(temp.Get2SInt());
+                int data = e.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(e.GetBinaryString(), temp.GetBinaryString());
+                e.SetData(data);
+                f.Update(e);
             }
-            else if (hex == "25") // DCR H
+            // DCR H
+            else if (hex == "25")
             {
+                //dcr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                temp.setData(temp.get2SInt());
-                int data = h.getInt() + temp.getInt();
-                f.checkAuxiliary(h.getBinaryString(), temp.getBinaryString());
-                h.setData(data);
-                f.update(h);
+                temp.SetData(1);
+                temp.SetData(temp.Get2SInt());
+                int data = h.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(h.GetBinaryString(), temp.GetBinaryString());
+                h.SetData(data);
+                f.Update(h);
             }
-            else if (hex == "2D") // DCR L
+            // DCR L
+            else if (hex == "2D")
             {
+                //dcr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                temp.setData(temp.get2SInt());
-                int data = l.getInt() + temp.getInt();
-                f.checkAuxiliary(l.getBinaryString(), temp.getBinaryString());
-                l.setData(data);
-                f.update(l);
+                temp.SetData(1);
+                temp.SetData(temp.Get2SInt());
+                int data = l.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(l.GetBinaryString(), temp.GetBinaryString());
+                l.SetData(data);
+                f.Update(l);
             }
-            else if (hex == "35") // DCR M
+            // DCR M
+            else if (hex == "35")
             {
+                //dcr ignores carry flag
                 int index = Convert.ToInt32(m, 16);
                 Register data = new Register();
-                data.setData(Convert.ToInt32(memory[index]));
+                data.SetData(Convert.ToInt32(memory[index]));
                 Register temp = new Register();
-                temp.setData(1);
-                temp.setData(temp.get2SInt());
-                int res = data.getInt() + temp.getInt();
-                f.checkAuxiliary(data.getBinaryString(), temp.getBinaryString());
-                data.setData(res);
-                f.update(data);
-                memorybox.Items[index].SubItems[1].Text = data.getHex();
+                temp.SetData(1);
+                temp.SetData(temp.Get2SInt());
+                int res = data.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(data.GetBinaryString(), temp.GetBinaryString());
+                data.SetData(res);
+                f.Update(data);
+                memorybox.Items[index].SubItems[1].Text = data.GetHex();
+                memorybox.Invalidate();
             }
-            else if (hex == "B") // DCX B [C]
+            // DCX B [C]
+            else if (hex == "B")
             {
-                string t1 = b.getHex() + c.getHex();
+                //dcx cannot set any flags
+                string t1 = b.GetHex() + c.GetHex();
                 int data = Convert.ToInt32(t1, 16);
                 data -= 1;
                 t1 = data.ToString("X").PadLeft(4, '0');
-                b.setData(t1.Substring(0, 2));
-                c.setData(t1.Substring(2, 2));
+                b.SetData(t1.Substring(0, 2));
+                c.SetData(t1.Substring(2, 2));
             }
-            else if (hex == "1B") // DCX D [E]
+            // DCX D [E]
+            else if (hex == "1B")
             {
-                string t1 = d.getHex() + e.getHex();
+                //dcx cannot set any flags
+                string t1 = d.GetHex() + e.GetHex();
                 int data = Convert.ToInt32(t1, 16);
                 data -= 1;
                 t1 = data.ToString("X").PadLeft(4, '0');
-                d.setData(t1.Substring(0, 2));
-                e.setData(t1.Substring(2, 2));
+                d.SetData(t1.Substring(0, 2));
+                e.SetData(t1.Substring(2, 2));
             }
-            else if (hex == "2B") // DCX H [L]
+            // DCX H [L]
+            else if (hex == "2B")
             {
-                string t1 = h.getHex() + l.getHex();
+                //dcx cannot set any flags
+                string t1 = h.GetHex() + l.GetHex();
                 int data = Convert.ToInt32(t1, 16);
                 data -= 1;
                 t1 = data.ToString("X").PadLeft(4, '0');
-                h.setData(t1.Substring(0, 2));
-                l.setData(t1.Substring(2, 2));
+                h.SetData(t1.Substring(0, 2));
+                l.SetData(t1.Substring(2, 2));
             }
-            else if (hex == "3B") // DCX SP
+            // DCX SP
+            else if (hex == "3B")
             {
+                //dcx cannot set any flags
                 string t1 = Convert.ToString(sp, 16).PadLeft(4, '0');
                 int data = Convert.ToInt32(t1, 16);
                 data -= 1;
                 sp = data;
             }
-            else if (hex == "F3") // DI
+            // DI
+            else if (hex == "F3")
             {
 
             }
-            else if (hex == "FB") // EI
+            // EI
+            else if (hex == "FB")
             {
 
             }
-            else if (hex == "76") // HLT
+            // HLT
+            else if (hex == "76")
             {
-                //end og life
+                //end of life
             }
-            else if (hex == "DB") // IN Port8
+            // IN Port8
+            else if (hex == "DB")
             {
-                //useless
+                //useless right now
+                //can be used if i implement hardware simulation
             }
-            else if (hex == "3C") // INR A
+            // INR A
+            else if (hex == "3C")
             {
+                //inr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                int data = a.getInt() + temp.getInt();
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                temp.SetData(1);
+                int data = a.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "4") // INR B
+            // INR B
+            else if (hex == "4")
             {
+                //inr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                int data = b.getInt() + temp.getInt();
-                f.checkAuxiliary(b.getBinaryString(), temp.getBinaryString());
-                b.setData(data);
-                f.update(b);
+                temp.SetData(1);
+                int data = b.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(b.GetBinaryString(), temp.GetBinaryString());
+                b.SetData(data);
+                f.Update(b);
             }
-            else if (hex == "C") // INR C
+            // INR C
+            else if (hex == "C")
             {
+                //inr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                int data = c.getInt() + temp.getInt();
-                f.checkAuxiliary(c.getBinaryString(), temp.getBinaryString());
-                c.setData(data);
-                f.update(c);
+                temp.SetData(1);
+                int data = c.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(c.GetBinaryString(), temp.GetBinaryString());
+                c.SetData(data);
+                f.Update(c);
             }
-            else if (hex == "14") // INR D
+            // INR D
+            else if (hex == "14")
             {
+                //inr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                int data = d.getInt() + temp.getInt();
-                f.checkAuxiliary(d.getBinaryString(), temp.getBinaryString());
-                d.setData(data);
-                f.update(d);
+                temp.SetData(1);
+                int data = d.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(d.GetBinaryString(), temp.GetBinaryString());
+                d.SetData(data);
+                f.Update(d);
             }
-            else if (hex == "1C") // INR E
+            // INR E
+            else if (hex == "1C")
             {
+                //inr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                int data = e.getInt() + temp.getInt();
-                f.checkAuxiliary(e.getBinaryString(), temp.getBinaryString());
-                e.setData(data);
-                f.update(e);
+                temp.SetData(1);
+                int data = e.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(e.GetBinaryString(), temp.GetBinaryString());
+                e.SetData(data);
+                f.Update(e);
             }
-            else if (hex == "24") // INR H
+            // INR H
+            else if (hex == "24")
             {
+                //inr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                int data = h.getInt() + temp.getInt();
-                f.checkAuxiliary(h.getBinaryString(), temp.getBinaryString());
-                h.setData(data);
-                f.update(h);
+                temp.SetData(1);
+                int data = h.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(h.GetBinaryString(), temp.GetBinaryString());
+                h.SetData(data);
+                f.Update(h);
             }
-            else if (hex == "2C") // INR L
+            // INR L
+            else if (hex == "2C")
             {
+                //inr ignores carry flag
                 Register temp = new Register();
-                temp.setData(1);
-                int data = l.getInt() + temp.getInt();
-                f.checkAuxiliary(l.getBinaryString(), temp.getBinaryString());
-                l.setData(data);
-                f.update(l);
+                temp.SetData(1);
+                int data = l.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(l.GetBinaryString(), temp.GetBinaryString());
+                l.SetData(data);
+                f.Update(l);
             }
-            else if (hex == "34") // INR M
+            // INR M
+            else if (hex == "34")
             {
+                //inr ignores carry flag
                 int index = Convert.ToInt32(m, 16);
                 Register data = new Register();
-                data.setData(Convert.ToInt32(memory[index]));
+                data.SetData(Convert.ToInt32(memory[index]));
                 Register temp = new Register();
-                temp.setData(1);
-                int res = data.getInt() + temp.getInt();
-                f.checkAuxiliary(data.getBinaryString(), temp.getBinaryString());
-                data.setData(res);
-                f.update(data);
-                memorybox.Items[index].SubItems[1].Text = data.getHex();
+                temp.SetData(1);
+                int res = data.GetInt() + temp.GetInt();
+                f.CheckAuxiliary(data.GetBinaryString(), temp.GetBinaryString());
+                data.SetData(res);
+                f.Update(data);
+                memorybox.Items[index].SubItems[1].Text = data.GetHex();
+                memorybox.Invalidate();
             }
-            else if (hex == "3") // INX B [C]
+            // INX B [C]
+            else if (hex == "3")
             {
-                string t1 = b.getHex() + c.getHex();
+                //inx cannot set any flags
+                string t1 = b.GetHex() + c.GetHex();
                 int data = Convert.ToInt32(t1, 16);
                 data += 1;
                 if (data > 65535)
                     data -= 65536;
                 t1 = data.ToString("X").PadLeft(4, '0');
-                b.setData(t1.Substring(0, 2));
-                c.setData(t1.Substring(2, 2));
+                b.SetData(t1.Substring(0, 2));
+                c.SetData(t1.Substring(2, 2));
             }
-            else if (hex == "13") // INX D [E]
+            // INX D [E]
+            else if (hex == "13")
             {
-                string t1 = d.getHex() + e.getHex();
+                //inx cannot set any flags
+                string t1 = d.GetHex() + e.GetHex();
                 int data = Convert.ToInt32(t1, 16);
                 data += 1;
                 if (data > 65535)
                     data -= 65536;
                 t1 = data.ToString("X").PadLeft(4, '0');
-                d.setData(t1.Substring(0, 2));
-                e.setData(t1.Substring(2, 2));
+                d.SetData(t1.Substring(0, 2));
+                e.SetData(t1.Substring(2, 2));
             }
-            else if (hex == "23") // INX H [L]
+            // INX H [L]
+            else if (hex == "23")
             {
-                string t1 = h.getHex() + l.getHex();
+                //inx cannot set any flags
+                string t1 = h.GetHex() + l.GetHex();
                 int data = Convert.ToInt32(t1, 16);
                 data -= 1;
                 if (data > 65535)
                     data -= 65536;
                 t1 = data.ToString("X").PadLeft(4, '0');
-                h.setData(t1.Substring(0, 2));
-                l.setData(t1.Substring(2, 2));
+                h.SetData(t1.Substring(0, 2));
+                l.SetData(t1.Substring(2, 2));
             }
-            else if (hex == "33") // INX SP
+            // INX SP
+            else if (hex == "33")
             {
+                //inx cannot set any flags
                 string t1 = Convert.ToString(sp, 16).PadLeft(4, '0');
                 int data = Convert.ToInt32(t1, 16);
                 data += 1;
@@ -2493,7 +2590,8 @@ namespace _8085_Simulator
                     data -= 65536;
                 sp = data;
             }
-            else if (hex == "DA") // JC label16
+            // JC label16
+            else if (hex == "DA")
             {
                 if (f.carry == true)
                 {
@@ -2504,9 +2602,10 @@ namespace _8085_Simulator
                     pc.counter -= 1;
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "FA") // JM label16
+            // JM label16
+            else if (hex == "FA")
             {
                 if (f.sign == true)
                 {
@@ -2517,9 +2616,10 @@ namespace _8085_Simulator
                     pc.counter -= 1;
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "C3") // JMP label16
+            // JMP label16
+            else if (hex == "C3")
             {
                 string label = "";
                 label += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
@@ -2527,7 +2627,8 @@ namespace _8085_Simulator
                 pc.counter = Convert.ToInt32(label, 16);
                 pc.counter -= 1;
             }
-            else if (hex == "D2") // JNC label16
+            // JNC label16
+            else if (hex == "D2")
             {
                 if (f.carry == false)
                 {
@@ -2538,9 +2639,10 @@ namespace _8085_Simulator
                     pc.counter -= 1;
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "C2") // JNZ label16
+            // JNZ label16
+            else if (hex == "C2")
             {
                 if (f.zero == false)
                 {
@@ -2551,9 +2653,10 @@ namespace _8085_Simulator
                     pc.counter -= 1;
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "F2") // JP label16
+            // JP label16
+            else if (hex == "F2")
             {
                 if (f.sign == false)
                 {
@@ -2564,9 +2667,10 @@ namespace _8085_Simulator
                     pc.counter -= 1;
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "EA") // JPE label16
+            // JPE label16
+            else if (hex == "EA")
             {
                 if (f.parity == true)
                 {
@@ -2577,9 +2681,10 @@ namespace _8085_Simulator
                     pc.counter -= 1;
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "D2") // JPO label16
+            // JPO label16
+            else if (hex == "D2")
             {
                 if (f.parity == false)
                 {
@@ -2590,9 +2695,10 @@ namespace _8085_Simulator
                     pc.counter -= 1;
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "CA") // JZ label16
+            // JZ label16
+            else if (hex == "CA")
             {
                 if (f.zero == true)
                 {
@@ -2603,448 +2709,603 @@ namespace _8085_Simulator
                     pc.counter -= 1;
                 }
                 else
-                    pc.incrementBy(2);
+                    pc.IncrementBy(2);
             }
-            else if (hex == "3A") // LDA address16
+            // LDA address16
+            else if (hex == "3A")
             {
                 string addr = "";
                 addr += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
                 addr += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
                 int index = Convert.ToInt32(addr, 16);
-                a.setData(Convert.ToInt32(memory[index]));
-                pc.incrementBy(2);
+                a.SetData(Convert.ToInt32(memory[index]));
+                pc.IncrementBy(2);
             }
-            else if (hex == "A") // LDAX B [C]
+            // LDAX B [C]
+            else if (hex == "A")
             {
                 string addr = "";
-                addr += b.getHex();
-                addr += c.getHex();
+                addr += b.GetHex();
+                addr += c.GetHex();
                 int index = Convert.ToInt32(addr, 16);
-                a.setData(Convert.ToInt32(memory[index]));
+                a.SetData(Convert.ToInt32(memory[index]));
             }
-            else if (hex == "1A") // LDAX D [E]
+            // LDAX D [E]
+            else if (hex == "1A")
             {
                 string addr = "";
-                addr += d.getHex();
-                addr += e.getHex();
+                addr += d.GetHex();
+                addr += e.GetHex();
                 int index = Convert.ToInt32(addr, 16);
-                a.setData(Convert.ToInt32(memory[index]));
+                a.SetData(Convert.ToInt32(memory[index]));
             }
-            else if (hex == "2A") // LHLD address16
+            // LHLD address16
+            else if (hex == "2A")
             {
-                int index = memory[pc.counter + 2] + memory[pc.counter + 1];
-                int ad1 = memory[index + 1];
-                int ad2 = memory[index];
-                h.setData(ad1);
-                l.setData(ad2);
-                pc.incrementBy(2);
+                string addr = memory[pc.counter + 2].ToString("X").PadLeft(2, '0') + memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
+                int ad1 = memory[Convert.ToInt32(addr,16) + 1];
+                int ad2 = memory[Convert.ToInt32(addr, 16)];
+                h.SetData(ad1);
+                l.SetData(ad2);
+                pc.IncrementBy(2);
             }
-            else if (hex == "1") // LXI B [C] data16
+            // LXI B [C] data16
+            else if (hex == "1")
             {
-                b.setData(Convert.ToInt32(memory[pc.counter + 2]));
-                c.setData(Convert.ToInt32(memory[pc.counter + 1]));
-                pc.incrementBy(2);
+                b.SetData(Convert.ToInt32(memory[pc.counter + 2]));
+                c.SetData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.IncrementBy(2);
             }
-            else if (hex == "11") // LXI D [E] data16
+            // LXI D [E] data16
+            else if (hex == "11")
             {
-                d.setData(Convert.ToInt32(memory[pc.counter + 2]));
-                e.setData(Convert.ToInt32(memory[pc.counter + 1]));
-                pc.incrementBy(2);
+                d.SetData(Convert.ToInt32(memory[pc.counter + 2]));
+                e.SetData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.IncrementBy(2);
             }
-            else if (hex == "21") // LXI H [L] data16
+            // LXI H [L] data16
+            else if (hex == "21")
             {
-                h.setData(Convert.ToInt32(memory[pc.counter + 2]));
-                l.setData(Convert.ToInt32(memory[pc.counter + 1]));
-                pc.incrementBy(2);
+                h.SetData(Convert.ToInt32(memory[pc.counter + 2]));
+                l.SetData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.IncrementBy(2);
             }
-            else if (hex == "31") // LXI SP data16
+            // LXI SP data16
+            else if (hex == "31")
             {
                 string data = "";
                 data += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
                 data += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
                 sp = Convert.ToInt32(data, 16);
-                pc.incrementBy(2);
+                pc.IncrementBy(2);
             }
-            else if (hex == "7F") // MOV A A
+            // MOV A A
+            else if (hex == "7F")
             {
-                a.setData(a.getInt());
+                a.SetData(a.GetInt());
             }
-            else if (hex == "78") // MOV A B
+            // MOV A B
+            else if (hex == "78")
             {
-                a.setData(b.getInt());
+                a.SetData(b.GetInt());
             }
-            else if (hex == "79") // MOV A C
+            // MOV A C
+            else if (hex == "79")
             {
-                a.setData(c.getInt());
+                a.SetData(c.GetInt());
             }
-            else if (hex == "7A") // MOV A D
+            // MOV A D
+            else if (hex == "7A")
             {
-                a.setData(d.getInt());
+                a.SetData(d.GetInt());
             }
-            else if (hex == "7B") // MOV A E
+            // MOV A E
+            else if (hex == "7B")
             {
-                a.setData(e.getInt());
+                a.SetData(e.GetInt());
             }
-            else if (hex == "7C") // MOV A H
+            // MOV A H
+            else if (hex == "7C")
             {
-                a.setData(h.getInt());
+                a.SetData(h.GetInt());
             }
-            else if (hex == "7D") // MOV A L
+            // MOV A L
+            else if (hex == "7D")
             {
-                a.setData(l.getInt());
+                a.SetData(l.GetInt());
             }
-            else if (hex == "7E") // MOV A M
-            {
-                int index = Convert.ToInt32(m, 16);
-                a.setData(Convert.ToInt32(memory[index]));
-            }
-            else if (hex == "47") // MOV B A
-            {
-                b.setData(a.getInt());
-            }
-            else if (hex == "40") // MOV B B
-            {
-                b.setData(b.getInt());
-            }
-            else if (hex == "41") // MOV B C
-            {
-                b.setData(c.getInt());
-            }
-            else if (hex == "42") // MOV B D
-            {
-                b.setData(d.getInt());
-            }
-            else if (hex == "43") // MOV B E
-            {
-                b.setData(e.getInt());
-            }
-            else if (hex == "44") // MOV B H
-            {
-                b.setData(h.getInt());
-            }
-            else if (hex == "45") // MOV B L
-            {
-                b.setData(l.getInt());
-            }
-            else if (hex == "46") // MOV B M
+            // MOV A M
+            else if (hex == "7E")
             {
                 int index = Convert.ToInt32(m, 16);
-                b.setData(Convert.ToInt32(memory[index]));
+                a.SetData(Convert.ToInt32(memory[index]));
             }
-            else if (hex == "4F") // MOV C A
+            // MOV B A
+            else if (hex == "47")
             {
-                c.setData(a.getInt());
+                b.SetData(a.GetInt());
             }
-            else if (hex == "48") // MOV C B
+            // MOV B B
+            else if (hex == "40")
             {
-                c.setData(b.getInt());
+                b.SetData(b.GetInt());
             }
-            else if (hex == "49") // MOV C C
+            // MOV B C
+            else if (hex == "41")
             {
-                c.setData(c.getInt());
+                b.SetData(c.GetInt());
             }
-            else if (hex == "4A") // MOV C D
+            // MOV B D
+            else if (hex == "42")
             {
-                c.setData(d.getInt());
+                b.SetData(d.GetInt());
             }
-            else if (hex == "4B") // MOV C E
+            // MOV B E
+            else if (hex == "43")
             {
-                c.setData(l.getInt());
+                b.SetData(e.GetInt());
             }
-            else if (hex == "4C") // MOV C H
+            // MOV B H
+            else if (hex == "44")
             {
-                c.setData(l.getInt());
+                b.SetData(h.GetInt());
             }
-            else if (hex == "4D") // MOV C L
+            // MOV B L
+            else if (hex == "45")
             {
-                c.setData(l.getInt());
+                b.SetData(l.GetInt());
             }
-            else if (hex == "4E") // MOV C M
-            {
-                int index = Convert.ToInt32(m, 16);
-                c.setData(Convert.ToInt32(memory[index]));
-            }
-            else if (hex == "57") // MOV D A
-            {
-                d.setData(a.getInt());
-            }
-            else if (hex == "50") // MOV D B
-            {
-                d.setData(b.getInt());
-            }
-            else if (hex == "51") // MOV D C
-            {
-                d.setData(c.getInt());
-            }
-            else if (hex == "52") // MOV D D
-            {
-                a.setData(a.getInt());
-            }
-            else if (hex == "53") // MOV D E
-            {
-                d.setData(e.getInt());
-            }
-            else if (hex == "54") // MOV D H
-            {
-                d.setData(h.getInt());
-            }
-            else if (hex == "55") // MOV D L
-            {
-                d.setData(l.getInt());
-            }
-            else if (hex == "56") // MOV D M
+            // MOV B M
+            else if (hex == "46")
             {
                 int index = Convert.ToInt32(m, 16);
-                d.setData(Convert.ToInt32(memory[index]));
+                b.SetData(Convert.ToInt32(memory[index]));
             }
-            else if (hex == "5F") // MOV E A
+            // MOV C A
+            else if (hex == "4F")
             {
-                e.setData(a.getInt());
+                c.SetData(a.GetInt());
             }
-            else if (hex == "58") // MOV E B
+            // MOV C B
+            else if (hex == "48")
             {
-                e.setData(b.getInt());
+                c.SetData(b.GetInt());
             }
-            else if (hex == "59") // MOV E C
+            // MOV C C
+            else if (hex == "49")
             {
-                e.setData(c.getInt());
+                c.SetData(c.GetInt());
             }
-            else if (hex == "5A") // MOV E D
+            // MOV C D
+            else if (hex == "4A")
             {
-                e.setData(d.getInt());
+                c.SetData(d.GetInt());
             }
-            else if (hex == "5B") // MOV E E
+            // MOV C E
+            else if (hex == "4B")
             {
-                e.setData(e.getInt());
+                c.SetData(l.GetInt());
             }
-            else if (hex == "5C") // MOV E H
+            // MOV C H
+            else if (hex == "4C")
             {
-                e.setData(h.getInt());
+                c.SetData(l.GetInt());
             }
-            else if (hex == "5D") // MOV E L
+            // MOV C L
+            else if (hex == "4D")
             {
-                e.setData(l.getInt());
+                c.SetData(l.GetInt());
             }
-            else if (hex == "5E") // MOV E M
-            {
-                int index = Convert.ToInt32(m, 16);
-                e.setData(Convert.ToInt32(memory[index]));
-            }
-            else if (hex == "67") // MOV H A
-            {
-                h.setData(a.getInt());
-            }
-            else if (hex == "60") // MOV H B
-            {
-                h.setData(b.getInt());
-            }
-            else if (hex == "61") // MOV H C
-            {
-                h.setData(c.getInt());
-            }
-            else if (hex == "62") // MOV H D
-            {
-                h.setData(d.getInt());
-            }
-            else if (hex == "63") // MOV H E
-            {
-                h.setData(e.getInt());
-            }
-            else if (hex == "64") // MOV H H
-            {
-                h.setData(h.getInt());
-            }
-            else if (hex == "65") // MOV H L
-            {
-                h.setData(l.getInt());
-            }
-            else if (hex == "66") // MOV H M
+            // MOV C M
+            else if (hex == "4E")
             {
                 int index = Convert.ToInt32(m, 16);
-                h.setData(Convert.ToInt32(memory[index]));
+                c.SetData(Convert.ToInt32(memory[index]));
             }
-            else if (hex == "6F") // MOV L A
+            // MOV D A
+            else if (hex == "57")
             {
-                l.setData(a.getInt());
+                d.SetData(a.GetInt());
             }
-            else if (hex == "68") // MOV L B
+            // MOV D B
+            else if (hex == "50")
             {
-                l.setData(b.getInt());
+                d.SetData(b.GetInt());
             }
-            else if (hex == "69") // MOV L C
+            // MOV D C
+            else if (hex == "51")
             {
-                l.setData(c.getInt());
+                d.SetData(c.GetInt());
             }
-            else if (hex == "6A") // MOV L D
+            // MOV D D
+            else if (hex == "52")
             {
-                l.setData(d.getInt());
+                a.SetData(a.GetInt());
             }
-            else if (hex == "6B") // MOV L E
+            // MOV D E
+            else if (hex == "53")
             {
-                l.setData(e.getInt());
+                d.SetData(e.GetInt());
             }
-            else if (hex == "6C") // MOV L H
+            // MOV D H
+            else if (hex == "54")
             {
-                l.setData(h.getInt());
+                d.SetData(h.GetInt());
             }
-            else if (hex == "6D") // MOV L L
+            // MOV D L
+            else if (hex == "55")
             {
-                l.setData(l.getInt());
+                d.SetData(l.GetInt());
             }
-            else if (hex == "6E") // MOV L M
-            {
-                int index = Convert.ToInt32(m, 16);
-                l.setData(Convert.ToInt32(memory[index]));
-            }
-            else if (hex == "77") // MOV M A
-            {
-                int index = Convert.ToInt32(m, 16);
-                memory[index] = Convert.ToByte(a.getInt());
-                memorybox.Items[index].SubItems[1].Text = a.getHex();
-            }
-            else if (hex == "70") // MOV M B
+            // MOV D M
+            else if (hex == "56")
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = Convert.ToByte(b.getInt());
-                memorybox.Items[index].SubItems[1].Text = b.getHex();
+                d.SetData(Convert.ToInt32(memory[index]));
             }
-            else if (hex == "71") // MOV M C
+            // MOV E A
+            else if (hex == "5F")
+            {
+                e.SetData(a.GetInt());
+            }
+            // MOV E B
+            else if (hex == "58")
+            {
+                e.SetData(b.GetInt());
+            }
+            // MOV E C
+            else if (hex == "59")
+            {
+                e.SetData(c.GetInt());
+            }
+            // MOV E D
+            else if (hex == "5A")
+            {
+                e.SetData(d.GetInt());
+            }
+            // MOV E E
+            else if (hex == "5B")
+            {
+                e.SetData(e.GetInt());
+            }
+            // MOV E H
+            else if (hex == "5C")
+            {
+                e.SetData(h.GetInt());
+            }
+            // MOV E L
+            else if (hex == "5D")
+            {
+                e.SetData(l.GetInt());
+            }
+            // MOV E M
+            else if (hex == "5E")
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = Convert.ToByte(c.getInt());
-                memorybox.Items[index].SubItems[1].Text = c.getHex();
+                e.SetData(Convert.ToInt32(memory[index]));
             }
-            else if (hex == "72") // MOV M D
+            // MOV H A
+            else if (hex == "67")
+            {
+                h.SetData(a.GetInt());
+            }
+            // MOV H B
+            else if (hex == "60")
+            {
+                h.SetData(b.GetInt());
+            }
+            // MOV H C
+            else if (hex == "61")
+            {
+                h.SetData(c.GetInt());
+            }
+            // MOV H D
+            else if (hex == "62")
+            {
+                h.SetData(d.GetInt());
+            }
+            // MOV H E
+            else if (hex == "63")
+            {
+                h.SetData(e.GetInt());
+            }
+            // MOV H H
+            else if (hex == "64")
+            {
+                h.SetData(h.GetInt());
+            }
+            // MOV H L
+            else if (hex == "65")
+            {
+                h.SetData(l.GetInt());
+            }
+            // MOV H M
+            else if (hex == "66")
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = Convert.ToByte(d.getInt());
-                memorybox.Items[index].SubItems[1].Text = d.getHex();
+                h.SetData(Convert.ToInt32(memory[index]));
             }
-            else if (hex == "73") // MOV M E
+            // MOV L A
+            else if (hex == "6F")
+            {
+                l.SetData(a.GetInt());
+            }
+            // MOV L B
+            else if (hex == "68")
+            {
+                l.SetData(b.GetInt());
+            }
+            // MOV L C
+            else if (hex == "69")
+            {
+                l.SetData(c.GetInt());
+            }
+            // MOV L D
+            else if (hex == "6A")
+            {
+                l.SetData(d.GetInt());
+            }
+            // MOV L E
+            else if (hex == "6B")
+            {
+                l.SetData(e.GetInt());
+            }
+            // MOV L H
+            else if (hex == "6C")
+            {
+                l.SetData(h.GetInt());
+            }
+            // MOV L L
+            else if (hex == "6D")
+            {
+                l.SetData(l.GetInt());
+            }
+            // MOV L M
+            else if (hex == "6E")
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = Convert.ToByte(e.getInt());
-                memorybox.Items[index].SubItems[1].Text = e.getHex();
+                l.SetData(Convert.ToInt32(memory[index]));
             }
-            else if (hex == "74") // MOV M H
+            // MOV M A
+            else if (hex == "77")
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = Convert.ToByte(h.getInt());
-                memorybox.Items[index].SubItems[1].Text = h.getHex();
+                memory[index] = Convert.ToByte(a.GetInt());
+                memorybox.Items[index].SubItems[1].Text = a.GetHex();
+                memorybox.Invalidate();
             }
-            else if (hex == "75") // MOV M L
+            // MOV M B
+            else if (hex == "70")
             {
                 int index = Convert.ToInt32(m, 16);
-                memory[index] = Convert.ToByte(l.getInt());
-                memorybox.Items[index].SubItems[1].Text = l.getHex();
+                memory[index] = Convert.ToByte(b.GetInt());
+                memorybox.Items[index].SubItems[1].Text = b.GetHex();
+                memorybox.Invalidate();
             }
-            else if (hex == "3E") // MVI A data8
+            // MOV M C
+            else if (hex == "71")
             {
-                a.setData(Convert.ToInt32(memory[pc.counter + 1]));
-                pc.incrementBy(1);
+                int index = Convert.ToInt32(m, 16);
+                memory[index] = Convert.ToByte(c.GetInt());
+                memorybox.Items[index].SubItems[1].Text = c.GetHex();
+                memorybox.Invalidate();
             }
-            else if (hex == "6") // MVI B data8
+            // MOV M D
+            else if (hex == "72")
             {
-                b.setData(Convert.ToInt32(memory[pc.counter + 1]));
-                pc.incrementBy(1);
+                int index = Convert.ToInt32(m, 16);
+                memory[index] = Convert.ToByte(d.GetInt());
+                memorybox.Items[index].SubItems[1].Text = d.GetHex();
+                memorybox.Invalidate();
             }
-            else if (hex == "E") // MVI C data8
+            // MOV M E
+            else if (hex == "73")
             {
-                c.setData(Convert.ToInt32(memory[pc.counter + 1]));
-                pc.incrementBy(1);
+                int index = Convert.ToInt32(m, 16);
+                memory[index] = Convert.ToByte(e.GetInt());
+                memorybox.Items[index].SubItems[1].Text = e.GetHex();
+                memorybox.Invalidate();
             }
-            else if (hex == "16") // MVI D data8
+            // MOV M H
+            else if (hex == "74")
             {
-                d.setData(Convert.ToInt32(memory[pc.counter + 1]));
-                pc.incrementBy(1);
+                int index = Convert.ToInt32(m, 16);
+                memory[index] = Convert.ToByte(h.GetInt());
+                memorybox.Items[index].SubItems[1].Text = h.GetHex();
+                memorybox.Invalidate();
             }
-            else if (hex == "1E") // MVI E data8
+            // MOV M L
+            else if (hex == "75")
             {
-                e.setData(Convert.ToInt32(memory[pc.counter + 1]));
-                pc.incrementBy(1);
+                int index = Convert.ToInt32(m, 16);
+                memory[index] = Convert.ToByte(l.GetInt());
+                memorybox.Items[index].SubItems[1].Text = l.GetHex();
+                memorybox.Invalidate();
             }
-            else if (hex == "26") // MVI H data8
+            // MVI A data8
+            else if (hex == "3E")
             {
-                h.setData(Convert.ToInt32(memory[pc.counter + 1]));
-                pc.incrementBy(1);
+                a.SetData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.IncrementBy(1);
             }
-            else if (hex == "2E") // MVI L data8
+            // MVI B data8
+            else if (hex == "6")
             {
-                l.setData(Convert.ToInt32(memory[pc.counter + 1]));
-                pc.incrementBy(1);
+                b.SetData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.IncrementBy(1);
             }
-            else if (hex == "36") // MVI M data8
+            // MVI C data8
+            else if (hex == "E")
+            {
+                c.SetData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.IncrementBy(1);
+            }
+            // MVI D data8
+            else if (hex == "16")
+            {
+                d.SetData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.IncrementBy(1);
+            }
+            // MVI E data8
+            else if (hex == "1E")
+            {
+                e.SetData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.IncrementBy(1);
+            }
+            // MVI H data8
+            else if (hex == "26")
+            {
+                h.SetData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.IncrementBy(1);
+            }
+            // MVI L data8
+            else if (hex == "2E")
+            {
+                l.SetData(Convert.ToInt32(memory[pc.counter + 1]));
+                pc.IncrementBy(1);
+            }
+            // MVI M data8
+            else if (hex == "36")
             {
                 int index = Convert.ToInt32(m, 16);
                 memory[index] = memory[pc.counter + 1];
                 memorybox.Items[index].SubItems[1].Text = memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
-                pc.incrementBy(1);
+                memorybox.Invalidate();
+                pc.IncrementBy(1);
             }
-            else if (hex == "0") // NOP
+            // NOP
+            else if (hex == "0")
             {
                 //NO MEANS NO
             }
-            else if (hex == "B7") // ORA A
+            // ORA A
+            else if (hex == "B7")
             {
-                int ora = a.getInt() | a.getInt();
-                a.setData(ora);
+                int ora = a.GetInt() | a.GetInt();
+                a.SetData(ora);
+                //ora reset carry by default
+                f.carry = false;
+                //ora reset auxiliary by default
+                f.auxiliary = false;
+                //
+                f.Update(a);
             }
-            else if (hex == "B0") // ORA B
+            // ORA B
+            else if (hex == "B0")
             {
-                int ora = a.getInt() | b.getInt();
-                a.setData(ora);
+                int ora = a.GetInt() | b.GetInt();
+                a.SetData(ora);
+                //ora reset carry by default
+                f.carry = false;
+                //ora reset auxiliary by default
+                f.auxiliary = false;
+                //
+                f.Update(a);
             }
-            else if (hex == "B1") // ORA C
+            // ORA C
+            else if (hex == "B1")
             {
-                int ora = a.getInt() | c.getInt();
-                a.setData(ora);
+                int ora = a.GetInt() | c.GetInt();
+                a.SetData(ora);
+                //ora reset carry by default
+                f.carry = false;
+                //ora reset auxiliary by default
+                f.auxiliary = false;
+                //
+                f.Update(a);
             }
-            else if (hex == "B2") // ORA D
+            // ORA D
+            else if (hex == "B2")
             {
-                int ora = a.getInt() | d.getInt();
-                a.setData(ora);
+                int ora = a.GetInt() | d.GetInt();
+                a.SetData(ora);
+                //ora reset carry by default
+                f.carry = false;
+                //ora reset auxiliary by default
+                f.auxiliary = false;
+                //
+                f.Update(a);
             }
-            else if (hex == "B3") // ORA E
+            // ORA E
+            else if (hex == "B3")
             {
-                int ora = a.getInt() | e.getInt();
-                a.setData(ora);
+                int ora = a.GetInt() | e.GetInt();
+                a.SetData(ora);
+                //ora reset carry by default
+                f.carry = false;
+                //ora reset auxiliary by default
+                f.auxiliary = false;
+                //
+                f.Update(a);
             }
-            else if (hex == "B4") // ORA H
+            // ORA H
+            else if (hex == "B4")
             {
-                int ora = a.getInt() | h.getInt();
-                a.setData(ora);
+                int ora = a.GetInt() | h.GetInt();
+                a.SetData(ora);
+                //ora reset carry by default
+                f.carry = false;
+                //ora reset auxiliary by default
+                f.auxiliary = false;
+                //
+                f.Update(a);
             }
-            else if (hex == "B5") // ORA L
+            // ORA L
+            else if (hex == "B5")
             {
-                int ora = a.getInt() | l.getInt();
-                a.setData(ora);
+                int ora = a.GetInt() | l.GetInt();
+                a.SetData(ora);
+                //ora reset carry by default
+                f.carry = false;
+                //ora reset auxiliary by default
+                f.auxiliary = false;
+                //
+                f.Update(a);
             }
-            else if (hex == "B6") // ORA M
+            // ORA M
+            else if (hex == "B6")
             {
-                int ora = a.getInt() | Convert.ToInt32(memory[Convert.ToInt32(m, 16)]);
-                a.setData(ora);
+                int ora = a.GetInt() | Convert.ToInt32(memory[Convert.ToInt32(m, 16)]);
+                a.SetData(ora);
+                //ora reset carry by default
+                f.carry = false;
+                //ora reset auxiliary by default
+                f.auxiliary = false;
+                //
+                f.Update(a);
             }
-            else if (hex == "F6") // ORI data8
+            // ORI data8
+            else if (hex == "F6")
             {
-                int ora = a.getInt() | Convert.ToInt32(memory[pc.counter + 1]);
-                a.setData(ora);
+                int ora = a.GetInt() | Convert.ToInt32(memory[pc.counter + 1]);
+                a.SetData(ora);
+                //ori reset carry by default
+                f.carry = false;
+                //ori reset auxiliary by default
+                f.auxiliary = false;
+                //
+                f.Update(a);
             }
-            else if (hex == "D3") // OUT port8
+            // OUT port8
+            else if (hex == "D3")
             {
-                //useless
+                //useless right now
+                //useful if i implement hardware simulation
             }
-            else if (hex == "E9") // PCHL
+            // PCHL
+            else if (hex == "E9")
             {
-                int data = Convert.ToInt32(h.getInt()) + Convert.ToInt32(l.getInt());
-                pc.counter = data-1;
+                int data = Convert.ToInt32(h.GetInt()) + Convert.ToInt32(l.GetInt());
+                pc.counter = data - 1;
             }
-            else if (hex == "C1") // POP B [C]
+            // POP B [C]
+            else if (hex == "C1")
             {
                 if (sp <= 65533)
                 {
-                    b.setData(stack[sp]);
+                    b.SetData(stack[sp]);
                     sp++;
-                    c.setData(stack[sp]);
+                    c.SetData(stack[sp]);
                     sp++;
                 }
                 else
@@ -3053,13 +3314,14 @@ namespace _8085_Simulator
                     errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
                 }
             }
-            else if (hex == "D1") // POP D [E]
+            // POP D [E]
+            else if (hex == "D1")
             {
                 if (sp <= 65533)
                 {
-                    d.setData(stack[sp]);
+                    d.SetData(stack[sp]);
                     sp++;
-                    e.setData(stack[sp]);
+                    e.SetData(stack[sp]);
                     sp++;
                 }
                 else
@@ -3068,13 +3330,14 @@ namespace _8085_Simulator
                     errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
                 }
             }
-            else if (hex == "E1") // POP H [L]
+            // POP H [L]
+            else if (hex == "E1")
             {
                 if (sp <= 65533)
                 {
-                    h.setData(stack[sp]);
+                    h.SetData(stack[sp]);
                     sp++;
-                    l.setData(stack[sp]);
+                    l.SetData(stack[sp]);
                     sp++;
                 }
                 else
@@ -3083,13 +3346,14 @@ namespace _8085_Simulator
                     errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
                 }
             }
-            else if (hex == "F1") // POP PSW
+            // POP PSW
+            else if (hex == "F1")
             {
                 if (sp <= 65533)
                 {
-                    a.setData(stack[sp]);
+                    a.SetData(stack[sp]);
                     sp++;
-                    f.setData(stack[sp]);
+                    f.SetData(stack[sp]);
                     sp++;
                 }
                 else
@@ -3098,43 +3362,52 @@ namespace _8085_Simulator
                     errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
                 }
             }
-            else if (hex == "C5") // PUSH B [C]
+            // PUSH B [C]
+            else if (hex == "C5")
             {
                 sp--;
-                stack[sp] = Convert.ToByte(c.getInt());
+                stack[sp] = Convert.ToByte(c.GetInt());
                 stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                 sp--;
-                stack[sp] = Convert.ToByte(b.getInt());
+                stack[sp] = Convert.ToByte(b.GetInt());
                 stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                stackbox.Invalidate();
             }
-            else if (hex == "D5") // PUSH D [E]
+            // PUSH D [E]
+            else if (hex == "D5")
             {
                 sp--;
-                stack[sp] = Convert.ToByte(e.getInt());
+                stack[sp] = Convert.ToByte(e.GetInt());
                 stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                 sp--;
-                stack[sp] = Convert.ToByte(d.getInt());
+                stack[sp] = Convert.ToByte(d.GetInt());
                 stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                stackbox.Invalidate();
             }
-            else if (hex == "E5") // PUSH H [L]
+            // PUSH H [L]
+            else if (hex == "E5")
             {
                 sp--;
-                stack[sp] = Convert.ToByte(l.getInt());
+                stack[sp] = Convert.ToByte(l.GetInt());
                 stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                 sp--;
-                stack[sp] = Convert.ToByte(h.getInt());
+                stack[sp] = Convert.ToByte(h.GetInt());
                 stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                stackbox.Invalidate();
             }
-            else if (hex == "F5") // PUSH PSW
+            // PUSH PSW
+            else if (hex == "F5")
             {
                 sp--;
-                stack[sp] = Convert.ToByte(f.getInt());
+                stack[sp] = Convert.ToByte(f.GetInt());
                 stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                 sp--;
-                stack[sp] = Convert.ToByte(a.getInt());
+                stack[sp] = Convert.ToByte(a.GetInt());
                 stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                stackbox.Invalidate();
             }
-            else if (hex == "17") // RAL
+            // RAL
+            else if (hex == "17")
             {
                 bool temp = a.data[0];
                 for (int i = 1; i < 8; i++)
@@ -3142,15 +3415,17 @@ namespace _8085_Simulator
                 a.data[7] = f.carry;
                 f.carry = temp;
             }
-            else if (hex == "1F") // RAR
+            // RAR
+            else if (hex == "1F")
             {
                 bool temp = a.data[7];
                 for (int i = 7; i > 0; i--)
-                    a.data[i] = a.data[i-1];
+                    a.data[i] = a.data[i - 1];
                 a.data[0] = f.carry;
                 f.carry = temp;
             }
-            else if (hex == "D8") // RC
+            // RC
+            else if (hex == "D8")
             {
                 if (f.carry == true)
                 {
@@ -3164,6 +3439,7 @@ namespace _8085_Simulator
                         stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                         sp++;
                         pc.counter = Convert.ToInt32(address, 16);
+                        stackbox.Invalidate();
                     }
                     else
                     {
@@ -3172,7 +3448,8 @@ namespace _8085_Simulator
                     }
                 }
             }
-            else if (hex == "C9") // RET
+            // RET
+            else if (hex == "C9")
             {
                 if (sp <= 65533)
                 {
@@ -3184,6 +3461,7 @@ namespace _8085_Simulator
                     stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                     sp++;
                     pc.counter = Convert.ToInt32(address, 16);
+                    stackbox.Invalidate();
                 }
                 else
                 {
@@ -3191,11 +3469,13 @@ namespace _8085_Simulator
                     errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
                 }
             }
-            else if (hex == "20") // RIM
+            // RIM
+            else if (hex == "20")
             {
 
             }
-            else if (hex == "7") // RLC
+            // RLC
+            else if (hex == "7")
             {
                 bool temp = a.data[0];
                 for (int i = 1; i < 8; i++)
@@ -3203,7 +3483,8 @@ namespace _8085_Simulator
                 a.data[7] = temp;
                 f.carry = temp;
             }
-            else if (hex == "F8") // RM
+            // RM
+            else if (hex == "F8")
             {
                 if (f.sign == true)
                 {
@@ -3217,6 +3498,7 @@ namespace _8085_Simulator
                         stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                         sp++;
                         pc.counter = Convert.ToInt32(address, 16);
+                        stackbox.Invalidate();
                     }
                     else
                     {
@@ -3225,7 +3507,8 @@ namespace _8085_Simulator
                     }
                 }
             }
-            else if (hex == "D0") // RNC
+            // RNC
+            else if (hex == "D0")
             {
                 if (f.carry == false)
                 {
@@ -3239,6 +3522,7 @@ namespace _8085_Simulator
                         stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                         sp++;
                         pc.counter = Convert.ToInt32(address, 16);
+                        stackbox.Invalidate();
                     }
                     else
                     {
@@ -3247,7 +3531,8 @@ namespace _8085_Simulator
                     }
                 }
             }
-            else if (hex == "C0") // RNZ
+            // RNZ
+            else if (hex == "C0")
             {
                 if (f.zero == false)
                 {
@@ -3261,6 +3546,7 @@ namespace _8085_Simulator
                         stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                         sp++;
                         pc.counter = Convert.ToInt32(address, 16);
+                        stackbox.Invalidate();
                     }
                     else
                     {
@@ -3269,7 +3555,8 @@ namespace _8085_Simulator
                     }
                 }
             }
-            else if (hex == "F0") // RP
+            // RP
+            else if (hex == "F0")
             {
                 if (f.sign == false)
                 {
@@ -3283,6 +3570,7 @@ namespace _8085_Simulator
                         stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                         sp++;
                         pc.counter = Convert.ToInt32(address, 16);
+                        stackbox.Invalidate();
                     }
                     else
                     {
@@ -3291,7 +3579,8 @@ namespace _8085_Simulator
                     }
                 }
             }
-            else if (hex == "E8") // RPE
+            // RPE
+            else if (hex == "E8")
             {
                 if (f.parity == true)
                 {
@@ -3305,6 +3594,7 @@ namespace _8085_Simulator
                         stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                         sp++;
                         pc.counter = Convert.ToInt32(address, 16);
+                        stackbox.Invalidate();
                     }
                     else
                     {
@@ -3313,7 +3603,8 @@ namespace _8085_Simulator
                     }
                 }
             }
-            else if (hex == "E0") // RPO
+            // RPO
+            else if (hex == "E0")
             {
                 if (f.parity == false)
                 {
@@ -3327,6 +3618,7 @@ namespace _8085_Simulator
                         stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                         sp++;
                         pc.counter = Convert.ToInt32(address, 16);
+                        stackbox.Invalidate();
                     }
                     else
                     {
@@ -3335,47 +3627,57 @@ namespace _8085_Simulator
                     }
                 }
             }
-            else if (hex == "F") // RRC
+            // RRC
+            else if (hex == "F")
             {
                 bool temp = a.data[7];
                 for (int i = 8; i > 1; i--)
-                    a.data[i] = a.data[i-1];
+                    a.data[i] = a.data[i - 1];
                 a.data[0] = temp;
                 f.carry = temp;
             }
-            else if (hex == "C7") // RST 0
+            // RST 0
+            else if (hex == "C7")
             {
 
             }
-            else if (hex == "CF") // RST 1
+            // RST 1
+            else if (hex == "CF")
             {
 
             }
-            else if (hex == "D7") // RST 2
+            // RST 2
+            else if (hex == "D7")
             {
 
             }
-            else if (hex == "DF") // RST 3
+            // RST 3
+            else if (hex == "DF")
             {
 
             }
-            else if (hex == "E7") // RST 4
+            // RST 4
+            else if (hex == "E7")
             {
 
             }
-            else if (hex == "EF") // RST 5
+            // RST 5
+            else if (hex == "EF")
             {
 
             }
-            else if (hex == "F7") // RST 6
+            // RST 6
+            else if (hex == "F7")
             {
 
             }
-            else if (hex == "FF") // RST 7
+            // RST 7
+            else if (hex == "FF")
             {
 
             }
-            else if (hex == "C8") // RZ
+            // RZ
+            else if (hex == "C8")
             {
                 if (f.zero == true)
                 {
@@ -3389,6 +3691,7 @@ namespace _8085_Simulator
                         stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                         sp++;
                         pc.counter = Convert.ToInt32(address, 16);
+                        stackbox.Invalidate();
                     }
                     else
                     {
@@ -3397,274 +3700,499 @@ namespace _8085_Simulator
                     }
                 }
             }
-            else if (hex == "9F") // SBB A
+            // SBB A
+            else if (hex == "9F")
             {
-
+                Register temp = new Register();
+                int data = a.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
+                    f.carry = false;
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "98") // SBB B
+            // SBB B
+            else if (hex == "98")
             {
-
+                Register temp = new Register();
+                int data = b.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
+                    f.carry = false;
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "99") // SBB C
+            // SBB C
+            else if (hex == "99")
             {
-
+                Register temp = new Register();
+                int data = c.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
+                    f.carry = false;
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "9A") // SBB D
+            // SBB D
+            else if (hex == "9A")
             {
-
+                Register temp = new Register();
+                int data = d.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
+                    f.carry = false;
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "9B") // SBB E
+            // SBB E
+            else if (hex == "9B")
             {
-
+                Register temp = new Register();
+                int data = e.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
+                    f.carry = false;
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "9C") // SBB H
+            // SBB H
+            else if (hex == "9C")
             {
-
+                Register temp = new Register();
+                int data = h.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
+                    f.carry = false;
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "9D") // SBB L
+            // SBB L
+            else if (hex == "9D")
             {
-
+                Register temp = new Register();
+                int data = l.GetInt() + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
+                    f.carry = false;
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "9E") // SBB M
+            // SBB M
+            else if (hex == "9E")
             {
-
+                Register temp = new Register();
+                int data = memory[Convert.ToInt32(m, 16)] + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
+                    f.carry = false;
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "DE") // SBI data8
+            // SBI data8
+            else if (hex == "DE")
             {
-
+                Register temp = new Register();
+                int data = memory[pc.counter + 1] + (f.carry ? 1 : 0);
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
+                    f.carry = false;
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
+                pc.IncrementBy(1);
             }
-            else if (hex == "22") // SHLD address16
+            // SHLD address16
+            else if (hex == "22")
             {
                 int index = memory[pc.counter + 2] + memory[pc.counter + 1];
-                memory[index] = Convert.ToByte(l.getInt());
-                memory[index + 1] = Convert.ToByte(h.getInt());
-                memorybox.Items[index].SubItems[1].Text = l.getHex();
-                memorybox.Items[index + 1].SubItems[1].Text = h.getHex();
+                memory[index] = Convert.ToByte(l.GetInt());
+                memory[index + 1] = Convert.ToByte(h.GetInt());
+                memorybox.Items[index].SubItems[1].Text = l.GetHex();
+                memorybox.Items[index + 1].SubItems[1].Text = h.GetHex();
+                pc.IncrementBy(2);
+                memorybox.Invalidate();
             }
-            else if (hex == "30") // SIM
+            // SIM
+            else if (hex == "30")
             {
 
             }
-            else if (hex == "F9") // SPHL
+            // SPHL
+            else if (hex == "F9")
             {
-
+                sp--;
+                stack[sp] = Convert.ToByte(l.GetInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                sp--;
+                stack[sp] = Convert.ToByte(h.GetInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                stackbox.Invalidate();
             }
-            else if (hex == "32") // STA address16
+            // STA address16
+            else if (hex == "32")
             {
                 string addr = "";
                 addr += memory[pc.counter + 2].ToString("X").PadLeft(2, '0');
                 addr += memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
                 int index = Convert.ToInt32(addr, 16);
-                memory[index] = Convert.ToByte(a.getInt());
-                memorybox.Items[index].SubItems[1].Text = a.getHex();
-                pc.incrementBy(2);
+                memory[index] = Convert.ToByte(a.GetInt());
+                memorybox.Items[index].SubItems[1].Text = a.GetHex();
+                memorybox.Invalidate();
+                pc.IncrementBy(2);
             }
-            else if (hex == "2") // STAX B [C]
+            // STAX B [C]
+            else if (hex == "2")
             {
                 string addr = "";
-                addr += b.getHex();
-                addr += c.getHex();
+                addr += b.GetHex();
+                addr += c.GetHex();
                 int index = Convert.ToInt32(addr, 16);
-                memory[index] = Convert.ToByte(a.getInt());
-                memorybox.Items[index].SubItems[1].Text = a.getHex();
+                memory[index] = Convert.ToByte(a.GetInt());
+                memorybox.Items[index].SubItems[1].Text = a.GetHex();
+                memorybox.Invalidate();
             }
-            else if (hex == "12") // STAX D [E]
+            // STAX D [E]
+            else if (hex == "12")
             {
                 string addr = "";
-                addr += d.getHex();
-                addr += e.getHex();
+                addr += d.GetHex();
+                addr += e.GetHex();
                 int index = Convert.ToInt32(addr, 16);
-                memory[index] = Convert.ToByte(a.getInt());
-                memorybox.Items[index].SubItems[1].Text = a.getHex();
+                memory[index] = Convert.ToByte(a.GetInt());
+                memorybox.Items[index].SubItems[1].Text = a.GetHex();
+                memorybox.Invalidate();
             }
-            else if (hex == "37") // STC
+            // STC
+            else if (hex == "37")
             {
                 f.carry = true;
             }
-            else if (hex == "97") // SUB A
+            // SUB A
+            else if (hex == "97")
             {
-                /*
-                 * "sub a", sets carry when "a" is 0
-                 * but sub a, resets carry if set when "a" is not 0
-                 * why?
-                 * 
-                 * */
                 Register temp = new Register();
-                temp.setData(a.getInt());
-                int data = a.getInt() + temp.get2SInt();
+                int data = a.GetInt();
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
                 if (data > 255)
-                    f.carry = true;
-                else
                     f.carry = false;
-                f.carry = !f.carry;
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "90") // SUB B
+            // SUB B
+            else if (hex == "90")
             {
                 Register temp = new Register();
-                temp.setData(b.getInt());
-                if (temp.getInt() > a.getInt())
-                    f.carry = true;
-                else
+                int data = b.GetInt();
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
                     f.carry = false;
-                int data = a.getInt() + temp.get2SInt();
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "91") // SUB C
+            // SUB C
+            else if (hex == "91")
             {
                 Register temp = new Register();
-                temp.setData(c.getInt());
-                if (temp.getInt() > a.getInt())
-                    f.carry = true;
-                else
+                int data = c.GetInt();
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
                     f.carry = false;
-                int data = a.getInt() + temp.get2SInt();
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "92") // SUB D
+            // SUB D
+            else if (hex == "92")
             {
                 Register temp = new Register();
-                temp.setData(d.getInt());
-                if (temp.getInt() > a.getInt())
-                    f.carry = true;
-                else
+                int data = d.GetInt();
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
                     f.carry = false;
-                int data = a.getInt() + temp.get2SInt();
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "93") // SUB E
+            // SUB E
+            else if (hex == "93")
             {
                 Register temp = new Register();
-                temp.setData(e.getInt());
-                if (temp.getInt() > a.getInt())
-                    f.carry = true;
-                else
+                int data = e.GetInt();
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
                     f.carry = false;
-                int data = a.getInt() + temp.get2SInt();
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "94") // SUB H
+            // SUB H
+            else if (hex == "94")
             {
                 Register temp = new Register();
-                temp.setData(h.getInt());
-                if (temp.getInt() > a.getInt())
-                    f.carry = true;
-                else
+                int data = h.GetInt();
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
                     f.carry = false;
-                int data = a.getInt() + temp.get2SInt();
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "95") // SUB L
+            // SUB L
+            else if (hex == "95")
             {
                 Register temp = new Register();
-                temp.setData(l.getInt());
-                if (temp.getInt() > a.getInt())
-                    f.carry = true;
-                else
+                int data = l.GetInt();
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
                     f.carry = false;
-                int data = a.getInt() + temp.get2SInt();
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "96") // SUB M
+            // SUB M
+            else if (hex == "96")
             {
-                int index = Convert.ToInt32(m, 16);
-                int data = Convert.ToInt32(memory[index]);
                 Register temp = new Register();
-                temp.setData(data);
-                if (data > a.getInt())
-                    f.carry = true;
-                else
+                int data = memory[Convert.ToInt32(m, 16)];
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
                     f.carry = false;
-                data = a.getInt() + temp.get2SInt();
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
             }
-            else if (hex == "D6") // SUI data8
+            // SUI data8
+            else if (hex == "D6")
             {
+                Register temp = new Register();
                 int data = memory[pc.counter + 1];
-                Register temp = new Register();
-                temp.setData(data);
-                if (data > a.getInt())
-                    f.carry = true;
-                else
+                temp.SetData(data);
+                temp.SetData(temp.Get2SInt());
+                data += temp.GetInt();
+                if (data > 255)
                     f.carry = false;
-                data = a.getInt() + temp.get2SInt();
-                temp.setData(temp.get2SInt());
-                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
-                a.setData(data);
-                f.update(a);
-                pc.incrementBy(1);
+                else
+                    f.carry = true;
+                f.CheckAuxiliary(a.GetBinaryString(), temp.GetBinaryString());
+                a.SetData(a.GetInt() + temp.GetInt());
+                f.Update(a);
+                pc.IncrementBy(1);
             }
-            else if (hex == "EB") // XCHG
+            // XCHG
+            else if (hex == "EB")
             {
-
+                int temp = d.GetInt();
+                d.SetData(h.GetInt());
+                h.SetData(temp);
+                temp = e.GetInt();
+                e.SetData(l.GetInt());
+                l.SetData(temp);
             }
-            else if (hex == "AF") // XRA A
+            // XRA A
+            else if (hex == "AF")
             {
-
+                int data = a.GetInt() ^ a.GetInt();
+                //xra resets carry flag by default
+                f.carry = false;
+                //xra resets auxiliary flag by default
+                f.auxiliary = false;
+                //
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "A8") // XRA B
+            // XRA B
+            else if (hex == "A8")
             {
-
+                int data = a.GetInt() ^ b.GetInt();
+                //xra resets carry flag by default
+                f.carry = false;
+                //xra resets auxiliary flag by default
+                f.auxiliary = false;
+                //
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "A9") // XRA C
+            // XRA C
+            else if (hex == "A9")
             {
-
+                int data = a.GetInt() ^ c.GetInt();
+                //xra resets carry flag by default
+                f.carry = false;
+                //xra resets auxiliary flag by default
+                f.auxiliary = false;
+                //
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "AA") // XRA D
+            // XRA D
+            else if (hex == "AA")
             {
-
+                int data = a.GetInt() ^ d.GetInt();
+                //xra resets carry flag by default
+                f.carry = false;
+                //xra resets auxiliary flag by default
+                f.auxiliary = false;
+                //
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "AB") // XRA E
+            // XRA E
+            else if (hex == "AB")
             {
-
+                int data = a.GetInt() ^ e.GetInt();
+                //xra resets carry flag by default
+                f.carry = false;
+                //xra resets auxiliary flag by default
+                f.auxiliary = false;
+                //
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "AC") // XRA H
+            // XRA H
+            else if (hex == "AC")
             {
-
+                int data = a.GetInt() ^ h.GetInt();
+                //xra resets carry flag by default
+                f.carry = false;
+                //xra resets auxiliary flag by default
+                f.auxiliary = false;
+                //
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "AD") // XRA L
+            // XRA L
+            else if (hex == "AD")
             {
-
+                int data = a.GetInt() ^ l.GetInt();
+                //xra resets carry flag by default
+                f.carry = false;
+                //xra resets auxiliary flag by default
+                f.auxiliary = false;
+                //
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "AE") // XRA M
+            // XRA M
+            else if (hex == "AE")
             {
-
+                int data = a.GetInt() ^ memory[Convert.ToInt32(m, 16)];
+                //xra resets carry flag by default
+                f.carry = false;
+                //xra resets auxiliary flag by default
+                f.auxiliary = false;
+                //
+                a.SetData(data);
+                f.Update(a);
             }
-            else if (hex == "EE") // XRI data8
+            // XRI data8
+            else if (hex == "EE")
             {
-
+                int data = a.GetInt() ^ memory[pc.counter + 1];
+                //xra resets carry flag by default
+                f.carry = false;
+                //xra resets auxiliary flag by default
+                f.auxiliary = false;
+                //
+                a.SetData(data);
+                f.Update(a);
+                pc.IncrementBy(1);
             }
-            else if (hex == "E3") // XTHL
+            // XTHL
+            else if (hex == "E3")
             {
-
+                string addh = stack[sp].ToString("X").PadLeft(2, '0');
+                sp++;
+                string addl = stack[sp].ToString("X").PadLeft(2, '0');
+                stack[sp] = Convert.ToByte(l.GetInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                sp--;
+                stack[sp] = Convert.ToByte(h.GetInt());
+                stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                h.SetData(addh);
+                l.SetData(addl);
+                stackbox.Invalidate();
             }
         }
 
-        private string check_error(string[] code)
+        private string Check_error(string[] code)
         {
             for (int i = 0; i < code.Length; i++)
                 code[i] = code[i].ToLower();
@@ -3798,7 +4326,7 @@ namespace _8085_Simulator
                     else
                         error_string = $"Only 'a','b','c','d','e','h','l', or 'm' can be used! Cannot identify \"{code[1]}\"";
                 else
-                    error_string = error_string = "Need 1 parameter";
+                    error_string = "Need 1 parameter";
 
             } //done
 
@@ -4030,7 +4558,7 @@ namespace _8085_Simulator
             {
                 if (code.Length > 1)
                 {
-                    if (isLabel(code[1])) { }
+                    if (IsLabel(code[1])) { }
                     else if (code[1].StartsWith("-"))
                     {
                         error_string = $"\"{code[1]}\" is not valid value";
@@ -4110,12 +4638,12 @@ namespace _8085_Simulator
             return error_string;
         }
 
-        private void closing(object sender, FormClosingEventArgs e)
+        private void Window_Closing(object sender, FormClosingEventArgs e)
         {
 
         }
 
-        private void loading(object sender, EventArgs e)
+        private void Window_Loading(object sender, EventArgs e)
         {
 
             labels = new List<LabelAddress>();
@@ -4128,10 +4656,10 @@ namespace _8085_Simulator
 
             pc = new ProgramCounter();
 
-            reset_memory();
-            reset_stack();
-            reset_port();
-            update_variables();
+            Reset_memory();
+            Reset_stack();
+            Reset_port();
+            Update_variables();
 
             WindowState = FormWindowState.Maximized;
 
@@ -4160,7 +4688,7 @@ namespace _8085_Simulator
 
         //Menu section
 
-        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
+        private void FontToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FontDialog fd = new FontDialog();
             if (fd.ShowDialog() == DialogResult.OK)
@@ -4173,44 +4701,44 @@ namespace _8085_Simulator
             }
         }
 
-        private void clearMemoryToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ClearMemoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            reset_memory();
+            Reset_memory();
         }
 
-        private void clearRegistersToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ClearRegistersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            clear_registers();
+            Clear_registers();
         }
 
-        private void clearEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ClearEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             codeEditor.ClearAll();
         }
 
         //key events
 
-        private void runToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void RunToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             codeEditor.Enabled = false;
             stop_button.Enabled = true;
             play_button.Enabled = false;
             step_button.Enabled = false;
             stop_run = false;
-            code_inspect(true);
+            Code_inspect(true);
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("8085 Simulator - ALPHA\nDeveloped by Vishal Solanki\n\nThis is Project for my 5th semester, I poured all my dedication to this project, hope it helps!\n\nE-Mail : vcsolanki.vs@gmail.com", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void stepNextToolStripMenuItem_Click(object sender, EventArgs e)
+        private void StepNextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            step_next_code();
+            Step_next_code();
         }
 
-        private void show_conv_tooltip(object sender, EventArgs e)
+        private void Show_conv_tooltip(object sender, EventArgs e)
         {
             Label temp = (Label)sender;
             reg_name.Text = temp.Tag.ToString();
@@ -4218,27 +4746,27 @@ namespace _8085_Simulator
             conv_lbl.Text = $"BIN : {Convert.ToString(data, 2).PadLeft(8, '0')}\nHEX : {temp.Text}\nDEC : {data}";
         }
 
-        private void checkErrorsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void CheckErrorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            code_inspect(false);
+            Code_inspect(false);
         }
       
-        private void warning_click(object sender, EventArgs e)
+        private void Warning_click(object sender, EventArgs e)
         {
             MessageBox.Show("Software is in ALPHA state!\nCan't guarantee software will work in every situation!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void run_program(object sender, EventArgs e)
+        private void Run_program(object sender, EventArgs e)
         {
                 codeEditor.Enabled = false;
                 stop_button.Enabled = true;
                 play_button.Enabled = false;
                 step_button.Enabled = false;
                 stop_run = false;
-                code_inspect(true);
+                Code_inspect(true);
         }
 
-        private void stop_program(object sender, EventArgs e)
+        private void Stop_program(object sender, EventArgs e)
         {
             play_button.Enabled = true;
             stop_button.Enabled = false;
@@ -4249,13 +4777,12 @@ namespace _8085_Simulator
             formatted_code = "";
         }
 
-        private void format_code(ref string str)
+        private void Format_code(ref string str)
         {
             int start_location = 0;
-            string lineF = "";
             foreach (Line line in codeEditor.Lines)
             {
-                lineF = Regex.Replace(line.Text, @",+", " ");
+                string lineF = Regex.Replace(line.Text, @",+", " ");
                 lineF = Regex.Replace(lineF, @"\s+", " ");
                 lineF = lineF.Trim(' ');
                 if (lineF == "")
@@ -4371,7 +4898,7 @@ namespace _8085_Simulator
                         code[0] == "lhld" ||
                         code[0] == "shld")
                     {
-                        if (isLabel(code[1]))
+                        if (IsLabel(code[1]))
                         {
                             foreach (LabelAddress la in labels)
                                 if (code[1] == la.name)
@@ -4388,13 +4915,13 @@ namespace _8085_Simulator
             }
         }
 
-        private void step_program(object sender, EventArgs e)
+        private void Step_program(object sender, EventArgs e)
         {
-            if (stop_run == true && code_inspect(false))
+            if (stop_run == true && Code_inspect(false))
             {
-                pc.counter = load_into_memory();
+                pc.counter = Load_into_memory();
                 orignal_code = codeEditor.Text;
-                format_code(ref formatted_code);
+                Format_code(ref formatted_code);
                 codeEditor.Text = formatted_code;
                 play_button.Enabled = false;
                 stop_button.Enabled = true;
@@ -4404,9 +4931,9 @@ namespace _8085_Simulator
             else
                 if (memory[pc.counter].ToString("X") != "76")
                 {
-                code_execute(memory[pc.counter].ToString("X"));
-                pc.increment();
-                update_variables();
+                Code_execute(memory[pc.counter].ToString("X"));
+                pc.Increment();
+                Update_variables();
                 if (sp == 0)
                     sp += 1;
                 for (int i = 0; i < codeEditor.Lines.Count; i++)
@@ -4422,7 +4949,7 @@ namespace _8085_Simulator
                     }
                 ln++;
                 }
-                stackbox.TopItem = stackbox.Items[sp - 1];
+                    stackbox.TopItem = stackbox.Items[sp - 1];
                     memorybox.Invalidate();
                 }
                 else
@@ -4438,7 +4965,7 @@ namespace _8085_Simulator
                 }
         }
 
-        private void code_editor_keypress(object sender, KeyPressEventArgs e)
+        private void Code_editor_keypress(object sender, KeyPressEventArgs e)
         {
             if(e.KeyChar<32)
             {
@@ -4446,7 +4973,7 @@ namespace _8085_Simulator
             }
         }
 
-        private void find_text_keypress(object sender, KeyPressEventArgs e)
+        private void Find_text_keypress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Return)
             {
@@ -4454,12 +4981,12 @@ namespace _8085_Simulator
                 e.Handled = true;
             }
         }
-        private void find_address_Click(object sender, EventArgs e)
+        private void Find_address_Click(object sender, EventArgs e)
         {
             memorybox.TopItem = memorybox.FindItemWithText(address_to_find.Text.ToUpper());
         }
 
-        private void memory_retrieve_items(object sender, RetrieveVirtualItemEventArgs e)
+        private void Memory_retrieve_items(object sender, RetrieveVirtualItemEventArgs e)
         {
             if (memory_items != null && e.ItemIndex >= m_first && e.ItemIndex < m_first + memory_items.Length)
                 e.Item = memory_items[e.ItemIndex - m_first];
@@ -4469,22 +4996,21 @@ namespace _8085_Simulator
                 e.Item = new ListViewItem(x.ToString());
             }
         }
-        private void memory_cache_items(object sender, CacheVirtualItemsEventArgs e)
+        private void Memory_cache_items(object sender, CacheVirtualItemsEventArgs e)
         {
             if (memory_items != null && e.StartIndex >= m_first && e.EndIndex <= m_first + memory_items.Length)
                 return;
             m_first = e.StartIndex;
             int length = e.EndIndex - e.StartIndex + 1;
             memory_items = new ListViewItem[length];
-            int x = 0;
             for (int i = 0; i < length; i++)
             {
-                x = (i + m_first) * (i + m_first);
+                int x = (i + m_first) * (i + m_first);
                 memory_items[i] = new ListViewItem(x.ToString());
             }
         }
 
-        private void stack_retrieve_items(object sender, RetrieveVirtualItemEventArgs e)
+        private void Stack_retrieve_items(object sender, RetrieveVirtualItemEventArgs e)
         {
             if (stack_items != null && e.ItemIndex >= s_first && e.ItemIndex < s_first + stack_items.Length)
                 e.Item = stack_items[e.ItemIndex - s_first];
@@ -4494,22 +5020,21 @@ namespace _8085_Simulator
                 e.Item = new ListViewItem(x.ToString());
             }
         }
-        private void stack_cache_items(object sender, CacheVirtualItemsEventArgs e)
+        private void Stack_cache_items(object sender, CacheVirtualItemsEventArgs e)
         {
             if (stack_items != null && e.StartIndex >= s_first && e.EndIndex <= s_first + stack_items.Length)
                 return;
             s_first = e.StartIndex;
             int length = e.EndIndex - e.StartIndex + 1;
             stack_items = new ListViewItem[length];
-            int x = 0;
             for (int i = 0; i < length; i++)
             {
-                x = (i + s_first) * (i + s_first);
+                int x = (i + s_first) * (i + s_first);
                 stack_items[i] = new ListViewItem(x.ToString());
             }
         }
 
-        private void port_retrieve_items(object sender, RetrieveVirtualItemEventArgs e)
+        private void Port_retrieve_items(object sender, RetrieveVirtualItemEventArgs e)
         {
             if (port_items != null && e.ItemIndex >= p_first && e.ItemIndex < p_first + port_items.Length)
                 e.Item = port_items[e.ItemIndex - p_first];
@@ -4519,22 +5044,21 @@ namespace _8085_Simulator
                 e.Item = new ListViewItem(x.ToString());
             }
         }
-        private void port_cache_items(object sender, CacheVirtualItemsEventArgs e)
+        private void Port_cache_items(object sender, CacheVirtualItemsEventArgs e)
         {
             if (port_items != null && e.StartIndex >= p_first && e.EndIndex <= p_first + port_items.Length)
                 return;
             p_first = e.StartIndex;
             int length = e.EndIndex - e.StartIndex + 1;
             port_items = new ListViewItem[length];
-            int x = 0;
             for (int i = 0; i < length; i++)
             {
-                x = (i + p_first) * (i + p_first);
+                int x = (i + p_first) * (i + p_first);
                 port_items[i] = new ListViewItem(x.ToString());
             }
         }
 
-        private void memory_search_item(object sender, SearchForVirtualItemEventArgs e)
+        private void Memory_search_item(object sender, SearchForVirtualItemEventArgs e)
         {
             int x = 0;
             foreach(ListViewItem it in m_items)
@@ -4548,15 +5072,17 @@ namespace _8085_Simulator
             }
         }
 
-        private void memory_box_keypress(object sender, KeyPressEventArgs e)
+        private void Memory_box_keypress(object sender, KeyPressEventArgs e)
         {
         }
 
-        private void memory_double_click(object sender, EventArgs e)
+        private void Memory_double_click(object sender, EventArgs e)
         {
             ListView.SelectedIndexCollection lic = memorybox.SelectedIndices;
-            address_editbox address_Editbox = new address_editbox(memorybox.Items[lic[0]].SubItems[1].Text);
-            address_Editbox.Text = memorybox.Items[lic[0]].Text;
+            address_editbox address_Editbox = new address_editbox(memorybox.Items[lic[0]].SubItems[1].Text)
+            {
+                Text = memorybox.Items[lic[0]].Text
+            };
             if (address_Editbox.ShowDialog() == DialogResult.OK)
             {
                 memory[Convert.ToInt32(memorybox.Items[lic[0]].Text, 16)] = Convert.ToByte(address_Editbox.int_value);
