@@ -68,7 +68,7 @@
             this.type_box.Controls.Add(this.bin_flag);
             this.type_box.Location = new System.Drawing.Point(12, 145);
             this.type_box.Name = "type_box";
-            this.type_box.Size = new System.Drawing.Size(325, 153);
+            this.type_box.Size = new System.Drawing.Size(325, 78);
             this.type_box.TabIndex = 2;
             this.type_box.TabStop = false;
             this.type_box.Text = "Type";
@@ -76,7 +76,7 @@
             // dec_flag
             // 
             this.dec_flag.AutoSize = true;
-            this.dec_flag.Location = new System.Drawing.Point(6, 109);
+            this.dec_flag.Location = new System.Drawing.Point(211, 33);
             this.dec_flag.Name = "dec_flag";
             this.dec_flag.Size = new System.Drawing.Size(108, 32);
             this.dec_flag.TabIndex = 2;
@@ -89,7 +89,7 @@
             // 
             this.hex_flag.AutoSize = true;
             this.hex_flag.Checked = true;
-            this.hex_flag.Location = new System.Drawing.Point(6, 71);
+            this.hex_flag.Location = new System.Drawing.Point(104, 33);
             this.hex_flag.Name = "hex_flag";
             this.hex_flag.Size = new System.Drawing.Size(108, 32);
             this.hex_flag.TabIndex = 1;
@@ -136,7 +136,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 28F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancel_button;
-            this.ClientSize = new System.Drawing.Size(349, 307);
+            this.ClientSize = new System.Drawing.Size(349, 233);
             this.Controls.Add(this.cancel_button);
             this.Controls.Add(this.set_button);
             this.Controls.Add(this.type_box);

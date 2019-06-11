@@ -24,6 +24,7 @@ namespace _8085_Simulator
         public class Register
         {
             public bool[] data = new bool[8];
+            public int overflowed = 0;
             public Register()
             {
                 Clear();
@@ -62,21 +63,33 @@ namespace _8085_Simulator
             }
             public int get2SInt()
             {
-                int data = Convert.ToInt32(getBinaryString(), 2);
-                return (data+1);
+                int data = Convert.ToInt32(getBinaryString(true), 2);
+                data += 1;
+                if (data > 255)
+                    overflowed = 1;
+                else
+                    overflowed = 0;
+                return data;
             }
             public string getHex()
             {
-                string hex = Convert.ToString(getInt(), 16).ToUpper();
+                string hex = Convert.ToString(getInt(), 16).ToUpper().PadLeft(2,'0');
                 return hex;
             }
             public void setData(int data)
             {
                 Clear();
-                    if (data > 255)
-                        data -= 256;
-                    if (data < 0)
-                        data += 256;
+                if (data > 255)
+                {
+                    data -= 256;
+                    overflowed = 1;
+                }
+                else if (data < 0)
+                {
+                    data += 256;
+                }
+                else
+                    overflowed = 0;
                 int i = 7;
                 foreach (char c in Convert.ToString(data, 2).Reverse<char>())
                 {
@@ -105,7 +118,7 @@ namespace _8085_Simulator
         {
             public bool sign = new bool();
             public bool zero = new bool();
-            public bool auxilary = new bool();
+            public bool auxiliary = new bool();
             public bool parity = new bool();
             public bool carry = new bool();
             public bool[] address;
@@ -123,7 +136,7 @@ namespace _8085_Simulator
                 string data_string = "";
                 address[7] = carry;
                 address[5] = parity;
-                address[3] = auxilary;
+                address[3] = auxiliary;
                 address[1] = zero;
                 address[0] = sign;
                 for (int i = 0; i < 8; i++)
@@ -140,6 +153,28 @@ namespace _8085_Simulator
                 string hex = Convert.ToString(getInt(), 16).ToUpper();
                 return hex;
             }
+            public void setData(int data)
+            {
+                Clear();
+                if (data > 255)
+                    data -= 256;
+                else if (data < 0)
+                    data += 256;
+                int i = 7;
+                foreach (char c in Convert.ToString(data, 2).Reverse<char>())
+                {
+                    if (c == '1')
+                        address[i] = true;
+                    else
+                        address[i] = false;
+                    i--;
+                }
+                carry = address[7];
+                parity = address[5];
+                auxiliary = address[3];
+                zero = address[1];
+                sign = address[0];
+            }
             public void checkParity(string binary)
             {
                 int eo = 0;
@@ -155,12 +190,14 @@ namespace _8085_Simulator
                 else
                     parity = false;
             }
-            public void checkAuxilary(string f1, string f2)
+            public void checkAuxiliary(string f1, string f2)
             {
                 int a = Convert.ToInt32(f1.Substring(4), 2);
                 int b = Convert.ToInt32(f2.Substring(4), 2);
                 if ((a + b) >= 16)
-                    auxilary = true;
+                    auxiliary = true;
+                else
+                    auxiliary = false;
             }
             public void checkSign(string binary)
             {
@@ -174,11 +211,15 @@ namespace _8085_Simulator
                 sign = temp.data[0];
                 if (temp.getInt() == 0)
                     zero = true;
+                else
+                    zero = false;
                 checkParity(temp.getBinaryString());
             }
             public void Clear()
             {
-                sign = zero = auxilary = parity = carry = false;
+                for (int i = 0; i < 8; i++)
+                    address[i] = false;
+                sign = zero = auxiliary = parity = carry = false;
             }
         };
         public class ProgramCounter
@@ -262,15 +303,17 @@ namespace _8085_Simulator
         string psw;
         string m;
 
-        bool stop_run = false;
+        bool stop_run = true;
 
         private List<ushort> memory;
         private List<ushort> port;
 
         private List<ushort> stack;
         int sp = 65535;
+        int selected_index = 0;
 
-
+        string orignal_code;
+        string formatted_code;
 
         private List<string> errors;
         private List<LabelAddress> labels;
@@ -303,7 +346,7 @@ namespace _8085_Simulator
             flagc.Text = f.carry ? "1" : "0";
             flagz.Text = f.zero ? "1" : "0";
             flags.Text = f.sign ? "1" : "0";
-            flaga.Text = f.auxilary ? "1" : "0";
+            flaga.Text = f.auxiliary ? "1" : "0";
             flagp.Text = f.parity ? "1" : "0";
             psw = $"{a.getHex().PadLeft(2, '0')}{f.getHex().PadLeft(2, '0')}";
             m = $"{h.getHex().PadLeft(2, '0')}{l.getHex().PadLeft(2, '0')}";
@@ -560,9 +603,9 @@ namespace _8085_Simulator
                     if (code[1] == "a")
                         opcode = "3E";
                     if (code[1] == "b")
-                        opcode = "6";
+                        opcode = "06";
                     if (code[1] == "c")
-                        opcode = "E";
+                        opcode = "0E";
                     if (code[1] == "d")
                         opcode = "16";
                     if (code[1] == "e")
@@ -574,13 +617,24 @@ namespace _8085_Simulator
                     if (code[1] == "m")
                         opcode = "36";
 
-                    if (code[2].StartsWith("0"))
-                        code[2] = code[2].TrimStart('0');
+
 
                     if (code[2].EndsWith("h"))
+                    {
                         code[2] = code[2].Remove(code[2].Length - 1);
+                        if (code[2].StartsWith("0"))
+                        {
+                            code[2] = code[2].TrimStart('0');
+                            if (code[2] == "") code[2] = "0";
+                        }
+                    }
                     else
                     {
+                        if (code[2].StartsWith("0"))
+                        {
+                            code[2] = code[2].TrimStart('0');
+                            if (code[2] == "") code[2] = "0";
+                        }
                         int data = Convert.ToInt32(code[2]);
                         code[2] = data.ToString("X");
                     }
@@ -595,7 +649,7 @@ namespace _8085_Simulator
                 else if (code[0] == "lxi")
                 {
                     if (code[1] == "b")
-                        opcode = "1";
+                        opcode = "01";
                     if (code[1] == "d")
                         opcode = "11";
                     if (code[1] == "h")
@@ -606,13 +660,24 @@ namespace _8085_Simulator
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
 
-                    if (code[2].StartsWith("0"))
-                        code[2] = code[2].TrimStart('0');
+                   
 
                     if (code[2].EndsWith("h"))
+                    {
                         code[2] = code[2].Remove(code[2].Length - 1);
+                        if (code[2].StartsWith("0"))
+                        {
+                            code[2] = code[2].TrimStart('0');
+                            if (code[2] == "") code[2] = "0";
+                        }
+                    }
                     else
                     {
+                        if (code[2].StartsWith("0"))
+                        {
+                            code[2] = code[2].TrimStart('0');
+                            if (code[2] == "") code[2] = "0";
+                        }
                         int data = Convert.ToInt32(code[2], 16);
                         code[2] = data.ToString("X");
                     }
@@ -630,12 +695,12 @@ namespace _8085_Simulator
                 {
                     if (code[0] == "ldax")
                         if (code[1] == "b")
-                            opcode = "A";
+                            opcode = "0A";
                         else if (code[1] == "d")
                             opcode = "1A";
                     if (code[0] == "stax")
                         if (code[1] == "b")
-                            opcode = "2";
+                            opcode = "02";
                         else if (code[1] == "d")
                             opcode = "12";
                     memory[start_location] = Convert.ToByte(opcode, 16);
@@ -722,13 +787,24 @@ namespace _8085_Simulator
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
 
-                    if (code[1].StartsWith("0"))
-                        code[1] = code[1].TrimStart('0');
+                    
 
                     if (code[1].EndsWith("h"))
+                    {
                         code[1] = code[1].Remove(code[1].Length - 1);
+                        if (code[1].StartsWith("0"))
+                        {
+                            code[1] = code[1].TrimStart('0');
+                            if (code[1] == "") code[1] = "0";
+                        }
+                    }
                     else
                     {
+                        if (code[1].StartsWith("0"))
+                        {
+                            code[1] = code[1].TrimStart('0');
+                            if (code[1] == "") code[1] = "0";
+                        }
                         int data = Convert.ToInt32(code[1], 16);
                         code[1] = data.ToString("X");
                     }
@@ -773,9 +849,9 @@ namespace _8085_Simulator
                     if (code[0] == "hlt")
                         opcode = "76";
                     if (code[0] == "rlc")
-                        opcode = "7";
+                        opcode = "07";
                     if (code[0] == "rrc")
-                        opcode = "F";
+                        opcode = "0F";
                     if (code[0] == "ral")
                         opcode = "17";
                     if (code[0] == "rar")
@@ -823,7 +899,7 @@ namespace _8085_Simulator
                     if (code[0] == "sim")
                         opcode = "30";
                     if (code[0] == "nop")
-                        opcode = "0";
+                        opcode = "00";
 
                     memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
@@ -979,9 +1055,9 @@ namespace _8085_Simulator
                         if (code[1] == "a")
                             opcode = "3C";
                         if (code[1] == "b")
-                            opcode = "4";
+                            opcode = "04";
                         if (code[1] == "c")
-                            opcode = "C";
+                            opcode = "0C";
                         if (code[1] == "d")
                             opcode = "14";
                         if (code[1] == "e")
@@ -998,9 +1074,9 @@ namespace _8085_Simulator
                         if (code[1] == "a")
                             opcode = "3D";
                         if (code[1] == "b")
-                            opcode = "5";
+                            opcode = "05";
                         if (code[1] == "c")
-                            opcode = "D";
+                            opcode = "0D";
                         if (code[1] == "d")
                             opcode = "15";
                         if (code[1] == "e")
@@ -1072,15 +1148,24 @@ namespace _8085_Simulator
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
 
-                    if (code[1].StartsWith("0"))
-                        code[1] = code[1].TrimStart('0');
+                    
 
                     if (code[1].EndsWith("h") || code[1].EndsWith("H"))
                     {
                         code[1] = code[1].Remove(code[1].Length - 1);
+                        if (code[1].StartsWith("0"))
+                        {
+                            code[1] = code[1].TrimStart('0');
+                            if (code[1] == "") code[1] = "0";
+                        }
                     }
                     else
                     {
+                        if (code[1].StartsWith("0"))
+                        {
+                            code[1] = code[1].TrimStart('0');
+                            if (code[1] == "") code[1] = "0";
+                        }
                         int data = Convert.ToInt32(code[1], 16);
                         code[1] = data.ToString("X");
                     }
@@ -1099,7 +1184,7 @@ namespace _8085_Simulator
                     if (code[0] == "dad")
                     {
                         if (code[1] == "b")
-                            opcode = "9";
+                            opcode = "09";
                         if (code[1] == "d")
                             opcode = "19";
                         if (code[1] == "h")
@@ -1110,7 +1195,7 @@ namespace _8085_Simulator
                     if (code[0] == "inx")
                     {
                         if (code[1] == "b")
-                            opcode = "3";
+                            opcode = "03";
                         if (code[1] == "d")
                             opcode = "13";
                         if (code[1] == "h")
@@ -1121,7 +1206,7 @@ namespace _8085_Simulator
                     if (code[0] == "dcx")
                     {
                         if (code[1] == "b")
-                            opcode = "B";
+                            opcode = "0B";
                         if (code[1] == "d")
                             opcode = "1B";
                         if (code[1] == "h")
@@ -1369,7 +1454,7 @@ namespace _8085_Simulator
                 stop_button.Enabled = false;
                 step_button.Enabled = true;
                 play_button.Enabled = true;
-                stop_run = false;
+                stop_run = true;
                 return false;
             }
             else
@@ -1382,7 +1467,9 @@ namespace _8085_Simulator
                         code_execute(memory[pc.counter].ToString("X"));
                         pc.increment();
                         update_variables();
-                        stackbox.TopItem = stackbox.Items[sp - 1];
+                        if (sp == 0)
+                            sp += 1;
+                        stackbox.TopItem = stackbox.Items[sp-1];
                         if (stop_run == true)
                         {
                             break;
@@ -1400,7 +1487,7 @@ namespace _8085_Simulator
                     stop_button.Enabled = false;
                     step_button.Enabled = true;
                     play_button.Enabled = true;
-                    stop_run = false;
+                    stop_run = true;
                     output_box.Items.Add("Program successfully terminated!");
                 }
                 else
@@ -1421,7 +1508,7 @@ namespace _8085_Simulator
                     f.carry = false;
                 }
                 temp.setData(data);
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
@@ -1440,7 +1527,7 @@ namespace _8085_Simulator
                     f.carry = false;
                 }
                 temp.setData(data);
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
@@ -1458,7 +1545,7 @@ namespace _8085_Simulator
                     f.carry = false;
                 }
                 temp.setData(data);
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
@@ -1476,7 +1563,7 @@ namespace _8085_Simulator
                     f.carry = false;
                 }
                 temp.setData(data);
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
@@ -1494,7 +1581,7 @@ namespace _8085_Simulator
                     f.carry = false;
                 }
                 temp.setData(data);
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
@@ -1512,7 +1599,7 @@ namespace _8085_Simulator
                     f.carry = false;
                 }
                 temp.setData(data);
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
@@ -1530,7 +1617,7 @@ namespace _8085_Simulator
                     f.carry = false;
                 }
                 temp.setData(data);
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
@@ -1548,7 +1635,7 @@ namespace _8085_Simulator
                     f.carry = false;
                 }
                 temp.setData(data);
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
@@ -1566,7 +1653,7 @@ namespace _8085_Simulator
                     f.carry = false;
                 }
                 temp.setData(data);
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
@@ -1581,7 +1668,7 @@ namespace _8085_Simulator
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 a.setData(data);
                 f.update(a);
             }
@@ -1593,7 +1680,7 @@ namespace _8085_Simulator
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 a.setData(data);
                 f.update(a);
             }
@@ -1605,7 +1692,7 @@ namespace _8085_Simulator
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 a.setData(data);
                 f.update(a);
             }
@@ -1617,7 +1704,7 @@ namespace _8085_Simulator
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 a.setData(data);
                 f.update(a);
             }
@@ -1629,7 +1716,7 @@ namespace _8085_Simulator
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 a.setData(data);
                 f.update(a);
             }
@@ -1641,7 +1728,7 @@ namespace _8085_Simulator
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 a.setData(data);
                 f.update(a);
             }
@@ -1653,7 +1740,7 @@ namespace _8085_Simulator
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 a.setData(data);
                 f.update(a);
             }
@@ -1666,7 +1753,7 @@ namespace _8085_Simulator
                 data += a.getInt();
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 a.setData(data);
                 f.update(a);
             }
@@ -1678,7 +1765,7 @@ namespace _8085_Simulator
                 data = a.getInt() + data;
                 if (data > 255)
                     f.carry = true;
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 a.setData(data);
                 f.update(a);
                 pc.incrementBy(1);
@@ -1689,7 +1776,12 @@ namespace _8085_Simulator
                 int data = a.getInt();
                 temp.setData(data);
                 data = data & a.getInt();
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
                 a.setData(data);
                 f.update(a);
 
@@ -1700,7 +1792,12 @@ namespace _8085_Simulator
                 int data = b.getInt();
                 temp.setData(data);
                 data = data & a.getInt();
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
                 a.setData(data);
                 f.update(a);
             }
@@ -1710,7 +1807,12 @@ namespace _8085_Simulator
                 int data = c.getInt();
                 temp.setData(data);
                 data = data & a.getInt();
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
                 a.setData(data);
                 f.update(a);
             }
@@ -1720,7 +1822,12 @@ namespace _8085_Simulator
                 int data = d.getInt();
                 temp.setData(data);
                 data = data & a.getInt();
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
                 a.setData(data);
                 f.update(a);
             }
@@ -1730,7 +1837,12 @@ namespace _8085_Simulator
                 int data = e.getInt();
                 temp.setData(data);
                 data = data & a.getInt();
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
                 a.setData(data);
                 f.update(a);
             }
@@ -1740,7 +1852,12 @@ namespace _8085_Simulator
                 int data = h.getInt();
                 temp.setData(data);
                 data = data & a.getInt();
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
                 a.setData(data);
                 f.update(a);
             }
@@ -1750,7 +1867,12 @@ namespace _8085_Simulator
                 int data = l.getInt();
                 temp.setData(data);
                 data = data & a.getInt();
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
                 a.setData(data);
                 f.update(a);
             }
@@ -1761,7 +1883,12 @@ namespace _8085_Simulator
                 int data = memory[index];
                 temp.setData(data);
                 data = data & a.getInt();
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                //ana resets carry flag by default
+                f.carry = false;
+                //ana sets auxiliary flag by default
+                f.auxiliary = true;
+                //
                 a.setData(data);
                 f.update(a);
             }
@@ -1771,9 +1898,14 @@ namespace _8085_Simulator
                 int data = memory[pc.counter + 1];
                 temp.setData(data);
                 data = data & a.getInt();
-                f.checkAuxilary(a.getBinaryString(), temp.getBinaryString());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
                 a.setData(data);
                 f.update(a);
+                //ani resets carry flag by default
+                f.carry = false;
+                //ani sets auxiliary carry by default
+                f.auxiliary = true;
+                //
                 pc.incrementBy(1);
             }
             else if (hex == "CD") // CALL label16
@@ -1834,213 +1966,224 @@ namespace _8085_Simulator
             }
             else if (hex == "3F") // CMC
             {
-
+                f.carry = !f.carry;
             }
             else if (hex == "BF") // CMP A
             {
                 Register temp = new Register();
-                temp.setData(a.getInt() - a.getInt());
-                if (a.getInt() < a.getInt())
-                {
+                temp.setData(a.getInt());
+                if (temp.getInt() > a.getInt())
                     f.carry = true;
-                    f.zero = false;
-                }
-                if (a.getInt() == a.getInt())
-                {
-                    f.carry = false;
-                    f.zero = true;
-                }
-                if (a.getInt() > a.getInt())
-                {
-                    f.carry = false;
-                    f.zero = false;
-                }
-                f.checkParity(temp.getBinaryString());
-                f.checkSign(temp.getBinaryString());
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                temp.setData(a.getInt() + temp.getInt());
+                f.update(temp);
             }
             else if (hex == "B8") // CMP B
             {
                 Register temp = new Register();
-                temp.setData(a.getInt() - b.getInt());
-                if(a.getInt() < b.getInt())
-                {
+                temp.setData(b.getInt());
+                if (temp.getInt() > a.getInt())
                     f.carry = true;
-                    f.zero = false;
-                }
-                if(a.getInt() == b.getInt())
-                {
-                    f.carry = false;
-                    f.zero = true;
-                }
-                if(a.getInt() > b.getInt())
-                {
-                    f.carry = false;
-                    f.zero = false;
-                }
-                f.checkParity(temp.getBinaryString());
-                f.checkSign(temp.getBinaryString());
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                temp.setData(a.getInt() + temp.getInt());
+                f.update(temp);
             }
             else if (hex == "B9") // CMP C
             {
                 Register temp = new Register();
-                temp.setData(a.getInt() - c.getInt());
-                if (a.getInt() < c.getInt())
-                {
+                temp.setData(c.getInt());
+                if (temp.getInt() > a.getInt())
                     f.carry = true;
-                    f.zero = false;
-                }
-                if (a.getInt() == c.getInt())
-                {
-                    f.carry = false;
-                    f.zero = true;
-                }
-                if (a.getInt() > c.getInt())
-                {
-                    f.carry = false;
-                    f.zero = false;
-                }
-                f.checkParity(temp.getBinaryString());
-                f.checkSign(temp.getBinaryString());
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                temp.setData(a.getInt() + temp.getInt());
+                f.update(temp);
             }
             else if (hex == "BA") // CMP D
             {
                 Register temp = new Register();
-                temp.setData(a.getInt() - d.getInt());
-                if (a.getInt() < d.getInt())
-                {
+                temp.setData(d.getInt());
+                if (temp.getInt() > a.getInt())
                     f.carry = true;
-                    f.zero = false;
-                }
-                if (a.getInt() == d.getInt())
-                {
-                    f.carry = false;
-                    f.zero = true;
-                }
-                if (a.getInt() > d.getInt())
-                {
-                    f.carry = false;
-                    f.zero = false;
-                }
-                f.checkParity(temp.getBinaryString());
-                f.checkSign(temp.getBinaryString());
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                temp.setData(a.getInt() + temp.getInt());
+                f.update(temp);
             }
             else if (hex == "BB") // CMP E
             {
                 Register temp = new Register();
-                temp.setData(a.getInt() - e.getInt());
-                if (a.getInt() < e.getInt())
-                {
+                temp.setData(e.getInt());
+                if (temp.getInt() > a.getInt())
                     f.carry = true;
-                    f.zero = false;
-                }
-                if (a.getInt() == e.getInt())
-                {
-                    f.carry = false;
-                    f.zero = true;
-                }
-                if (a.getInt() > e.getInt())
-                {
-                    f.carry = false;
-                    f.zero = false;
-                }
-                f.checkParity(temp.getBinaryString());
-                f.checkSign(temp.getBinaryString());
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                temp.setData(a.getInt() + temp.getInt());
+                f.update(temp);
             }
             else if (hex == "BC") // CMP H
             {
                 Register temp = new Register();
-                temp.setData(a.getInt() - h.getInt());
-                if (a.getInt() < h.getInt())
-                {
+                temp.setData(h.getInt());
+                if (temp.getInt() > a.getInt())
                     f.carry = true;
-                    f.zero = false;
-                }
-                if (a.getInt() == h.getInt())
-                {
-                    f.carry = false;
-                    f.zero = true;
-                }
-                if (a.getInt() > h.getInt())
-                {
-                    f.carry = false;
-                    f.zero = false;
-                }
-                f.checkParity(temp.getBinaryString());
-                f.checkSign(temp.getBinaryString());
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                temp.setData(a.getInt() + temp.getInt());
+                f.update(temp);
             }
             else if (hex == "BD") // CMP L
             {
                 Register temp = new Register();
-                temp.setData(a.getInt() - l.getInt());
-                if (a.getInt() < l.getInt())
-                {
+                temp.setData(l.getInt());
+                if (temp.getInt() > a.getInt())
                     f.carry = true;
-                    f.zero = false;
-                }
-                if (a.getInt() == l.getInt())
-                {
-                    f.carry = false;
-                    f.zero = true;
-                }
-                if (a.getInt() > l.getInt())
-                {
-                    f.carry = false;
-                    f.zero = false;
-                }
-                f.checkParity(temp.getBinaryString());
-                f.checkSign(temp.getBinaryString());
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                temp.setData(a.getInt() + temp.getInt());
+                f.update(temp);
             }
             else if (hex == "BE") // CMP M
             {
                 int index = Convert.ToInt32(m, 16);
                 int data = Convert.ToInt32(memory[index]);
                 Register temp = new Register();
-                temp.setData(a.getInt() - data);
-                if (a.getInt() < data)
-                {
+                temp.setData(data);
+                if (temp.getInt() > a.getInt())
                     f.carry = true;
-                    f.zero = false;
-                }
-                if (a.getInt() == data)
-                {
-                    f.carry = false;
-                    f.zero = true;
-                }
-                if (a.getInt() > data)
-                {
-                    f.carry = false;
-                    f.zero = false;
-                }
-                f.checkParity(temp.getBinaryString());
-                f.checkSign(temp.getBinaryString());
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                temp.setData(a.getInt() + temp.getInt());
+                f.update(temp);
             }
             else if (hex == "D4") // CNC label16
             {
-
+                if (f.carry == false)
+                {
+                    string pchex = Convert.ToString(pc.counter + 2, 16).PadLeft(4, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(2, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(0, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    string address = "";
+                    address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                    address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(address) - 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "C4") // CNZ label16
             {
-
+                if (f.zero == false)
+                {
+                    string pchex = Convert.ToString(pc.counter + 2, 16).PadLeft(4, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(2, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(0, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    string address = "";
+                    address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                    address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(address) - 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "F4") // CP label16
             {
-
+                if (f.sign == false)
+                {
+                    string pchex = Convert.ToString(pc.counter + 2, 16).PadLeft(4, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(2, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(0, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    string address = "";
+                    address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                    address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(address) - 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "EC") // CPE label16
             {
-
+                if (f.parity == true)
+                {
+                    string pchex = Convert.ToString(pc.counter + 2, 16).PadLeft(4, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(2, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(0, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    string address = "";
+                    address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                    address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(address) - 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "FE") // CPI data8
             {
-
+                int data = Convert.ToInt32(memory[pc.counter + 1]);
+                Register temp = new Register();
+                temp.setData(data);
+                if (temp.getInt() > a.getInt())
+                    f.carry = true;
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                temp.setData(a.getInt() + temp.getInt());
+                f.update(temp);
+                pc.incrementBy(1);
             }
             else if (hex == "E4") // CPO label16
             {
-
+                if (f.parity == false)
+                {
+                    string pchex = Convert.ToString(pc.counter + 2, 16).PadLeft(4, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(2, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(0, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    string address = "";
+                    address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                    address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(address) - 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "CC") // CZ label16
             {
-
+                if (f.zero == true)
+                {
+                    string pchex = Convert.ToString(pc.counter + 2, 16).PadLeft(4, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(2, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    sp--;
+                    stack[sp] = Convert.ToByte(pchex.Substring(0, 2), 16);
+                    stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                    string address = "";
+                    address += memory[pc.counter + 2].ToString().PadLeft(2, '0');
+                    address += memory[pc.counter + 1].ToString().PadLeft(2, '0');
+                    pc.counter = Convert.ToInt32(address) - 1;
+                }
+                else
+                    pc.incrementBy(2);
             }
             else if (hex == "27") // DAA
             {
@@ -2048,67 +2191,173 @@ namespace _8085_Simulator
             }
             else if (hex == "9") // DAD B [C]
             {
-
+                string t1 = b.getHex() + c.getHex();
+                string t2 = h.getHex() + l.getHex();
+                long data = Convert.ToUInt32(t1, 16) + Convert.ToUInt32(t2, 16);
+                if(data>65535)
+                {
+                    data -= 65536;
+                    f.carry = true;
+                }
+                h.setData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
+                l.setData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
             }
             else if (hex == "19") // DAD D [E]
             {
-
+                string t1 = d.getHex() + e.getHex();
+                string t2 = h.getHex() + l.getHex();
+                long data = Convert.ToUInt32(t1, 16) + Convert.ToUInt32(t2, 16);
+                if (data > 65535)
+                {
+                    data -= 65536;
+                    f.carry = true;
+                }
+                h.setData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
+                l.setData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
             }
             else if (hex == "29")  // DAD H [L]
             {
-
+                string t1 = h.getHex() + l.getHex();
+                string t2 = h.getHex() + l.getHex();
+                long data = Convert.ToUInt32(t1, 16) + Convert.ToUInt32(t2, 16);
+                if (data > 65535)
+                {
+                    data -= 65536;
+                    f.carry = true;
+                }
+                h.setData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
+                l.setData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
             }
             else if (hex == "39") // DAD SP
             {
-
+                string t1 = Convert.ToString(sp, 16).PadLeft(4, '0');
+                string t2 = h.getHex() + l.getHex();
+                long data = Convert.ToUInt32(t1, 16) + Convert.ToUInt32(t2, 16);
+                if (data > 65535)
+                {
+                    data -= 65536;
+                    f.carry = true;
+                }
+                h.setData(data.ToString("X").PadLeft(4, '0').Substring(0, 2));
+                l.setData(data.ToString("X").PadLeft(4, '0').Substring(2, 2));
             }
             else if (hex == "3D") // DCR A
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                temp.setData(temp.get2SInt());
+                int data = a.getInt() + temp.getInt();
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "5") // DCR B
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                temp.setData(temp.get2SInt());
+                int data = b.getInt() + temp.getInt();
+                f.checkAuxiliary(b.getBinaryString(), temp.getBinaryString());
+                b.setData(data);
+                f.update(b);
             }
             else if (hex == "D") // DCR C
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                temp.setData(temp.get2SInt());
+                int data = c.getInt() + temp.getInt();
+                f.checkAuxiliary(c.getBinaryString(), temp.getBinaryString());
+                c.setData(data);
+                f.update(c);
             }
             else if (hex == "15") // DCR D
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                temp.setData(temp.get2SInt());
+                int data = d.getInt() + temp.getInt();
+                f.checkAuxiliary(d.getBinaryString(), temp.getBinaryString());
+                d.setData(data);
+                f.update(d);
             }
             else if (hex == "1D") // DCR E
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                temp.setData(temp.get2SInt());
+                int data = e.getInt() + temp.getInt();
+                f.checkAuxiliary(e.getBinaryString(), temp.getBinaryString());
+                e.setData(data);
+                f.update(e);
             }
             else if (hex == "25") // DCR H
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                temp.setData(temp.get2SInt());
+                int data = h.getInt() + temp.getInt();
+                f.checkAuxiliary(h.getBinaryString(), temp.getBinaryString());
+                h.setData(data);
+                f.update(h);
             }
             else if (hex == "2D") // DCR L
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                temp.setData(temp.get2SInt());
+                int data = l.getInt() + temp.getInt();
+                f.checkAuxiliary(l.getBinaryString(), temp.getBinaryString());
+                l.setData(data);
+                f.update(l);
             }
             else if (hex == "35") // DCR M
             {
-
+                int index = Convert.ToInt32(m, 16);
+                Register data = new Register();
+                data.setData(Convert.ToInt32(memory[index]));
+                Register temp = new Register();
+                temp.setData(1);
+                temp.setData(temp.get2SInt());
+                int res = data.getInt() + temp.getInt();
+                f.checkAuxiliary(data.getBinaryString(), temp.getBinaryString());
+                data.setData(res);
+                f.update(data);
+                memorybox.Items[index].SubItems[1].Text = data.getHex();
             }
             else if (hex == "B") // DCX B [C]
             {
-
+                string t1 = b.getHex() + c.getHex();
+                int data = Convert.ToInt32(t1, 16);
+                data -= 1;
+                t1 = data.ToString("X").PadLeft(4, '0');
+                b.setData(t1.Substring(0, 2));
+                c.setData(t1.Substring(2, 2));
             }
             else if (hex == "1B") // DCX D [E]
             {
-
+                string t1 = d.getHex() + e.getHex();
+                int data = Convert.ToInt32(t1, 16);
+                data -= 1;
+                t1 = data.ToString("X").PadLeft(4, '0');
+                d.setData(t1.Substring(0, 2));
+                e.setData(t1.Substring(2, 2));
             }
             else if (hex == "2B") // DCX H [L]
             {
-
+                string t1 = h.getHex() + l.getHex();
+                int data = Convert.ToInt32(t1, 16);
+                data -= 1;
+                t1 = data.ToString("X").PadLeft(4, '0');
+                h.setData(t1.Substring(0, 2));
+                l.setData(t1.Substring(2, 2));
             }
             else if (hex == "3B") // DCX SP
             {
-
+                string t1 = Convert.ToString(sp, 16).PadLeft(4, '0');
+                int data = Convert.ToInt32(t1, 16);
+                data -= 1;
+                sp = data;
             }
             else if (hex == "F3") // DI
             {
@@ -2120,7 +2369,7 @@ namespace _8085_Simulator
             }
             else if (hex == "76") // HLT
             {
-
+                //end og life
             }
             else if (hex == "DB") // IN Port8
             {
@@ -2128,51 +2377,121 @@ namespace _8085_Simulator
             }
             else if (hex == "3C") // INR A
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                int data = a.getInt() + temp.getInt();
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "4") // INR B
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                int data = b.getInt() + temp.getInt();
+                f.checkAuxiliary(b.getBinaryString(), temp.getBinaryString());
+                b.setData(data);
+                f.update(b);
             }
             else if (hex == "C") // INR C
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                int data = c.getInt() + temp.getInt();
+                f.checkAuxiliary(c.getBinaryString(), temp.getBinaryString());
+                c.setData(data);
+                f.update(c);
             }
             else if (hex == "14") // INR D
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                int data = d.getInt() + temp.getInt();
+                f.checkAuxiliary(d.getBinaryString(), temp.getBinaryString());
+                d.setData(data);
+                f.update(d);
             }
             else if (hex == "1C") // INR E
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                int data = e.getInt() + temp.getInt();
+                f.checkAuxiliary(e.getBinaryString(), temp.getBinaryString());
+                e.setData(data);
+                f.update(e);
             }
             else if (hex == "24") // INR H
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                int data = h.getInt() + temp.getInt();
+                f.checkAuxiliary(h.getBinaryString(), temp.getBinaryString());
+                h.setData(data);
+                f.update(h);
             }
             else if (hex == "2C") // INR L
             {
-
+                Register temp = new Register();
+                temp.setData(1);
+                int data = l.getInt() + temp.getInt();
+                f.checkAuxiliary(l.getBinaryString(), temp.getBinaryString());
+                l.setData(data);
+                f.update(l);
             }
             else if (hex == "34") // INR M
             {
-
+                int index = Convert.ToInt32(m, 16);
+                Register data = new Register();
+                data.setData(Convert.ToInt32(memory[index]));
+                Register temp = new Register();
+                temp.setData(1);
+                int res = data.getInt() + temp.getInt();
+                f.checkAuxiliary(data.getBinaryString(), temp.getBinaryString());
+                data.setData(res);
+                f.update(data);
+                memorybox.Items[index].SubItems[1].Text = data.getHex();
             }
             else if (hex == "3") // INX B [C]
             {
-
+                string t1 = b.getHex() + c.getHex();
+                int data = Convert.ToInt32(t1, 16);
+                data += 1;
+                if (data > 65535)
+                    data -= 65536;
+                t1 = data.ToString("X").PadLeft(4, '0');
+                b.setData(t1.Substring(0, 2));
+                c.setData(t1.Substring(2, 2));
             }
             else if (hex == "13") // INX D [E]
             {
-
+                string t1 = d.getHex() + e.getHex();
+                int data = Convert.ToInt32(t1, 16);
+                data += 1;
+                if (data > 65535)
+                    data -= 65536;
+                t1 = data.ToString("X").PadLeft(4, '0');
+                d.setData(t1.Substring(0, 2));
+                e.setData(t1.Substring(2, 2));
             }
             else if (hex == "23") // INX H [L]
             {
-
+                string t1 = h.getHex() + l.getHex();
+                int data = Convert.ToInt32(t1, 16);
+                data -= 1;
+                if (data > 65535)
+                    data -= 65536;
+                t1 = data.ToString("X").PadLeft(4, '0');
+                h.setData(t1.Substring(0, 2));
+                l.setData(t1.Substring(2, 2));
             }
             else if (hex == "33") // INX SP
             {
-
+                string t1 = Convert.ToString(sp, 16).PadLeft(4, '0');
+                int data = Convert.ToInt32(t1, 16);
+                data += 1;
+                if (data > 65535)
+                    data -= 65536;
+                sp = data;
             }
             else if (hex == "DA") // JC label16
             {
@@ -2313,7 +2632,12 @@ namespace _8085_Simulator
             }
             else if (hex == "2A") // LHLD address16
             {
-
+                int index = memory[pc.counter + 2] + memory[pc.counter + 1];
+                int ad1 = memory[index + 1];
+                int ad2 = memory[index];
+                h.setData(ad1);
+                l.setData(ad2);
+                pc.incrementBy(2);
             }
             else if (hex == "1") // LXI B [C] data16
             {
@@ -2707,27 +3031,72 @@ namespace _8085_Simulator
             }
             else if (hex == "D3") // OUT port8
             {
-
+                //useless
             }
             else if (hex == "E9") // PCHL
             {
-
+                int data = Convert.ToInt32(h.getInt()) + Convert.ToInt32(l.getInt());
+                pc.counter = data-1;
             }
             else if (hex == "C1") // POP B [C]
             {
-
+                if (sp <= 65533)
+                {
+                    b.setData(stack[sp]);
+                    sp++;
+                    c.setData(stack[sp]);
+                    sp++;
+                }
+                else
+                {
+                    stop_run = true;
+                    errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                }
             }
             else if (hex == "D1") // POP D [E]
             {
-
+                if (sp <= 65533)
+                {
+                    d.setData(stack[sp]);
+                    sp++;
+                    e.setData(stack[sp]);
+                    sp++;
+                }
+                else
+                {
+                    stop_run = true;
+                    errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                }
             }
             else if (hex == "E1") // POP H [L]
             {
-
+                if (sp <= 65533)
+                {
+                    h.setData(stack[sp]);
+                    sp++;
+                    l.setData(stack[sp]);
+                    sp++;
+                }
+                else
+                {
+                    stop_run = true;
+                    errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                }
             }
             else if (hex == "F1") // POP PSW
             {
-
+                if (sp <= 65533)
+                {
+                    a.setData(stack[sp]);
+                    sp++;
+                    f.setData(stack[sp]);
+                    sp++;
+                }
+                else
+                {
+                    stop_run = true;
+                    errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                }
             }
             else if (hex == "C5") // PUSH B [C]
             {
@@ -2767,15 +3136,41 @@ namespace _8085_Simulator
             }
             else if (hex == "17") // RAL
             {
-
+                bool temp = a.data[0];
+                for (int i = 1; i < 8; i++)
+                    a.data[i - 1] = a.data[i];
+                a.data[7] = f.carry;
+                f.carry = temp;
             }
             else if (hex == "1F") // RAR
             {
-
+                bool temp = a.data[7];
+                for (int i = 7; i > 0; i--)
+                    a.data[i] = a.data[i-1];
+                a.data[0] = f.carry;
+                f.carry = temp;
             }
             else if (hex == "D8") // RC
             {
-
+                if (f.carry == true)
+                {
+                    if (sp <= 65533)
+                    {
+                        string address = "";
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        pc.counter = Convert.ToInt32(address, 16);
+                    }
+                    else
+                    {
+                        stop_run = true;
+                        errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                    }
+                }
             }
             else if (hex == "C9") // RET
             {
@@ -2802,35 +3197,151 @@ namespace _8085_Simulator
             }
             else if (hex == "7") // RLC
             {
-
+                bool temp = a.data[0];
+                for (int i = 1; i < 8; i++)
+                    a.data[i - 1] = a.data[i];
+                a.data[7] = temp;
+                f.carry = temp;
             }
             else if (hex == "F8") // RM
             {
-
+                if (f.sign == true)
+                {
+                    if (sp <= 65533)
+                    {
+                        string address = "";
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        pc.counter = Convert.ToInt32(address, 16);
+                    }
+                    else
+                    {
+                        stop_run = true;
+                        errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                    }
+                }
             }
             else if (hex == "D0") // RNC
             {
-
+                if (f.carry == false)
+                {
+                    if (sp <= 65533)
+                    {
+                        string address = "";
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        pc.counter = Convert.ToInt32(address, 16);
+                    }
+                    else
+                    {
+                        stop_run = true;
+                        errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                    }
+                }
             }
             else if (hex == "C0") // RNZ
             {
-
+                if (f.zero == false)
+                {
+                    if (sp <= 65533)
+                    {
+                        string address = "";
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        pc.counter = Convert.ToInt32(address, 16);
+                    }
+                    else
+                    {
+                        stop_run = true;
+                        errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                    }
+                }
             }
             else if (hex == "F0") // RP
             {
-
+                if (f.sign == false)
+                {
+                    if (sp <= 65533)
+                    {
+                        string address = "";
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        pc.counter = Convert.ToInt32(address, 16);
+                    }
+                    else
+                    {
+                        stop_run = true;
+                        errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                    }
+                }
             }
             else if (hex == "E8") // RPE
             {
-
+                if (f.parity == true)
+                {
+                    if (sp <= 65533)
+                    {
+                        string address = "";
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        pc.counter = Convert.ToInt32(address, 16);
+                    }
+                    else
+                    {
+                        stop_run = true;
+                        errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                    }
+                }
             }
             else if (hex == "E0") // RPO
             {
-
+                if (f.parity == false)
+                {
+                    if (sp <= 65533)
+                    {
+                        string address = "";
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        pc.counter = Convert.ToInt32(address, 16);
+                    }
+                    else
+                    {
+                        stop_run = true;
+                        errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                    }
+                }
             }
             else if (hex == "F") // RRC
             {
-
+                bool temp = a.data[7];
+                for (int i = 8; i > 1; i--)
+                    a.data[i] = a.data[i-1];
+                a.data[0] = temp;
+                f.carry = temp;
             }
             else if (hex == "C7") // RST 0
             {
@@ -2866,7 +3377,25 @@ namespace _8085_Simulator
             }
             else if (hex == "C8") // RZ
             {
-
+                if (f.zero == true)
+                {
+                    if (sp <= 65533)
+                    {
+                        string address = "";
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        address += stack[sp].ToString().PadLeft(2, '0');
+                        stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
+                        sp++;
+                        pc.counter = Convert.ToInt32(address, 16);
+                    }
+                    else
+                    {
+                        stop_run = true;
+                        errors.Add($"Runtime Error at {pc.counter.ToString("X").PadLeft(4, '0')} : Not enough value in stack!");
+                    }
+                }
             }
             else if (hex == "9F") // SBB A
             {
@@ -2906,7 +3435,11 @@ namespace _8085_Simulator
             }
             else if (hex == "22") // SHLD address16
             {
-
+                int index = memory[pc.counter + 2] + memory[pc.counter + 1];
+                memory[index] = Convert.ToByte(l.getInt());
+                memory[index + 1] = Convert.ToByte(h.getInt());
+                memorybox.Items[index].SubItems[1].Text = l.getHex();
+                memorybox.Items[index + 1].SubItems[1].Text = h.getHex();
             }
             else if (hex == "30") // SIM
             {
@@ -2950,39 +3483,140 @@ namespace _8085_Simulator
             }
             else if (hex == "97") // SUB A
             {
-
+                /*
+                 * "sub a", sets carry when "a" is 0
+                 * but sub a, resets carry if set when "a" is not 0
+                 * why?
+                 * 
+                 * */
+                Register temp = new Register();
+                temp.setData(a.getInt());
+                int data = a.getInt() + temp.get2SInt();
+                if (data > 255)
+                    f.carry = true;
+                else
+                    f.carry = false;
+                f.carry = !f.carry;
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "90") // SUB B
             {
-
+                Register temp = new Register();
+                temp.setData(b.getInt());
+                if (temp.getInt() > a.getInt())
+                    f.carry = true;
+                else
+                    f.carry = false;
+                int data = a.getInt() + temp.get2SInt();
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "91") // SUB C
             {
-
+                Register temp = new Register();
+                temp.setData(c.getInt());
+                if (temp.getInt() > a.getInt())
+                    f.carry = true;
+                else
+                    f.carry = false;
+                int data = a.getInt() + temp.get2SInt();
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "92") // SUB D
             {
-
+                Register temp = new Register();
+                temp.setData(d.getInt());
+                if (temp.getInt() > a.getInt())
+                    f.carry = true;
+                else
+                    f.carry = false;
+                int data = a.getInt() + temp.get2SInt();
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "93") // SUB E
             {
-
+                Register temp = new Register();
+                temp.setData(e.getInt());
+                if (temp.getInt() > a.getInt())
+                    f.carry = true;
+                else
+                    f.carry = false;
+                int data = a.getInt() + temp.get2SInt();
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "94") // SUB H
             {
-
+                Register temp = new Register();
+                temp.setData(h.getInt());
+                if (temp.getInt() > a.getInt())
+                    f.carry = true;
+                else
+                    f.carry = false;
+                int data = a.getInt() + temp.get2SInt();
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "95") // SUB L
             {
-
+                Register temp = new Register();
+                temp.setData(l.getInt());
+                if (temp.getInt() > a.getInt())
+                    f.carry = true;
+                else
+                    f.carry = false;
+                int data = a.getInt() + temp.get2SInt();
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "96") // SUB M
             {
-
+                int index = Convert.ToInt32(m, 16);
+                int data = Convert.ToInt32(memory[index]);
+                Register temp = new Register();
+                temp.setData(data);
+                if (data > a.getInt())
+                    f.carry = true;
+                else
+                    f.carry = false;
+                data = a.getInt() + temp.get2SInt();
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
             }
             else if (hex == "D6") // SUI data8
             {
-
+                int data = memory[pc.counter + 1];
+                Register temp = new Register();
+                temp.setData(data);
+                if (data > a.getInt())
+                    f.carry = true;
+                else
+                    f.carry = false;
+                data = a.getInt() + temp.get2SInt();
+                temp.setData(temp.get2SInt());
+                f.checkAuxiliary(a.getBinaryString(), temp.getBinaryString());
+                a.setData(data);
+                f.update(a);
+                pc.incrementBy(1);
             }
             else if (hex == "EB") // XCHG
             {
@@ -3060,16 +3694,16 @@ namespace _8085_Simulator
                         code[2] == "m")
                         {
                             if (code[1] == "m" && code[2] == "m")
-                                error_string = $"cannot do self assignment to \"m\"";
+                                error_string = $"Cannot do self assignment to 'm'";
                         }
                         else
-                            error_string = $"cannot identify \"{code[2]}\"";
+                            error_string = $"Only 'a','b','c','d','e','h','l', or 'm' can be used! Cannot identify \"{code[1]}\"";
                     }
                     else
-                        error_string = $"cannot identify \"{code[1]}\"";
+                        error_string = $"Only 'a','b','c','d','e','h','l', or 'm' can be used! Cannot identify \"{code[1]}\"";
                 }
                 else
-                    error_string = "not enough parameter";
+                    error_string = "Need 2 parameters";
 
             }  //done
             else if (code[0] == "mvi")
@@ -3091,9 +3725,12 @@ namespace _8085_Simulator
                         }
                         else if (code[2].EndsWith("h") || code[2].EndsWith("H"))
                         {
-                            if (code[2].StartsWith("0"))
-                                code[2] = code[2].TrimStart('0');
                             code[2] = code[2].Remove(code[2].Length - 1);
+                            if (code[2].StartsWith("0"))
+                            {
+                                code[2] = code[2].TrimStart('0');
+                                if (code[2] == "") code[2] += "0";
+                            }
                             try
                             {
                                 Convert.ToInt32(code[2], 16);
@@ -3112,7 +3749,10 @@ namespace _8085_Simulator
                             try
                             {
                                 if (code[2].StartsWith("0"))
+                                {
                                     code[2] = code[2].TrimStart('0');
+                                    if (code[2] == "") code[2] += "0";
+                                }
                                 Int32.Parse(code[2]);
                                 if (Int32.Parse(code[2]) > 255)
                                 {
@@ -3127,10 +3767,10 @@ namespace _8085_Simulator
 
                     }
                     else
-                        error_string = $"cannot identify \"{code[1]}\"";
+                        error_string = $"Only 'a','b','c','d','e','h','l', or 'm' can be used! Cannot identify \"{code[1]}\"";
                 }
                 else
-                    error_string = "not enough parameter";
+                    error_string = "Need 2 parameters";
 
 
             }  //done
@@ -3156,9 +3796,9 @@ namespace _8085_Simulator
                         code[1] == "l" ||
                         code[1] == "m") { }
                     else
-                        error_string = $"cannot identify \"{code[1]}\"";
+                        error_string = $"Only 'a','b','c','d','e','h','l', or 'm' can be used! Cannot identify \"{code[1]}\"";
                 else
-                    error_string = error_string = "not enough parameter";
+                    error_string = error_string = "Need 1 parameter";
 
             } //done
 
@@ -3180,9 +3820,12 @@ namespace _8085_Simulator
                     }
                     else if (code[1].EndsWith("h") || code[1].EndsWith("H"))
                     {
-                        if (code[1].StartsWith("0"))
-                            code[1] = code[1].TrimStart('0');
                         code[1] = code[1].Remove(code[1].Length - 1);
+                        if (code[1].StartsWith("0"))
+                        {
+                            code[1] = code[1].TrimStart('0');
+                            if (code[1] == "") code[1] += "0";
+                        }
                         try
                         {
                             if (Convert.ToInt32(code[1], 16) > 255)
@@ -3197,7 +3840,10 @@ namespace _8085_Simulator
                         try
                         {
                             if (code[1].StartsWith("0"))
+                            {
                                 code[1] = code[1].TrimStart('0');
+                                if (code[1] == "") code[1] += "0";
+                            }
                             if (Int32.Parse(code[1]) > 255)
                                 error_string = $"\"{code[1]}\" is not valid value";
                         }
@@ -3206,7 +3852,7 @@ namespace _8085_Simulator
                             error_string = $"\"{code[1]}\" is not valid value";
                         }
                 else
-                    error_string = "not enough parameter";
+                    error_string = "Need 1 parameter";
             } //done
 
             else if (code[0] == "stc" ||
@@ -3250,9 +3896,12 @@ namespace _8085_Simulator
                         }
                         else if (code[2].EndsWith("h") || code[2].EndsWith("H"))
                         {
-                            if (code[2].StartsWith("0"))
-                                code[2] = code[2].TrimStart('0');
                             code[2] = code[2].Remove(code[2].Length - 1);
+                            if (code[2].StartsWith("0"))
+                            {
+                                code[2] = code[2].TrimStart('0');
+                                if (code[2] == "") code[2] += "0";
+                            }
                             try
                             {
                                 if (Convert.ToInt32(code[2], 16) > 65535)
@@ -3269,7 +3918,10 @@ namespace _8085_Simulator
                             try
                             {
                                 if (code[2].StartsWith("0"))
+                                {
                                     code[2] = code[2].TrimStart('0');
+                                    if (code[2] == "") code[2] += "0";
+                                }
                                 if (Int32.Parse(code[2]) > 65535)
                                 {
                                     error_string = $"\"{code[2]}\" is not valid value";
@@ -3280,9 +3932,9 @@ namespace _8085_Simulator
                                 error_string = $"\"{code[2]}\" is not valid value";
                             }
                     else
-                        error_string = $"cannot identify \"{code[1]}\"";
+                        error_string = $"Only 'b','d','h', or \"sp\" can be used! Cannot identify \"{code[1]}\"";
                 else
-                    error_string = "not enough parameters";
+                    error_string = "Need 2 parameters";
             } //done
 
             else if (code[0] == "ldax" ||
@@ -3292,9 +3944,9 @@ namespace _8085_Simulator
                     if (code[1] == "b" ||
                         code[1] == "d") { }
                     else
-                        error_string = $"cannot identify \"{code[1]}\"";
+                        error_string = $"Only 'b' or 'd' can be used! Cannot identify \"{code[1]}\"";
                 else
-                    error_string = "not enough parameters";
+                    error_string = "Need 1 parameter";
             } //done
 
             else if (code[0] == "lda" ||
@@ -3310,9 +3962,12 @@ namespace _8085_Simulator
                     else if (code[1].EndsWith("h") || code[1].EndsWith("H"))
                         try
                         {
-                            if (code[1].StartsWith("0"))
-                                code[1] = code[2].TrimStart('0');
                             code[1] = code[1].Remove(code[1].Length - 1);
+                            if (code[1].StartsWith("0"))
+                            {
+                                code[1] = code[1].TrimStart('0');
+                                if (code[1] == "") code[1] += "0";
+                            }
                             if (Convert.ToInt32(code[1], 16) > 65335)
                                 error_string = $"\"{code[1]}\" is not valid value";
                         }
@@ -3324,7 +3979,10 @@ namespace _8085_Simulator
                         try
                         {
                             if (code[1].StartsWith("0"))
-                                code[1] = code[2].TrimStart('0');
+                            {
+                                code[1] = code[1].TrimStart('0');
+                                if (code[1] == "") code[1] += "0";
+                            }
                             if (Int32.Parse(code[1]) > 65335)
                                 error_string = $"\"{code[1]}\" is not valid value";
                         }
@@ -3333,7 +3991,7 @@ namespace _8085_Simulator
                             error_string = $"\"{code[1]}\" is not valid value";
                         }
                 else
-                    error_string = "not enough parameters";
+                    error_string = "Need 1 parameter";
             } //done
 
             else if (code[0] == "dad" ||
@@ -3346,9 +4004,9 @@ namespace _8085_Simulator
                         code[1] == "h" ||
                         code[1] == "sp") { }
                     else
-                        error_string = $"cannot identify \"{code[1]}\"";
+                        error_string = $"Only 'b','d','h', or \"sp\" can be used! Cannot identify \"{code[1]}\"";
                 else
-                    error_string = "not enough parameters";
+                    error_string = "Need 1 parameter";
             } //done
 
             else if (code[0] == "jmp" ||
@@ -3381,6 +4039,11 @@ namespace _8085_Simulator
                         try
                         {
                             code[1] = code[1].Remove(code[1].Length - 1);
+                            if (code[1].StartsWith("0"))
+                            {
+                                code[1] = code[1].TrimStart('0');
+                                if (code[1] == "") code[1] += "0";
+                            }
                             if (Convert.ToInt32(code[1], 16) > 65535)
                                 error_string = $"\"{code[1]}\" is not valid value";
                         }
@@ -3391,6 +4054,11 @@ namespace _8085_Simulator
                     else
                         try
                         {
+                            if (code[1].StartsWith("0"))
+                            {
+                                code[1] = code[1].TrimStart('0');
+                                if (code[1] == "") code[1] += "0";
+                            }
                             if (Int32.Parse(code[1]) > 65535)
                                 error_string = $"\"{code[1]}\" is not valid value";
                         }
@@ -3400,7 +4068,7 @@ namespace _8085_Simulator
                         }
                 }
                 else
-                    error_string = "not enough parameters";
+                    error_string = "Need 1 parameter";
             } //done
 
             else if (code[0] == "rst")
@@ -3418,7 +4086,7 @@ namespace _8085_Simulator
                         error_string = $"\"{code[1]}\" is not valid value";
                     }
                 else
-                    error_string = "not enough parameters";
+                    error_string = "Need 1 parameter";
             }
 
             else if (code[0] == "push" ||
@@ -3430,9 +4098,9 @@ namespace _8085_Simulator
                         code[1] == "h" ||
                         code[1] == "psw") { }
                     else
-                        error_string = $"cannot identify \"{code[1]}\"";
+                        error_string = $"Only 'b','d','h', or \"psw\" can be used! Cannot identify \"{code[1]}\"";
                 else
-                    error_string = "not enough parameters";
+                    error_string = "Need 1 parameter";
             } //done
 
             else if (code[0].StartsWith(";")) { } //done
@@ -3483,6 +4151,8 @@ namespace _8085_Simulator
             codeEditor.Margins[0].Width = 40;
             codeEditor.Margins[1].Width = 10;
 
+            codeEditor.Markers[1].Symbol = MarkerSymbol.Background;
+            codeEditor.Markers[1].SetBackColor(Color.LightGray);
 
             codeEditor.Select();
         }
@@ -3522,6 +4192,11 @@ namespace _8085_Simulator
 
         private void runToolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            codeEditor.Enabled = false;
+            stop_button.Enabled = true;
+            play_button.Enabled = false;
+            step_button.Enabled = false;
+            stop_run = false;
             code_inspect(true);
         }
 
@@ -3565,13 +4240,202 @@ namespace _8085_Simulator
 
         private void stop_program(object sender, EventArgs e)
         {
+            play_button.Enabled = true;
+            stop_button.Enabled = false;
+            selected_index = 0;
             stop_run = true;
+            codeEditor.Enabled = true;
+            codeEditor.Text = orignal_code;
+            formatted_code = "";
+        }
+
+        private void format_code(ref string str)
+        {
+            int start_location = 0;
+            string lineF = "";
+            foreach (Line line in codeEditor.Lines)
+            {
+                lineF = Regex.Replace(line.Text, @",+", " ");
+                lineF = Regex.Replace(lineF, @"\s+", " ");
+                lineF = lineF.Trim(' ');
+                if (lineF == "")
+                    continue;
+                string[] code = lineF.ToLower().Split(' ');
+                if (code[0].EndsWith(":"))
+                {
+                    code[0] = code[0].Remove(code[0].Length - 1);
+                    labels.Add(new LabelAddress(code[0], start_location));
+                    for (int i = 1; i < code.Length; i++)
+                        code[i - 1] = code[i];
+                    code[code.Length-1] = "";
+                    lineF = "";
+                    foreach(string word in code)
+                    {
+                        if(word!="")
+                        lineF += word + ' ';
+                    }
+                    str += $"{start_location.ToString("X").PadLeft(4, '0')} : {lineF}\n";
+                    start_location += 1;
+                }
+                else
+                {
+                    if (code[0] == "mov" ||
+                        code[0] == "add" ||
+                        code[0] == "sub" ||
+                        code[0] == "adc" ||
+                        code[0] == "sbb" ||
+                        code[0] == "inr" ||
+                        code[0] == "dcr" ||
+                        code[0] == "ana" ||
+                        code[0] == "ora" ||
+                        code[0] == "xra" ||
+                        code[0] == "cmp" ||
+                        code[0] == "stc" ||
+                        code[0] == "cma" ||
+                        code[0] == "daa" ||
+                        code[0] == "cmc" ||
+                        code[0] == "rlc" ||
+                        code[0] == "rrc" ||
+                        code[0] == "ral" ||
+                        code[0] == "rar" ||
+                        code[0] == "ret" ||
+                        code[0] == "rnz" ||
+                        code[0] == "rz" ||
+                        code[0] == "rnc" ||
+                        code[0] == "rc" ||
+                        code[0] == "rpo" ||
+                        code[0] == "rpe" ||
+                        code[0] == "rp" ||
+                        code[0] == "rm" ||
+                        code[0] == "pchl" ||
+                        code[0] == "xthl" ||
+                        code[0] == "sphl" ||
+                        code[0] == "ei" ||
+                        code[0] == "di" ||
+                        code[0] == "rim" ||
+                        code[0] == "sim" ||
+                        code[0] == "nop" ||
+                        code[0] == "hlt" ||
+                        code[0] == "xchg" ||
+                        code[0] == "ldax" ||
+                        code[0] == "stax" ||
+                        code[0] == "dad" ||
+                        code[0] == "inx" ||
+                        code[0] == "dcx" ||
+                        code[0] == "rst" ||
+                        code[0] == "push" ||
+                        code[0] == "pop")
+                    {
+                        str += $"{start_location.ToString("X").PadLeft(4, '0')} : {lineF}\n";
+                        start_location += 1;
+                    }
+
+                    else if (code[0] == "mvi" ||
+                        code[0] == "adi" ||
+                        code[0] == "aci" ||
+                        code[0] == "sui" ||
+                        code[0] == "sbi" ||
+                        code[0] == "ani" ||
+                        code[0] == "xri" ||
+                        code[0] == "ori" ||
+                        code[0] == "cpi" ||
+                        code[0] == "in" ||
+                        code[0] == "out"
+                        )
+                    {
+                        str += $"{start_location.ToString("X").PadLeft(4, '0')} : {lineF}\n";
+                        start_location += 2;
+                    }
+
+                    else if (code[0] == "jmp" ||
+                        code[0] == "jnz" ||
+                        code[0] == "jz" ||
+                        code[0] == "jnc" ||
+                        code[0] == "jc" ||
+                        code[0] == "jpo" ||
+                        code[0] == "jpe" ||
+                        code[0] == "jp" ||
+                        code[0] == "jm" ||
+                        code[0] == "call" ||
+                        code[0] == "cnz" ||
+                        code[0] == "cz" ||
+                        code[0] == "cnc" ||
+                        code[0] == "lda" ||
+                        code[0] == "sta" ||
+                        code[0] == "cc" ||
+                        code[0] == "cpo" ||
+                        code[0] == "cpe" ||
+                        code[0] == "cp" ||
+                        code[0] == "cm" ||
+                        code[0] == "lxi" ||
+                        code[0] == "lhld" ||
+                        code[0] == "shld")
+                    {
+                        if (isLabel(code[1]))
+                        {
+                            foreach (LabelAddress la in labels)
+                                if (code[1] == la.name)
+                                    code[1] = la.address.ToString("X").PadLeft(4, '0');
+                            lineF = "";
+                            foreach (string word in code)
+                                lineF += word + " ";
+                        }
+
+                        str += $"{start_location.ToString("X").PadLeft(4, '0')} : {lineF}\n";
+                        start_location += 3;
+                    }
+                }
+            }
         }
 
         private void step_program(object sender, EventArgs e)
         {
-            codeEditor.SelectionStart= codeEditor.Lines[codeEditor.CurrentLine].Position;
-            codeEditor.SelectionEnd = codeEditor.Lines[codeEditor.CurrentLine].Position + codeEditor.Lines[codeEditor.CurrentLine].Length;
+            if (stop_run == true && code_inspect(false))
+            {
+                pc.counter = load_into_memory();
+                orignal_code = codeEditor.Text;
+                format_code(ref formatted_code);
+                codeEditor.Text = formatted_code;
+                play_button.Enabled = false;
+                stop_button.Enabled = true;
+                stop_run = false;
+                codeEditor.Enabled = false;
+            }
+            else
+                if (memory[pc.counter].ToString("X") != "76")
+                {
+                code_execute(memory[pc.counter].ToString("X"));
+                pc.increment();
+                update_variables();
+                if (sp == 0)
+                    sp += 1;
+                for (int i = 0; i < codeEditor.Lines.Count; i++)
+                    codeEditor.Lines[i].MarkerDelete(1);
+                codeEditor.Lines[selected_index].MarkerAdd(1);
+                int ln = 0;
+                foreach (Line line in codeEditor.Lines)
+                {
+                    if (line.Text.Split(' ')[0] == pc.counter.ToString("X").PadLeft(4, '0'))
+                    {
+                        selected_index = ln;
+                        break;
+                    }
+                ln++;
+                }
+                stackbox.TopItem = stackbox.Items[sp - 1];
+                    memorybox.Invalidate();
+                }
+                else
+                {
+                    output_box.Items.Add("Program successfully terminated!");
+                    play_button.Enabled = true;
+                    stop_button.Enabled = false;
+                    selected_index = 0;
+                    stop_run = true;
+                    codeEditor.Enabled = true;
+                    codeEditor.Text = orignal_code;
+                    formatted_code = "";
+                }
         }
 
         private void code_editor_keypress(object sender, KeyPressEventArgs e)

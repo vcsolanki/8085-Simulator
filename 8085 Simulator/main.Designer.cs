@@ -77,7 +77,7 @@
             this.portAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.portData = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.code_input_layout = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.code_editors = new System.Windows.Forms.TableLayoutPanel();
             this.codeEditor = new ScintillaNET.Scintilla();
             this.status_group_layout = new System.Windows.Forms.TableLayoutPanel();
             this.pcandsp = new System.Windows.Forms.GroupBox();
@@ -133,7 +133,7 @@
             this.stackTab.SuspendLayout();
             this.portTab.SuspendLayout();
             this.code_input_layout.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
+            this.code_editors.SuspendLayout();
             this.status_group_layout.SuspendLayout();
             this.pcandsp.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -658,7 +658,7 @@
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(216, 666);
             this.tableLayoutPanel3.TabIndex = 28;
             // 
@@ -709,7 +709,7 @@
             this.data_tabs.Location = new System.Drawing.Point(3, 50);
             this.data_tabs.Name = "data_tabs";
             this.data_tabs.SelectedIndex = 0;
-            this.data_tabs.Size = new System.Drawing.Size(210, 742);
+            this.data_tabs.Size = new System.Drawing.Size(210, 613);
             this.data_tabs.TabIndex = 4;
             // 
             // memoryTab
@@ -718,7 +718,7 @@
             this.memoryTab.Location = new System.Drawing.Point(4, 32);
             this.memoryTab.Name = "memoryTab";
             this.memoryTab.Padding = new System.Windows.Forms.Padding(3);
-            this.memoryTab.Size = new System.Drawing.Size(202, 706);
+            this.memoryTab.Size = new System.Drawing.Size(202, 577);
             this.memoryTab.TabIndex = 0;
             this.memoryTab.Text = "Memory";
             this.memoryTab.UseVisualStyleBackColor = true;
@@ -733,7 +733,7 @@
             this.memorybox.HideSelection = false;
             this.memorybox.Location = new System.Drawing.Point(3, 3);
             this.memorybox.Name = "memorybox";
-            this.memorybox.Size = new System.Drawing.Size(196, 700);
+            this.memorybox.Size = new System.Drawing.Size(196, 571);
             this.memorybox.TabIndex = 2;
             this.memorybox.UseCompatibleStateImageBehavior = false;
             this.memorybox.View = System.Windows.Forms.View.Details;
@@ -761,7 +761,7 @@
             this.stackTab.Location = new System.Drawing.Point(4, 32);
             this.stackTab.Name = "stackTab";
             this.stackTab.Padding = new System.Windows.Forms.Padding(3);
-            this.stackTab.Size = new System.Drawing.Size(202, 706);
+            this.stackTab.Size = new System.Drawing.Size(202, 577);
             this.stackTab.TabIndex = 1;
             this.stackTab.Text = "Stack";
             this.stackTab.UseVisualStyleBackColor = true;
@@ -776,7 +776,7 @@
             this.stackbox.HideSelection = false;
             this.stackbox.Location = new System.Drawing.Point(3, 3);
             this.stackbox.Name = "stackbox";
-            this.stackbox.Size = new System.Drawing.Size(196, 700);
+            this.stackbox.Size = new System.Drawing.Size(196, 571);
             this.stackbox.TabIndex = 0;
             this.stackbox.UseCompatibleStateImageBehavior = false;
             this.stackbox.View = System.Windows.Forms.View.Details;
@@ -801,7 +801,7 @@
             this.portTab.Controls.Add(this.portbox);
             this.portTab.Location = new System.Drawing.Point(4, 32);
             this.portTab.Name = "portTab";
-            this.portTab.Size = new System.Drawing.Size(202, 706);
+            this.portTab.Size = new System.Drawing.Size(202, 577);
             this.portTab.TabIndex = 2;
             this.portTab.Text = "Port";
             this.portTab.UseVisualStyleBackColor = true;
@@ -816,7 +816,7 @@
             this.portbox.HideSelection = false;
             this.portbox.Location = new System.Drawing.Point(0, 0);
             this.portbox.Name = "portbox";
-            this.portbox.Size = new System.Drawing.Size(202, 706);
+            this.portbox.Size = new System.Drawing.Size(202, 577);
             this.portbox.TabIndex = 0;
             this.portbox.UseCompatibleStateImageBehavior = false;
             this.portbox.View = System.Windows.Forms.View.Details;
@@ -841,7 +841,7 @@
             this.code_input_layout.ColumnCount = 1;
             this.code_input_layout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.code_input_layout.Controls.Add(this.output_box, 0, 1);
-            this.code_input_layout.Controls.Add(this.tableLayoutPanel1, 0, 0);
+            this.code_input_layout.Controls.Add(this.code_editors, 0, 0);
             this.code_input_layout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.code_input_layout.Location = new System.Drawing.Point(209, 3);
             this.code_input_layout.Name = "code_input_layout";
@@ -851,19 +851,19 @@
             this.code_input_layout.Size = new System.Drawing.Size(745, 666);
             this.code_input_layout.TabIndex = 1;
             // 
-            // tableLayoutPanel1
+            // code_editors
             // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Controls.Add(this.codeEditor, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(739, 526);
-            this.tableLayoutPanel1.TabIndex = 14;
+            this.code_editors.ColumnCount = 1;
+            this.code_editors.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.code_editors.Controls.Add(this.codeEditor, 0, 0);
+            this.code_editors.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.code_editors.Location = new System.Drawing.Point(3, 3);
+            this.code_editors.Name = "code_editors";
+            this.code_editors.RowCount = 1;
+            this.code_editors.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.code_editors.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.code_editors.Size = new System.Drawing.Size(739, 526);
+            this.code_editors.TabIndex = 14;
             // 
             // codeEditor
             // 
@@ -873,10 +873,10 @@
             this.codeEditor.EdgeMode = ScintillaNET.EdgeMode.Line;
             this.codeEditor.Location = new System.Drawing.Point(3, 3);
             this.codeEditor.Name = "codeEditor";
-            this.codeEditor.Size = new System.Drawing.Size(973, 520);
+            this.codeEditor.Size = new System.Drawing.Size(733, 520);
             this.codeEditor.TabIndex = 30;
             this.codeEditor.Text = ";8085 Simulator ALPHA state!\r\n;Developed by Vishal Solanki\r\n\r\njmp start\r\n\r\n\r\nstar" +
-    "t: nop\r\n\r\n;start here\r\n\r\nhlt";
+    "t: nop\r\n\r\n\r\n\r\nhlt";
             this.codeEditor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.code_editor_keypress);
             // 
             // status_group_layout
@@ -1380,7 +1380,7 @@
             this.stackTab.ResumeLayout(false);
             this.portTab.ResumeLayout(false);
             this.code_input_layout.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
+            this.code_editors.ResumeLayout(false);
             this.status_group_layout.ResumeLayout(false);
             this.status_group_layout.PerformLayout();
             this.pcandsp.ResumeLayout(false);
@@ -1432,7 +1432,7 @@
         private System.Windows.Forms.TableLayoutPanel main_layout;
         private System.Windows.Forms.TableLayoutPanel code_input_layout;
         private System.Windows.Forms.TableLayoutPanel status_group_layout;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel code_editors;
         private System.Windows.Forms.GroupBox pcandsp;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Label label2;
