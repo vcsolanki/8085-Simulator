@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Text;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -30,7 +31,7 @@ namespace _8085_Simulator
             {
                 Clear();
             }
-            public string GetBinaryString(bool not=false)
+            public string GetBinaryString(bool not = false)
             {
                 string data_string = "";
                 for (int i = 0; i < 8; i++)
@@ -74,7 +75,7 @@ namespace _8085_Simulator
             }
             public string GetHex()
             {
-                string hex = Convert.ToString(GetInt(), 16).ToUpper().PadLeft(2,'0');
+                string hex = Convert.ToString(GetInt(), 16).ToUpper().PadLeft(2, '0');
                 return hex;
             }
             public void SetData(int data)
@@ -179,9 +180,9 @@ namespace _8085_Simulator
             public void CheckParity(string binary)
             {
                 int eo = 0;
-                foreach(char c in binary)
+                foreach (char c in binary)
                 {
-                    if(c=='1')
+                    if (c == '1')
                     {
                         eo++;
                     }
@@ -283,34 +284,41 @@ namespace _8085_Simulator
 
         readonly Flags f = new Flags();
 
-        ProgramCounter pc;
+        private ProgramCounter pc;
 
-        string psw;
-        string m;
+        private string psw;
+        private string m;
 
-        bool stop_run = true;
+        private bool stop_run = true;
 
         private List<ushort> memory;
         private List<ushort> port;
 
         private List<ushort> stack;
-        int sp = 65535;
-        int selected_index = 0;
+        private int sp = 65535;
+        private int selected_index = 0;
 
-        string orignal_code;
-        string formatted_code;
+        private string orignal_code;
+        private string formatted_code;
 
         private List<string> errors;
         private List<LabelAddress> labels;
 
-        ListViewItem[] memory_items;
-        ListViewItem[] stack_items;
-        ListViewItem[] port_items;
-        int m_first;
-        int s_first;
-        int p_first;
+        private ListViewItem[] memory_items;
+        private ListViewItem[] stack_items;
+        private ListViewItem[] port_items;
+        private int m_first;
+        private int s_first;
+        private int p_first;
 
-        ListViewItem[] m_items;
+        private ListViewItem[] m_items;
+
+        //File management avriables
+
+        private bool isFileSaved = false;
+        private string filePath = "";
+
+        //
 
         public main()
         {
@@ -319,7 +327,7 @@ namespace _8085_Simulator
 
         //General functions
 
-        public void Update_variables()
+        private void Update_variables()
         {
             areg.Text = a.GetHex().PadLeft(2, '0');
             breg.Text = b.GetHex().PadLeft(2, '0');
@@ -341,7 +349,7 @@ namespace _8085_Simulator
             spreg.Text = sp.ToString("X").PadLeft(4, '0');
         }
 
-        public void Clear_registers()
+        private void Clear_registers()
         {
             a.Clear();
             b.Clear();
@@ -358,7 +366,7 @@ namespace _8085_Simulator
             Update_variables();
         }
 
-        public void Reset_memory()
+        private void Reset_memory()
         {
             ListViewItem item;
             memorybox.VirtualListSize = memory.Count;
@@ -374,7 +382,7 @@ namespace _8085_Simulator
             memorybox.Invalidate();
         }
 
-        public void Reset_stack()
+        private void Reset_stack()
         {
             ListViewItem item;
             stackbox.VirtualListSize = stack.Count;
@@ -389,7 +397,7 @@ namespace _8085_Simulator
             stackbox.Invalidate();
         }
 
-        public void Reset_port()
+        private void Reset_port()
         {
             ListViewItem item;
             portbox.VirtualListSize = port.Count;
@@ -404,7 +412,7 @@ namespace _8085_Simulator
             portbox.Update();
         }
 
-        public int Load_into_memory()
+        private int Load_into_memory()
         {
             int for_pc;
             int start_location = for_pc = 0;
@@ -644,8 +652,6 @@ namespace _8085_Simulator
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
 
-                   
-
                     if (code[2].EndsWith("h"))
                     {
                         code[2] = code[2].Remove(code[2].Length - 1);
@@ -662,7 +668,7 @@ namespace _8085_Simulator
                             code[2] = code[2].TrimStart('0');
                             if (code[2] == "") code[2] = "0";
                         }
-                        int data = Convert.ToInt32(code[2], 16);
+                        int data = Convert.ToInt32(code[2]);
                         code[2] = data.ToString("X");
                     }
                     code[2] = code[2].PadLeft(4, '0');
@@ -771,8 +777,6 @@ namespace _8085_Simulator
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
 
-                    
-
                     if (code[1].EndsWith("h"))
                     {
                         code[1] = code[1].Remove(code[1].Length - 1);
@@ -789,7 +793,7 @@ namespace _8085_Simulator
                             code[1] = code[1].TrimStart('0');
                             if (code[1] == "") code[1] = "0";
                         }
-                        int data = Convert.ToInt32(code[1], 16);
+                        int data = Convert.ToInt32(code[1]);
                         code[1] = data.ToString("X");
                     }
                     code[1] = code[1].PadLeft(4, '0');
@@ -1132,7 +1136,7 @@ namespace _8085_Simulator
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
 
-                    
+
 
                     if (code[1].EndsWith("h") || code[1].EndsWith("H"))
                     {
@@ -1150,7 +1154,7 @@ namespace _8085_Simulator
                             code[1] = code[1].TrimStart('0');
                             if (code[1] == "") code[1] = "0";
                         }
-                        int data = Convert.ToInt32(code[1], 16);
+                        int data = Convert.ToInt32(code[1]);
                         code[1] = data.ToString("X");
                     }
 
@@ -1252,17 +1256,7 @@ namespace _8085_Simulator
             return for_pc;
         }
 
-        private void Run_click(object sender, EventArgs e)
-        {
-            Code_inspect(true);
-        }
-
-        public void Step_next_code()
-        {
-
-        }
-
-        public void Read_labels()
+        private void Read_labels()
         {
             labels.Clear();
             int start_location = 0;
@@ -1372,7 +1366,7 @@ namespace _8085_Simulator
             }
         }
 
-        public bool IsLabel(string lbl)
+        private bool IsLabel(string lbl)
         {
             foreach (LabelAddress ad in labels)
                 if (ad.name == lbl)
@@ -1424,7 +1418,7 @@ namespace _8085_Simulator
             }
             if (halt == false)
             {
-                errors.Add("No end to the program detected, did you forget \"HLT?\"");
+                errors.Add("No end to the program detected, did you forget \"HLT\"?");
                 error_level++;
             }
             if (error_level > 0)
@@ -1436,6 +1430,18 @@ namespace _8085_Simulator
                 codeEditor.Enabled = true;
                 stop_button.Enabled = false;
                 step_button.Enabled = true;
+                runToolStripMenuItem.Enabled = true;
+                stepNextToolStripMenuItem.Enabled = true;
+                checkErrorsToolStripMenuItem.Enabled = true;
+                clearEditorToolStripMenuItem.Enabled = true;
+                clearMemoryToolStripMenuItem.Enabled = true;
+                clearRegistersToolStripMenuItem.Enabled = true;
+                newASMFileToolStripMenuItem.Enabled = true;
+                openASMToolStripMenuItem.Enabled = true;
+                saveAsToolStripMenuItem.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+                status_lbl.Text = "Program Stopped, " + $"Errors :{error_level}";
+                status_lbl.ForeColor = Color.Red;
                 play_button.Enabled = true;
                 stop_run = true;
                 return false;
@@ -1452,7 +1458,7 @@ namespace _8085_Simulator
                         Update_variables();
                         if (sp == 0)
                             sp += 1;
-                        stackbox.TopItem = stackbox.Items[sp-1];
+                        stackbox.TopItem = stackbox.Items[sp - 1];
                         if (stop_run == true)
                         {
                             break;
@@ -1469,6 +1475,18 @@ namespace _8085_Simulator
                     codeEditor.Enabled = true;
                     stop_button.Enabled = false;
                     step_button.Enabled = true;
+                    runToolStripMenuItem.Enabled = true;
+                    stepNextToolStripMenuItem.Enabled = true;
+                    checkErrorsToolStripMenuItem.Enabled = true;
+                    clearEditorToolStripMenuItem.Enabled = true;
+                    clearMemoryToolStripMenuItem.Enabled = true;
+                    clearRegistersToolStripMenuItem.Enabled = true;
+                    newASMFileToolStripMenuItem.Enabled = true;
+                    openASMToolStripMenuItem.Enabled = true;
+                    saveAsToolStripMenuItem.Enabled = true;
+                    saveToolStripMenuItem.Enabled = true;
+                    status_lbl.Text = "Program Stopped";
+                    status_lbl.ForeColor = Color.Red;
                     play_button.Enabled = true;
                     stop_run = true;
                     output_box.Items.Add("Program successfully terminated!");
@@ -2743,7 +2761,7 @@ namespace _8085_Simulator
             else if (hex == "2A")
             {
                 string addr = memory[pc.counter + 2].ToString("X").PadLeft(2, '0') + memory[pc.counter + 1].ToString("X").PadLeft(2, '0');
-                int ad1 = memory[Convert.ToInt32(addr,16) + 1];
+                int ad1 = memory[Convert.ToInt32(addr, 16) + 1];
                 int ad2 = memory[Convert.ToInt32(addr, 16)];
                 h.SetData(ad1);
                 l.SetData(ad2);
@@ -4247,7 +4265,7 @@ namespace _8085_Simulator
                         code[1] == "l" ||
                         code[1] == "m")
                     {
-                        if(code[2].StartsWith("-"))
+                        if (code[2].StartsWith("-"))
                         {
                             error_string = $"\"{code[2]}\" is not valid value";
                         }
@@ -4640,7 +4658,19 @@ namespace _8085_Simulator
 
         private void Window_Closing(object sender, FormClosingEventArgs e)
         {
-
+            if (isFileSaved == false)
+            {
+                DialogResult dm = MessageBox.Show("Do you wanna save this file?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (dm == DialogResult.Yes)
+                    SaveFile(this, null);
+                else if (dm == DialogResult.No) { }
+                else if (dm == DialogResult.Cancel)
+                    e.Cancel = true;
+            }
+            Properties.Settings.Default.WindowState = WindowState;
+            Properties.Settings.Default.Bounds = Bounds;
+            Properties.Settings.Default.LastFile = filePath;
+            Properties.Settings.Default.Save();
         }
 
         private void Window_Loading(object sender, EventArgs e)
@@ -4661,9 +4691,11 @@ namespace _8085_Simulator
             Reset_port();
             Update_variables();
 
-            WindowState = FormWindowState.Maximized;
-
-
+            WindowState = Properties.Settings.Default.WindowState;
+            if (WindowState != FormWindowState.Maximized)
+                Bounds = Properties.Settings.Default.Bounds;
+            if(Properties.Settings.Default.LastFile!="")
+                filePath = Properties.Settings.Default.LastFile;
 
             codeEditor.Lexer = ScintillaNET.Lexer.Asm;
             codeEditor.Styles[Style.Default].Font = "Consolas";
@@ -4676,11 +4708,26 @@ namespace _8085_Simulator
             codeEditor.Styles[Style.Asm.DirectiveOperand].ForeColor = Color.DarkSeaGreen;
             codeEditor.SetKeywords(0, "mov mvi lxi ldax stax lda sta lhld shld xchg add adc sub sbb adi aci sui sbi dad inr dcr inx dcx daa cma cmc stc adi aci sui sbi ana ora xra cmp rlc rrc ral rar ani xri ori cpi jmp jnz jz jnc jc jpo jpe jp jm call cnz cz cnc cc cpo cpe cp cm ret rnz rz rnc rc rpo rpe rp rm pchl in out push pop xthl sphl ei di rim sim nop hlt rst");
             codeEditor.SetKeywords(2, "a b c d e h l m psw sp");
-            codeEditor.Margins[0].Width = 40;
+            codeEditor.Margins[0].Width = 60;
             codeEditor.Margins[1].Width = 10;
 
             codeEditor.Markers[1].Symbol = MarkerSymbol.Background;
             codeEditor.Markers[1].SetBackColor(Color.LightGray);
+
+            if (File.Exists(filePath))
+            {
+                using (FileStream file = File.Open(filePath, FileMode.Open))
+                {
+                    using (StreamReader reader = new StreamReader(file))
+                    {
+                        codeEditor.Text = reader.ReadToEnd();
+                        isFileSaved = true;
+                        reader.Close();
+                    }
+                    Text = "8085 Simulator - " + Path.GetFileName(filePath);
+                    file.Close();
+                }
+            }
 
             codeEditor.Select();
         }
@@ -4718,24 +4765,9 @@ namespace _8085_Simulator
 
         //key events
 
-        private void RunToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            codeEditor.Enabled = false;
-            stop_button.Enabled = true;
-            play_button.Enabled = false;
-            step_button.Enabled = false;
-            stop_run = false;
-            Code_inspect(true);
-        }
-
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("8085 Simulator - ALPHA\nDeveloped by Vishal Solanki\n\nThis is Project for my 5th semester, I poured all my dedication to this project, hope it helps!\n\nE-Mail : vcsolanki.vs@gmail.com", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void StepNextToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Step_next_code();
         }
 
         private void Show_conv_tooltip(object sender, EventArgs e)
@@ -4750,7 +4782,7 @@ namespace _8085_Simulator
         {
             Code_inspect(false);
         }
-      
+
         private void Warning_click(object sender, EventArgs e)
         {
             MessageBox.Show("Software is in ALPHA state!\nCan't guarantee software will work in every situation!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -4758,12 +4790,25 @@ namespace _8085_Simulator
 
         private void Run_program(object sender, EventArgs e)
         {
-                codeEditor.Enabled = false;
-                stop_button.Enabled = true;
-                play_button.Enabled = false;
-                step_button.Enabled = false;
-                stop_run = false;
-                Code_inspect(true);
+            orignal_code = codeEditor.Text;
+            codeEditor.Enabled = false;
+            stop_button.Enabled = true;
+            play_button.Enabled = false;
+            step_button.Enabled = false;
+            runToolStripMenuItem.Enabled = false;
+            stepNextToolStripMenuItem.Enabled = false;
+            checkErrorsToolStripMenuItem.Enabled = false;
+            clearEditorToolStripMenuItem.Enabled = false;
+            clearMemoryToolStripMenuItem.Enabled = false;
+            clearRegistersToolStripMenuItem.Enabled = false;
+            newASMFileToolStripMenuItem.Enabled = false;
+            openASMToolStripMenuItem.Enabled = false;
+            saveAsToolStripMenuItem.Enabled = false;
+            saveToolStripMenuItem.Enabled = false;
+            stop_run = false;
+            status_lbl.Text = "Program Running, You can't edit code right now!";
+            status_lbl.ForeColor = Color.DarkGreen;
+            Code_inspect(true);
         }
 
         private void Stop_program(object sender, EventArgs e)
@@ -4772,8 +4817,19 @@ namespace _8085_Simulator
             stop_button.Enabled = false;
             selected_index = 0;
             stop_run = true;
-            codeEditor.Enabled = true;
+            runToolStripMenuItem.Enabled = true;
+            stepNextToolStripMenuItem.Enabled = true;
+            checkErrorsToolStripMenuItem.Enabled = true;
+            clearEditorToolStripMenuItem.Enabled = true;
+            clearMemoryToolStripMenuItem.Enabled = true;
+            clearRegistersToolStripMenuItem.Enabled = true;
+            newASMFileToolStripMenuItem.Enabled = true;
+            openASMToolStripMenuItem.Enabled = true;
+            saveAsToolStripMenuItem.Enabled = true;
+            saveToolStripMenuItem.Enabled = true;
             codeEditor.Text = orignal_code;
+            status_lbl.Text = "Program Stopped";
+            status_lbl.ForeColor = Color.Red;
             formatted_code = "";
         }
 
@@ -4794,12 +4850,12 @@ namespace _8085_Simulator
                     labels.Add(new LabelAddress(code[0], start_location));
                     for (int i = 1; i < code.Length; i++)
                         code[i - 1] = code[i];
-                    code[code.Length-1] = "";
+                    code[code.Length - 1] = "";
                     lineF = "";
-                    foreach(string word in code)
+                    foreach (string word in code)
                     {
-                        if(word!="")
-                        lineF += word + ' ';
+                        if (word != "")
+                            lineF += word + ' ';
                     }
                     str += $"{start_location.ToString("X").PadLeft(4, '0')} : {lineF}\n";
                     start_location += 1;
@@ -4925,51 +4981,85 @@ namespace _8085_Simulator
                 codeEditor.Text = formatted_code;
                 play_button.Enabled = false;
                 stop_button.Enabled = true;
+                runToolStripMenuItem.Enabled = false;
+                stepNextToolStripMenuItem.Enabled = false;
+                checkErrorsToolStripMenuItem.Enabled = false;
+                clearEditorToolStripMenuItem.Enabled = false;
+                clearMemoryToolStripMenuItem.Enabled = false;
+                clearRegistersToolStripMenuItem.Enabled = false;
+                newASMFileToolStripMenuItem.Enabled = false;
+                openASMToolStripMenuItem.Enabled = false;
+                saveAsToolStripMenuItem.Enabled = false;
+                saveToolStripMenuItem.Enabled = false;
+                status_lbl.Text = "Program Stepping, You can't edit code right now!";
+                status_lbl.ForeColor = Color.DarkGreen;
                 stop_run = false;
                 codeEditor.Enabled = false;
             }
             else
-                if (memory[pc.counter].ToString("X") != "76")
+            {
+                if (stop_run != true)
                 {
-                Code_execute(memory[pc.counter].ToString("X"));
-                pc.Increment();
-                Update_variables();
-                if (sp == 0)
-                    sp += 1;
-                for (int i = 0; i < codeEditor.Lines.Count; i++)
-                    codeEditor.Lines[i].MarkerDelete(1);
-                codeEditor.Lines[selected_index].MarkerAdd(1);
-                int ln = 0;
-                foreach (Line line in codeEditor.Lines)
-                {
-                    if (line.Text.Split(' ')[0] == pc.counter.ToString("X").PadLeft(4, '0'))
+                    if (memory[pc.counter].ToString("X") != "76")
                     {
-                        selected_index = ln;
-                        break;
+                        Code_execute(memory[pc.counter].ToString("X"));
+                        pc.Increment();
+                        Update_variables();
+                        if (sp == 0)
+                            sp += 1;
+                        for (int i = 0; i < codeEditor.Lines.Count; i++)
+                            codeEditor.Lines[i].MarkerDelete(1);
+                        codeEditor.Lines[selected_index].MarkerAdd(1);
+                        int ln = 0;
+                        foreach (Line line in codeEditor.Lines)
+                        {
+                            if (line.Text.Split(' ')[0] == pc.counter.ToString("X").PadLeft(4, '0'))
+                            {
+                                selected_index = ln;
+                                break;
+                            }
+                            ln++;
+                        }
+                        stackbox.TopItem = stackbox.Items[sp - 1];
+                        memorybox.Invalidate();
                     }
-                ln++;
+                    else
+                    {
+                        output_box.Items.Add("Program successfully terminated!");
+                        play_button.Enabled = true;
+                        stop_button.Enabled = false;
+                        selected_index = 0;
+                        stop_run = true;
+                        runToolStripMenuItem.Enabled = true;
+                        stepNextToolStripMenuItem.Enabled = true;
+                        checkErrorsToolStripMenuItem.Enabled = true;
+                        clearEditorToolStripMenuItem.Enabled = true;
+                        clearMemoryToolStripMenuItem.Enabled = true;
+                        clearRegistersToolStripMenuItem.Enabled = true;
+                        newASMFileToolStripMenuItem.Enabled = true;
+                        openASMToolStripMenuItem.Enabled = true;
+                        saveAsToolStripMenuItem.Enabled = true;
+                        saveToolStripMenuItem.Enabled = true;
+                        status_lbl.Text = "Program Stopped";
+                        status_lbl.ForeColor = Color.Red;
+                        codeEditor.Enabled = true;
+                        codeEditor.Text = orignal_code;
+                        formatted_code = "";
+                    }
                 }
-                    stackbox.TopItem = stackbox.Items[sp - 1];
-                    memorybox.Invalidate();
-                }
-                else
-                {
-                    output_box.Items.Add("Program successfully terminated!");
-                    play_button.Enabled = true;
-                    stop_button.Enabled = false;
-                    selected_index = 0;
-                    stop_run = true;
-                    codeEditor.Enabled = true;
-                    codeEditor.Text = orignal_code;
-                    formatted_code = "";
-                }
+            }
         }
 
         private void Code_editor_keypress(object sender, KeyPressEventArgs e)
         {
-            if(e.KeyChar<32)
+            if (e.KeyChar < 32)
             {
                 e.Handled = true;
+            }
+            else
+            {
+                isFileSaved = false;
+                Text = "8085 Simulator - " + Path.GetFileName(filePath) + "*";
             }
         }
 
@@ -5061,7 +5151,7 @@ namespace _8085_Simulator
         private void Memory_search_item(object sender, SearchForVirtualItemEventArgs e)
         {
             int x = 0;
-            foreach(ListViewItem it in m_items)
+            foreach (ListViewItem it in m_items)
             {
                 if (it.Text.Contains(e.Text))
                 {
@@ -5070,10 +5160,6 @@ namespace _8085_Simulator
                 }
                 x++;
             }
-        }
-
-        private void Memory_box_keypress(object sender, KeyPressEventArgs e)
-        {
         }
 
         private void Memory_double_click(object sender, EventArgs e)
@@ -5088,6 +5174,164 @@ namespace _8085_Simulator
                 memory[Convert.ToInt32(memorybox.Items[lic[0]].Text, 16)] = Convert.ToByte(address_Editbox.int_value);
                 memorybox.Items[lic[0]].SubItems[1].Text = memory[Convert.ToInt32(memorybox.Items[lic[0]].Text, 16)].ToString("X").PadLeft(2, '0');
                 memorybox.Invalidate();
+            }
+        }
+
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void Create_NewFile(object sender, EventArgs e)
+        {
+            if(isFileSaved==false)
+            {
+                DialogResult dm = MessageBox.Show("Do you wanna save this file?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (dm == DialogResult.Yes)
+                    SaveFile(this, null);
+                else if (dm == DialogResult.No) { }
+
+                else if (dm == DialogResult.Cancel)
+                    return;
+            }
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.CheckFileExists = false;
+            sfd.CheckPathExists = true;
+            sfd.SupportMultiDottedExtensions = true;
+            sfd.AddExtension = true;
+            sfd.Title = "Create New ASM File...";
+            sfd.Filter = "ASM File (*.asm)|*.asm|All Files (*.*)|*.*";
+            sfd.InitialDirectory = Properties.Settings.Default.RecentPath;
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                filePath = sfd.FileName;
+                isFileSaved = true;
+                FileStream file = File.Open(filePath, FileMode.Create);
+                file.Close();
+                Properties.Settings.Default.RecentPath = Path.GetDirectoryName(filePath);
+                Text = "8085 Simulator - " + Path.GetFileName(filePath);
+            }
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenFile(object sender, EventArgs e)
+        {
+            if (isFileSaved == false)
+            {
+                DialogResult dm = MessageBox.Show("Do you wanna save this file?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (dm == DialogResult.Yes)
+                    SaveFile(this, null);
+                else if (dm == DialogResult.No) { }
+
+                else if (dm == DialogResult.Cancel)
+                    return;
+            }
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.CheckPathExists = true;
+            ofd.CheckFileExists = true;
+            ofd.Title = "Open ASM File...";
+            ofd.Filter = "ASM File (*.asm)|*.asm|All Files (*.*)|*.*";
+            ofd.InitialDirectory = Properties.Settings.Default.RecentPath;
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                filePath = ofd.FileName;
+                isFileSaved = true;
+                using (FileStream file = File.Open(filePath, FileMode.Open))
+                {
+                    using (StreamReader reader = new StreamReader(file))
+                    {
+                        codeEditor.Text = reader.ReadToEnd();
+                        reader.Close();
+                    }
+                    file.Close();
+                }
+                Properties.Settings.Default.RecentPath = Path.GetDirectoryName(filePath);
+                Text = "8085 Simulator - " + Path.GetFileName(filePath);
+            }
+            Properties.Settings.Default.Save();
+        }
+
+        private void SaveFile(object sender, EventArgs e)
+        {
+            if (!isFileSaved)
+            {
+                if (filePath == "")
+                {
+                    SaveFileDialog sfd = new SaveFileDialog();
+                    sfd.CheckFileExists = true;
+                    sfd.CheckPathExists = true;
+                    sfd.SupportMultiDottedExtensions = true;
+                    sfd.AddExtension = true;
+                    sfd.Title = "Save ASM File As...";
+                    sfd.Filter = "ASM File (*.asm)|*.asm|All Files (*.*)|*.*";
+                    sfd.InitialDirectory = Properties.Settings.Default.RecentPath;
+                    if(sfd.ShowDialog()==DialogResult.OK)
+                    filePath = sfd.FileName;
+                }
+                if (filePath != "")
+                {
+                    isFileSaved = true;
+                    using (FileStream file = File.Open(filePath, FileMode.Open))
+                    {
+                        using (StreamWriter write = new StreamWriter(file))
+                        {
+                            write.Write(codeEditor.Text);
+                            write.Close();
+                        }
+                        file.Close();
+                    }
+                    Properties.Settings.Default.RecentPath = Path.GetDirectoryName(filePath);
+                    Text = "8085 Simulator - " + Path.GetFileName(filePath);
+                }
+            }
+            Properties.Settings.Default.Save();
+        }
+
+        private void SaveFileAs(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.CheckFileExists = true;
+            sfd.CheckPathExists = true;
+            sfd.SupportMultiDottedExtensions = true;
+            sfd.AddExtension = true;
+            sfd.Title = "Save ASM File As...";
+            sfd.Filter = "ASM File (*.asm)|*.asm|All Files (*.*)|*.*";
+            sfd.InitialDirectory = Properties.Settings.Default.RecentPath;
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                filePath = sfd.FileName;
+                isFileSaved = true;
+                using (FileStream file = File.Open(filePath, FileMode.Create))
+                {
+                    using (StreamWriter write = new StreamWriter(file))
+                    {
+                        write.Write(codeEditor.Text);
+                        write.Close();
+                    }
+                    file.Close();
+                }
+                Properties.Settings.Default.RecentPath = Path.GetDirectoryName(filePath);
+                Text = "8085 Simulator - " + Path.GetFileName(filePath);
+            }
+        }
+
+        private void Output_box_DoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                string slt = output_box.SelectedItem.ToString();
+                string[] words = slt.Split(' ');
+                int line = Convert.ToInt32(words.Last<string>());
+                codeEditor.Lines[line - 1].MarkerAdd(1);
+            }
+            catch { }
+        }
+
+        private void CodeEditor_click(object sender, EventArgs e)
+        {
+            if(stop_run==true)
+            {
+                codeEditor.MarkerDeleteAll(1);
             }
         }
     }
