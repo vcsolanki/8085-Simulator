@@ -94,7 +94,7 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.reg_name = new System.Windows.Forms.Label();
             this.conv_lbl = new System.Windows.Forms.Label();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.main_menu = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newASMFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openASMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -116,13 +116,12 @@
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label4 = new System.Windows.Forms.Label();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.play_button = new System.Windows.Forms.ToolStripButton();
-            this.step_button = new System.Windows.Forms.ToolStripButton();
-            this.stop_button = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.status_lbl = new System.Windows.Forms.ToolStripLabel();
+            this.play_button = new System.Windows.Forms.ToolStripMenuItem();
+            this.step_button = new System.Windows.Forms.ToolStripMenuItem();
+            this.stop_button = new System.Windows.Forms.ToolStripMenuItem();
+            this.status_lbl = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.registers_box.SuspendLayout();
             this.register_layout.SuspendLayout();
             this.flag_box.SuspendLayout();
@@ -141,8 +140,7 @@
             this.tableLayoutPanel2.SuspendLayout();
             this.conv_group_box.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
+            this.main_menu.SuspendLayout();
             this.SuspendLayout();
             // 
             // albl
@@ -248,7 +246,8 @@
             this.ereg.Tag = "E Register";
             this.ereg.Text = "0";
             this.ereg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.ereg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
+            this.ereg.Click += new System.EventHandler(this.Show_conv_tooltip);
+            this.ereg.DoubleClick += new System.EventHandler(this.DoubleClickRSet);
             // 
             // dreg
             // 
@@ -266,7 +265,8 @@
             this.dreg.Tag = "D Register";
             this.dreg.Text = "0";
             this.dreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.dreg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
+            this.dreg.Click += new System.EventHandler(this.Show_conv_tooltip);
+            this.dreg.DoubleClick += new System.EventHandler(this.DoubleClickRSet);
             // 
             // creg
             // 
@@ -284,7 +284,8 @@
             this.creg.Tag = "C Register";
             this.creg.Text = "0";
             this.creg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.creg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
+            this.creg.Click += new System.EventHandler(this.Show_conv_tooltip);
+            this.creg.DoubleClick += new System.EventHandler(this.DoubleClickRSet);
             // 
             // breg
             // 
@@ -302,7 +303,8 @@
             this.breg.Tag = "B Register";
             this.breg.Text = "0";
             this.breg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.breg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
+            this.breg.Click += new System.EventHandler(this.Show_conv_tooltip);
+            this.breg.DoubleClick += new System.EventHandler(this.DoubleClickRSet);
             // 
             // areg
             // 
@@ -320,7 +322,8 @@
             this.areg.Tag = "A Register";
             this.areg.Text = "0";
             this.areg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.areg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
+            this.areg.Click += new System.EventHandler(this.Show_conv_tooltip);
+            this.areg.DoubleClick += new System.EventHandler(this.DoubleClickRSet);
             // 
             // output_box
             // 
@@ -433,8 +436,10 @@
             this.flagp.Name = "flagp";
             this.flagp.Size = new System.Drawing.Size(107, 30);
             this.flagp.TabIndex = 24;
+            this.flagp.Tag = "pf";
             this.flagp.Text = "0";
             this.flagp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.flagp.DoubleClick += new System.EventHandler(this.DoubleClickFlagSet);
             // 
             // flaga
             // 
@@ -449,8 +454,10 @@
             this.flaga.Name = "flaga";
             this.flaga.Size = new System.Drawing.Size(107, 30);
             this.flaga.TabIndex = 23;
+            this.flaga.Tag = "af";
             this.flaga.Text = "0";
             this.flaga.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.flaga.DoubleClick += new System.EventHandler(this.DoubleClickFlagSet);
             // 
             // flags
             // 
@@ -465,8 +472,10 @@
             this.flags.Name = "flags";
             this.flags.Size = new System.Drawing.Size(107, 30);
             this.flags.TabIndex = 22;
+            this.flags.Tag = "sf";
             this.flags.Text = "0";
             this.flags.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.flags.DoubleClick += new System.EventHandler(this.DoubleClickFlagSet);
             // 
             // flagz
             // 
@@ -482,8 +491,10 @@
             this.flagz.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.flagz.Size = new System.Drawing.Size(107, 30);
             this.flagz.TabIndex = 21;
+            this.flagz.Tag = "zf";
             this.flagz.Text = "0";
             this.flagz.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.flagz.DoubleClick += new System.EventHandler(this.DoubleClickFlagSet);
             // 
             // flagc
             // 
@@ -498,8 +509,10 @@
             this.flagc.Name = "flagc";
             this.flagc.Size = new System.Drawing.Size(107, 30);
             this.flagc.TabIndex = 20;
+            this.flagc.Tag = "cf";
             this.flagc.Text = "0";
             this.flagc.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.flagc.DoubleClick += new System.EventHandler(this.DoubleClickFlagSet);
             // 
             // registers_box
             // 
@@ -565,7 +578,8 @@
             this.hreg.Tag = "H Register";
             this.hreg.Text = "0";
             this.hreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.hreg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
+            this.hreg.Click += new System.EventHandler(this.Show_conv_tooltip);
+            this.hreg.DoubleClick += new System.EventHandler(this.DoubleClickRSet);
             // 
             // lreg
             // 
@@ -584,7 +598,8 @@
             this.lreg.Tag = "L Register";
             this.lreg.Text = "0";
             this.lreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lreg.MouseHover += new System.EventHandler(this.Show_conv_tooltip);
+            this.lreg.Click += new System.EventHandler(this.Show_conv_tooltip);
+            this.lreg.DoubleClick += new System.EventHandler(this.DoubleClickRSet);
             // 
             // label3
             // 
@@ -721,10 +736,12 @@
             this.address_to_find.Dock = System.Windows.Forms.DockStyle.Fill;
             this.address_to_find.Location = new System.Drawing.Point(4, 4);
             this.address_to_find.Margin = new System.Windows.Forms.Padding(4);
+            this.address_to_find.MaxLength = 4;
             this.address_to_find.Multiline = true;
             this.address_to_find.Name = "address_to_find";
             this.address_to_find.Size = new System.Drawing.Size(145, 44);
             this.address_to_find.TabIndex = 0;
+            this.address_to_find.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.address_to_find.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Find_text_keypress);
             // 
             // find_address
@@ -828,6 +845,7 @@
             this.stackbox.VirtualMode = true;
             this.stackbox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.Stack_cache_items);
             this.stackbox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.Stack_retrieve_items);
+            this.stackbox.DoubleClick += new System.EventHandler(this.Stack_double_click);
             // 
             // index
             // 
@@ -870,6 +888,7 @@
             this.portbox.VirtualMode = true;
             this.portbox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.Port_cache_items);
             this.portbox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.Port_retrieve_items);
+            this.portbox.DoubleClick += new System.EventHandler(this.Port_double_click);
             // 
             // portAddress
             // 
@@ -902,15 +921,14 @@
             // 
             this.code_editors.ColumnCount = 1;
             this.code_editors.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.code_editors.Controls.Add(this.toolStrip1, 0, 0);
-            this.code_editors.Controls.Add(this.codeEditor, 0, 1);
+            this.code_editors.Controls.Add(this.codeEditor, 0, 0);
             this.code_editors.Dock = System.Windows.Forms.DockStyle.Fill;
             this.code_editors.Location = new System.Drawing.Point(4, 4);
             this.code_editors.Margin = new System.Windows.Forms.Padding(4);
             this.code_editors.Name = "code_editors";
-            this.code_editors.RowCount = 2;
-            this.code_editors.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.code_editors.RowCount = 1;
             this.code_editors.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.code_editors.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.code_editors.Size = new System.Drawing.Size(901, 638);
             this.code_editors.TabIndex = 14;
             // 
@@ -920,10 +938,10 @@
             this.codeEditor.CaretWidth = 2;
             this.codeEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.codeEditor.EdgeMode = ScintillaNET.EdgeMode.Line;
-            this.codeEditor.Location = new System.Drawing.Point(4, 37);
+            this.codeEditor.Location = new System.Drawing.Point(4, 4);
             this.codeEditor.Margin = new System.Windows.Forms.Padding(4);
             this.codeEditor.Name = "codeEditor";
-            this.codeEditor.Size = new System.Drawing.Size(893, 597);
+            this.codeEditor.Size = new System.Drawing.Size(893, 630);
             this.codeEditor.TabIndex = 30;
             this.codeEditor.Text = ";8085 Simulator ALPHA state!\r\n;Developed by Vishal Solanki\r\n\r\njmp start\r\n\r\n\r\nstar" +
     "t: nop\r\n\r\n\r\n\r\nhlt";
@@ -1036,9 +1054,10 @@
             this.spreg.Name = "spreg";
             this.spreg.Size = new System.Drawing.Size(107, 40);
             this.spreg.TabIndex = 2;
-            this.spreg.Tag = "Stack";
+            this.spreg.Tag = "Stack Pointer";
             this.spreg.Text = "0";
             this.spreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.spreg.Click += new System.EventHandler(this.Show_conv_tooltip);
             // 
             // pcreg
             // 
@@ -1056,6 +1075,7 @@
             this.pcreg.Tag = "Program Counter";
             this.pcreg.Text = "0";
             this.pcreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.pcreg.Click += new System.EventHandler(this.Show_conv_tooltip);
             // 
             // mlbl
             // 
@@ -1090,6 +1110,7 @@
             this.mreg.Tag = "M Register";
             this.mreg.Text = "0";
             this.mreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.mreg.Click += new System.EventHandler(this.Show_conv_tooltip);
             // 
             // pswlbl
             // 
@@ -1124,6 +1145,7 @@
             this.pswreg.Tag = "Processor Status Word";
             this.pswreg.Text = "0";
             this.pswreg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.pswreg.Click += new System.EventHandler(this.Show_conv_tooltip);
             // 
             // conv_group_box
             // 
@@ -1137,7 +1159,7 @@
             this.conv_group_box.Size = new System.Drawing.Size(237, 127);
             this.conv_group_box.TabIndex = 28;
             this.conv_group_box.TabStop = false;
-            this.conv_group_box.Text = "Conversion";
+            this.conv_group_box.Text = "Click Conversion";
             // 
             // flowLayoutPanel1
             // 
@@ -1176,22 +1198,28 @@
             this.conv_lbl.TabIndex = 1;
             this.conv_lbl.Text = "BIN : <value>\r\nHEX : <value>\r\nDEC : <value>";
             // 
-            // menuStrip1
+            // main_menu
             // 
-            this.menuStrip1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.main_menu.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.main_menu.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.main_menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.toolToolStripMenuItem,
             this.runToolStripMenuItem,
             this.formatToolStripMenuItem,
-            this.helpToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1441, 36);
-            this.menuStrip1.TabIndex = 28;
-            this.menuStrip1.Text = "menuStrip1";
+            this.helpToolStripMenuItem,
+            this.toolStripMenuItem2,
+            this.play_button,
+            this.step_button,
+            this.stop_button,
+            this.toolStripMenuItem1,
+            this.status_lbl});
+            this.main_menu.Location = new System.Drawing.Point(0, 0);
+            this.main_menu.Name = "main_menu";
+            this.main_menu.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
+            this.main_menu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.main_menu.Size = new System.Drawing.Size(1441, 36);
+            this.main_menu.TabIndex = 28;
             // 
             // fileToolStripMenuItem
             // 
@@ -1209,57 +1237,57 @@
             // 
             // newASMFileToolStripMenuItem
             // 
-            this.newASMFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("newASMFileToolStripMenuItem.Image")));
+            this.newASMFileToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.add_file;
             this.newASMFileToolStripMenuItem.Name = "newASMFileToolStripMenuItem";
             this.newASMFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newASMFileToolStripMenuItem.Size = new System.Drawing.Size(287, 32);
+            this.newASMFileToolStripMenuItem.Size = new System.Drawing.Size(291, 32);
             this.newASMFileToolStripMenuItem.Text = "&New ASM";
             this.newASMFileToolStripMenuItem.Click += new System.EventHandler(this.Create_NewFile);
             // 
             // openASMToolStripMenuItem
             // 
-            this.openASMToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openASMToolStripMenuItem.Image")));
+            this.openASMToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.folder;
             this.openASMToolStripMenuItem.Name = "openASMToolStripMenuItem";
             this.openASMToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openASMToolStripMenuItem.Size = new System.Drawing.Size(287, 32);
+            this.openASMToolStripMenuItem.Size = new System.Drawing.Size(291, 32);
             this.openASMToolStripMenuItem.Text = "&Open ASM";
             this.openASMToolStripMenuItem.Click += new System.EventHandler(this.OpenFile);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(284, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(288, 6);
             // 
             // saveToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
+            this.saveToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.floppy_disk;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(287, 32);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(291, 32);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveFile);
             // 
             // saveAsToolStripMenuItem
             // 
-            this.saveAsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveAsToolStripMenuItem.Image")));
+            this.saveAsToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.diskette;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.S)));
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(287, 32);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(291, 32);
             this.saveAsToolStripMenuItem.Text = "Save &As";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.SaveFileAs);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(284, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(288, 6);
             // 
             // exitToolStripMenuItem
             // 
-            this.exitToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem.Image")));
+            this.exitToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.exit;
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(287, 32);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(291, 32);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -1275,28 +1303,28 @@
             // 
             // clearMemoryToolStripMenuItem
             // 
-            this.clearMemoryToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("clearMemoryToolStripMenuItem.Image")));
+            this.clearMemoryToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.sim_card;
             this.clearMemoryToolStripMenuItem.Name = "clearMemoryToolStripMenuItem";
             this.clearMemoryToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-            this.clearMemoryToolStripMenuItem.Size = new System.Drawing.Size(296, 32);
+            this.clearMemoryToolStripMenuItem.Size = new System.Drawing.Size(300, 32);
             this.clearMemoryToolStripMenuItem.Text = "Clear &Memory";
             this.clearMemoryToolStripMenuItem.Click += new System.EventHandler(this.ClearMemoryToolStripMenuItem_Click);
             // 
             // clearRegistersToolStripMenuItem
             // 
-            this.clearRegistersToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("clearRegistersToolStripMenuItem.Image")));
+            this.clearRegistersToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.cashier;
             this.clearRegistersToolStripMenuItem.Name = "clearRegistersToolStripMenuItem";
             this.clearRegistersToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.clearRegistersToolStripMenuItem.Size = new System.Drawing.Size(296, 32);
+            this.clearRegistersToolStripMenuItem.Size = new System.Drawing.Size(300, 32);
             this.clearRegistersToolStripMenuItem.Text = "Clear &Registers";
             this.clearRegistersToolStripMenuItem.Click += new System.EventHandler(this.ClearRegistersToolStripMenuItem_Click);
             // 
             // clearEditorToolStripMenuItem
             // 
-            this.clearEditorToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("clearEditorToolStripMenuItem.Image")));
+            this.clearEditorToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.web_programming;
             this.clearEditorToolStripMenuItem.Name = "clearEditorToolStripMenuItem";
             this.clearEditorToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.clearEditorToolStripMenuItem.Size = new System.Drawing.Size(296, 32);
+            this.clearEditorToolStripMenuItem.Size = new System.Drawing.Size(300, 32);
             this.clearEditorToolStripMenuItem.Text = "Clear &Editor";
             this.clearEditorToolStripMenuItem.Click += new System.EventHandler(this.ClearEditorToolStripMenuItem_Click);
             // 
@@ -1313,33 +1341,33 @@
             // 
             // stepNextToolStripMenuItem
             // 
-            this.stepNextToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("stepNextToolStripMenuItem.Image")));
+            this.stepNextToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.play_next_button;
             this.stepNextToolStripMenuItem.Name = "stepNextToolStripMenuItem";
             this.stepNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.stepNextToolStripMenuItem.Size = new System.Drawing.Size(239, 32);
+            this.stepNextToolStripMenuItem.Size = new System.Drawing.Size(243, 32);
             this.stepNextToolStripMenuItem.Text = "&Step Next";
             this.stepNextToolStripMenuItem.Click += new System.EventHandler(this.Step_program);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(236, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(240, 6);
             // 
             // runToolStripMenuItem1
             // 
-            this.runToolStripMenuItem1.Image = ((System.Drawing.Image)(resources.GetObject("runToolStripMenuItem1.Image")));
+            this.runToolStripMenuItem1.Image = global::_8085_Simulator.Properties.Resources.play_button;
             this.runToolStripMenuItem1.Name = "runToolStripMenuItem1";
             this.runToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.runToolStripMenuItem1.Size = new System.Drawing.Size(239, 32);
+            this.runToolStripMenuItem1.Size = new System.Drawing.Size(243, 32);
             this.runToolStripMenuItem1.Text = "&Run";
             this.runToolStripMenuItem1.Click += new System.EventHandler(this.Run_program);
             // 
             // checkErrorsToolStripMenuItem
             // 
-            this.checkErrorsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("checkErrorsToolStripMenuItem.Image")));
+            this.checkErrorsToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.questionnaire;
             this.checkErrorsToolStripMenuItem.Name = "checkErrorsToolStripMenuItem";
-            this.checkErrorsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.checkErrorsToolStripMenuItem.Size = new System.Drawing.Size(239, 32);
+            this.checkErrorsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.checkErrorsToolStripMenuItem.Size = new System.Drawing.Size(243, 32);
             this.checkErrorsToolStripMenuItem.Text = "&Check Errors";
             this.checkErrorsToolStripMenuItem.Click += new System.EventHandler(this.CheckErrorsToolStripMenuItem_Click);
             // 
@@ -1353,9 +1381,9 @@
             // 
             // fontToolStripMenuItem
             // 
-            this.fontToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("fontToolStripMenuItem.Image")));
+            this.fontToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.font_symbol_of_letter_a;
             this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
-            this.fontToolStripMenuItem.Size = new System.Drawing.Size(224, 32);
+            this.fontToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
             this.fontToolStripMenuItem.Text = "&Font";
             this.fontToolStripMenuItem.Click += new System.EventHandler(this.FontToolStripMenuItem_Click);
             // 
@@ -1369,106 +1397,78 @@
             // 
             // aboutToolStripMenuItem
             // 
-            this.aboutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("aboutToolStripMenuItem.Image")));
+            this.aboutToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.help_icon;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 32);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(157, 32);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
-            // label4
-            // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label4.AutoSize = true;
-            this.label4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.label4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label4.Location = new System.Drawing.Point(1131, 2);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(289, 28);
-            this.label4.TabIndex = 29;
-            this.label4.Text = "Instruction coding still in works!\r\n";
-            this.label4.Click += new System.EventHandler(this.Warning_click);
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.toolStrip1.AutoSize = false;
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStrip1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.play_button,
-            this.step_button,
-            this.stop_button,
-            this.toolStripSeparator4,
-            this.status_lbl});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.toolStrip1.Size = new System.Drawing.Size(901, 33);
-            this.toolStrip1.TabIndex = 30;
-            this.toolStrip1.Text = "tool_strip";
-            // 
             // play_button
             // 
-            this.play_button.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.play_button.Image = ((System.Drawing.Image)(resources.GetObject("play_button.Image")));
-            this.play_button.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.play_button.Image = global::_8085_Simulator.Properties.Resources.play_button;
+            this.play_button.Margin = new System.Windows.Forms.Padding(-1);
             this.play_button.Name = "play_button";
-            this.play_button.Size = new System.Drawing.Size(69, 30);
+            this.play_button.ShortcutKeys = System.Windows.Forms.Keys.F4;
+            this.play_button.Size = new System.Drawing.Size(84, 34);
             this.play_button.Text = "Run";
-            this.play_button.ToolTipText = "Compile and Run whole program to the end!";
+            this.play_button.ToolTipText = "codeEditor.Text = orignal_code;";
             this.play_button.Click += new System.EventHandler(this.Run_program);
             // 
             // step_button
             // 
-            this.step_button.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.step_button.Image = ((System.Drawing.Image)(resources.GetObject("step_button.Image")));
-            this.step_button.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.step_button.Image = global::_8085_Simulator.Properties.Resources.play_next_button;
             this.step_button.Name = "step_button";
-            this.step_button.Size = new System.Drawing.Size(72, 30);
+            this.step_button.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.step_button.Size = new System.Drawing.Size(89, 32);
             this.step_button.Text = "Step";
-            this.step_button.ToolTipText = "Compile and run program wth Stepping!";
+            this.step_button.ToolTipText = "Compile and Run program wth Stepping!";
             this.step_button.Click += new System.EventHandler(this.Step_program);
             // 
             // stop_button
             // 
             this.stop_button.Enabled = false;
-            this.stop_button.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.stop_button.Image = ((System.Drawing.Image)(resources.GetObject("stop_button.Image")));
-            this.stop_button.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.stop_button.Image = global::_8085_Simulator.Properties.Resources.stop_button;
             this.stop_button.Name = "stop_button";
-            this.stop_button.Size = new System.Drawing.Size(73, 30);
+            this.stop_button.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.stop_button.Size = new System.Drawing.Size(91, 32);
             this.stop_button.Text = "Stop";
             this.stop_button.ToolTipText = "Stop running program! Useful if program goes into infinite loop!";
             this.stop_button.Click += new System.EventHandler(this.Stop_program);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 33);
             // 
             // status_lbl
             // 
             this.status_lbl.ForeColor = System.Drawing.Color.Red;
             this.status_lbl.Name = "status_lbl";
-            this.status_lbl.Size = new System.Drawing.Size(168, 30);
+            this.status_lbl.Size = new System.Drawing.Size(182, 32);
             this.status_lbl.Text = "Program Stopped";
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Enabled = false;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.ShowShortcutKeys = false;
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(31, 32);
+            this.toolStripMenuItem1.Text = "|";
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Enabled = false;
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.ShowShortcutKeys = false;
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(31, 32);
+            this.toolStripMenuItem2.Text = "|";
             // 
             // main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 28F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1441, 852);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.main_layout);
-            this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.main_menu);
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MainMenuStrip = this.menuStrip1;
+            this.MainMenuStrip = this.main_menu;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MinimumSize = new System.Drawing.Size(1459, 899);
             this.Name = "main";
@@ -1503,10 +1503,8 @@
             this.conv_group_box.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.main_menu.ResumeLayout(false);
+            this.main_menu.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1553,7 +1551,7 @@
         private System.Windows.Forms.Label spreg;
         private System.Windows.Forms.Label pcreg;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip main_menu;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
@@ -1584,7 +1582,6 @@
         private System.Windows.Forms.ToolStripMenuItem stepNextToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem1;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TabControl data_tabs;
         private System.Windows.Forms.TabPage memoryTab;
         private System.Windows.Forms.TabPage stackTab;
@@ -1601,12 +1598,12 @@
         private System.Windows.Forms.Label conv_lbl;
         private System.Windows.Forms.ToolStripMenuItem checkErrorsToolStripMenuItem;
         private ScintillaNET.Scintilla codeEditor;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton play_button;
-        private System.Windows.Forms.ToolStripButton step_button;
-        private System.Windows.Forms.ToolStripButton stop_button;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripLabel status_lbl;
+        private System.Windows.Forms.ToolStripMenuItem play_button;
+        private System.Windows.Forms.ToolStripMenuItem step_button;
+        private System.Windows.Forms.ToolStripMenuItem stop_button;
+        private System.Windows.Forms.ToolStripMenuItem status_lbl;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
     }
 }
 
