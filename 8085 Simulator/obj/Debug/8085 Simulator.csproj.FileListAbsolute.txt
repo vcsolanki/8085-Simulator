@@ -12,7 +12,6 @@ C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\bin\Debug\Sci
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\bin\Debug\ScintillaNET.xml
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.CopyComplete
 C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.address_editbox.resources
-E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csprojAssemblyReference.cache
 E:\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.address_editbox.resources
 E:\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.main.resources
 E:\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.Properties.Resources.resources
@@ -26,3 +25,4 @@ E:\8085 Simulator\8085 Simulator\bin\Debug\8085 Simulator.pdb
 E:\8085 Simulator\8085 Simulator\bin\Debug\ScintillaNET.xml
 E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.Fody.CopyLocal.cache
 E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.CopyComplete
+E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csprojAssemblyReference.cache

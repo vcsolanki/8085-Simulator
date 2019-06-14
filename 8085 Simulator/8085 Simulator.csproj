@@ -147,6 +147,10 @@
   <ItemGroup>
     <Content Include="Instructions.txt" />
     <Content Include="processor512px.ico" />
+    <None Include="Resources\play-button.png" />
+    <None Include="Resources\delete.png" />
+    <None Include="Resources\chevron.png" />
+    <None Include="Resources\play-button1.png" />
     <None Include="Resources\help_icon.png" />
     <None Include="Resources\add-file.png" />
     <None Include="Resources\folder.png" />
@@ -158,7 +162,6 @@
     <None Include="Resources\web-programming.png" />
     <None Include="Resources\questionnaire.png" />
     <None Include="Resources\font-symbol-of-letter-a.png" />
-    <None Include="Resources\play-button.png" />
     <None Include="Resources\stop_button.png" />
     <None Include="Resources\play-next-button.png" />
   </ItemGroup>

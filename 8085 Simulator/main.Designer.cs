@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(main));
             this.albl = new System.Windows.Forms.Label();
             this.blbl = new System.Windows.Forms.Label();
@@ -108,20 +109,23 @@
             this.clearRegistersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.stepNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.runToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.stepNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.checkErrorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.play_button = new System.Windows.Forms.ToolStripMenuItem();
             this.step_button = new System.Windows.Forms.ToolStripMenuItem();
             this.stop_button = new System.Windows.Forms.ToolStripMenuItem();
-            this.status_lbl = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.status_lbl = new System.Windows.Forms.ToolStripMenuItem();
+            this.blinker = new System.Windows.Forms.Timer(this.components);
+            this.output_group_bx = new System.Windows.Forms.GroupBox();
             this.registers_box.SuspendLayout();
             this.register_layout.SuspendLayout();
             this.flag_box.SuspendLayout();
@@ -141,6 +145,7 @@
             this.conv_group_box.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.main_menu.SuspendLayout();
+            this.output_group_bx.SuspendLayout();
             this.SuspendLayout();
             // 
             // albl
@@ -331,10 +336,10 @@
             this.output_box.Dock = System.Windows.Forms.DockStyle.Fill;
             this.output_box.FormattingEnabled = true;
             this.output_box.ItemHeight = 28;
-            this.output_box.Location = new System.Drawing.Point(4, 650);
-            this.output_box.Margin = new System.Windows.Forms.Padding(4);
+            this.output_box.Location = new System.Drawing.Point(0, 27);
+            this.output_box.Margin = new System.Windows.Forms.Padding(0);
             this.output_box.Name = "output_box";
-            this.output_box.Size = new System.Drawing.Size(901, 154);
+            this.output_box.Size = new System.Drawing.Size(909, 135);
             this.output_box.TabIndex = 13;
             this.output_box.DoubleClick += new System.EventHandler(this.Output_box_DoubleClick);
             // 
@@ -905,7 +910,7 @@
             // 
             this.code_input_layout.ColumnCount = 1;
             this.code_input_layout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.code_input_layout.Controls.Add(this.output_box, 0, 1);
+            this.code_input_layout.Controls.Add(this.output_group_bx, 0, 1);
             this.code_input_layout.Controls.Add(this.code_editors, 0, 0);
             this.code_input_layout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.code_input_layout.Location = new System.Drawing.Point(257, 4);
@@ -928,7 +933,7 @@
             this.code_editors.Name = "code_editors";
             this.code_editors.RowCount = 1;
             this.code_editors.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.code_editors.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.code_editors.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 638F));
             this.code_editors.Size = new System.Drawing.Size(901, 638);
             this.code_editors.TabIndex = 14;
             // 
@@ -1217,7 +1222,7 @@
             this.main_menu.Location = new System.Drawing.Point(0, 0);
             this.main_menu.Name = "main_menu";
             this.main_menu.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
-            this.main_menu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.main_menu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.main_menu.Size = new System.Drawing.Size(1441, 36);
             this.main_menu.TabIndex = 28;
             // 
@@ -1331,36 +1336,46 @@
             // runToolStripMenuItem
             // 
             this.runToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.stepNextToolStripMenuItem,
-            this.toolStripSeparator3,
             this.runToolStripMenuItem1,
+            this.stepNextToolStripMenuItem,
+            this.stopToolStripMenuItem,
+            this.toolStripSeparator3,
             this.checkErrorsToolStripMenuItem});
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
             this.runToolStripMenuItem.Size = new System.Drawing.Size(102, 32);
             this.runToolStripMenuItem.Text = "Program";
             // 
+            // runToolStripMenuItem1
+            // 
+            this.runToolStripMenuItem1.Image = ((System.Drawing.Image)(resources.GetObject("runToolStripMenuItem1.Image")));
+            this.runToolStripMenuItem1.Name = "runToolStripMenuItem1";
+            this.runToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.runToolStripMenuItem1.Size = new System.Drawing.Size(243, 32);
+            this.runToolStripMenuItem1.Text = "&Run";
+            this.runToolStripMenuItem1.Click += new System.EventHandler(this.Run_program);
+            // 
             // stepNextToolStripMenuItem
             // 
-            this.stepNextToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.play_next_button;
+            this.stepNextToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.next_button;
             this.stepNextToolStripMenuItem.Name = "stepNextToolStripMenuItem";
-            this.stepNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.stepNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
             this.stepNextToolStripMenuItem.Size = new System.Drawing.Size(243, 32);
             this.stepNextToolStripMenuItem.Text = "&Step Next";
             this.stepNextToolStripMenuItem.Click += new System.EventHandler(this.Step_program);
+            // 
+            // stopToolStripMenuItem
+            // 
+            this.stopToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.stop_button;
+            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
+            this.stopToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(243, 32);
+            this.stopToolStripMenuItem.Text = "Stop";
+            this.stopToolStripMenuItem.Click += new System.EventHandler(this.Stop_program);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(240, 6);
-            // 
-            // runToolStripMenuItem1
-            // 
-            this.runToolStripMenuItem1.Image = global::_8085_Simulator.Properties.Resources.play_button;
-            this.runToolStripMenuItem1.Name = "runToolStripMenuItem1";
-            this.runToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.runToolStripMenuItem1.Size = new System.Drawing.Size(243, 32);
-            this.runToolStripMenuItem1.Text = "&Run";
-            this.runToolStripMenuItem1.Click += new System.EventHandler(this.Run_program);
             // 
             // checkErrorsToolStripMenuItem
             // 
@@ -1383,7 +1398,7 @@
             // 
             this.fontToolStripMenuItem.Image = global::_8085_Simulator.Properties.Resources.font_symbol_of_letter_a;
             this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
-            this.fontToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
+            this.fontToolStripMenuItem.Size = new System.Drawing.Size(142, 32);
             this.fontToolStripMenuItem.Text = "&Font";
             this.fontToolStripMenuItem.Click += new System.EventHandler(this.FontToolStripMenuItem_Click);
             // 
@@ -1403,44 +1418,49 @@
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Enabled = false;
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.ShowShortcutKeys = false;
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(31, 32);
+            this.toolStripMenuItem2.Text = "|";
+            // 
             // play_button
             // 
-            this.play_button.Image = global::_8085_Simulator.Properties.Resources.play_button;
+            this.play_button.AutoToolTip = true;
+            this.play_button.Image = ((System.Drawing.Image)(resources.GetObject("play_button.Image")));
             this.play_button.Margin = new System.Windows.Forms.Padding(-1);
             this.play_button.Name = "play_button";
-            this.play_button.ShortcutKeys = System.Windows.Forms.Keys.F4;
+            this.play_button.ShortcutKeyDisplayString = "";
+            this.play_button.ShortcutKeys = System.Windows.Forms.Keys.F3;
             this.play_button.Size = new System.Drawing.Size(84, 34);
             this.play_button.Text = "Run";
-            this.play_button.ToolTipText = "codeEditor.Text = orignal_code;";
+            this.play_button.ToolTipText = "Run program to the end!";
             this.play_button.Click += new System.EventHandler(this.Run_program);
             // 
             // step_button
             // 
-            this.step_button.Image = global::_8085_Simulator.Properties.Resources.play_next_button;
+            this.step_button.AutoToolTip = true;
+            this.step_button.Image = global::_8085_Simulator.Properties.Resources.next_button;
             this.step_button.Name = "step_button";
-            this.step_button.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.step_button.ShortcutKeys = System.Windows.Forms.Keys.F4;
             this.step_button.Size = new System.Drawing.Size(89, 32);
             this.step_button.Text = "Step";
-            this.step_button.ToolTipText = "Compile and Run program wth Stepping!";
+            this.step_button.ToolTipText = "Run program with stepping!";
             this.step_button.Click += new System.EventHandler(this.Step_program);
             // 
             // stop_button
             // 
+            this.stop_button.AutoToolTip = true;
             this.stop_button.Enabled = false;
             this.stop_button.Image = global::_8085_Simulator.Properties.Resources.stop_button;
             this.stop_button.Name = "stop_button";
             this.stop_button.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.stop_button.Size = new System.Drawing.Size(91, 32);
             this.stop_button.Text = "Stop";
-            this.stop_button.ToolTipText = "Stop running program! Useful if program goes into infinite loop!";
+            this.stop_button.ToolTipText = "Stop running program!";
             this.stop_button.Click += new System.EventHandler(this.Stop_program);
-            // 
-            // status_lbl
-            // 
-            this.status_lbl.ForeColor = System.Drawing.Color.Red;
-            this.status_lbl.Name = "status_lbl";
-            this.status_lbl.Size = new System.Drawing.Size(182, 32);
-            this.status_lbl.Text = "Program Stopped";
             // 
             // toolStripMenuItem1
             // 
@@ -1450,18 +1470,38 @@
             this.toolStripMenuItem1.Size = new System.Drawing.Size(31, 32);
             this.toolStripMenuItem1.Text = "|";
             // 
-            // toolStripMenuItem2
+            // status_lbl
             // 
-            this.toolStripMenuItem2.Enabled = false;
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.ShowShortcutKeys = false;
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(31, 32);
-            this.toolStripMenuItem2.Text = "|";
+            this.status_lbl.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.status_lbl.ForeColor = System.Drawing.Color.Red;
+            this.status_lbl.Name = "status_lbl";
+            this.status_lbl.Size = new System.Drawing.Size(182, 32);
+            this.status_lbl.Text = "Program Stopped";
+            // 
+            // blinker
+            // 
+            this.blinker.Interval = 700;
+            this.blinker.Tick += new System.EventHandler(this.Blink);
+            // 
+            // output_group_bx
+            // 
+            this.output_group_bx.AutoSize = true;
+            this.output_group_bx.Controls.Add(this.output_box);
+            this.output_group_bx.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.output_group_bx.Location = new System.Drawing.Point(0, 646);
+            this.output_group_bx.Margin = new System.Windows.Forms.Padding(0);
+            this.output_group_bx.Name = "output_group_bx";
+            this.output_group_bx.Padding = new System.Windows.Forms.Padding(0);
+            this.output_group_bx.Size = new System.Drawing.Size(909, 162);
+            this.output_group_bx.TabIndex = 29;
+            this.output_group_bx.TabStop = false;
+            this.output_group_bx.Text = "Errors";
             // 
             // main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 28F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1441, 852);
             this.Controls.Add(this.main_layout);
             this.Controls.Add(this.main_menu);
@@ -1493,6 +1533,7 @@
             this.stackTab.ResumeLayout(false);
             this.portTab.ResumeLayout(false);
             this.code_input_layout.ResumeLayout(false);
+            this.code_input_layout.PerformLayout();
             this.code_editors.ResumeLayout(false);
             this.status_group_layout.ResumeLayout(false);
             this.status_group_layout.PerformLayout();
@@ -1505,6 +1546,7 @@
             this.flowLayoutPanel1.PerformLayout();
             this.main_menu.ResumeLayout(false);
             this.main_menu.PerformLayout();
+            this.output_group_bx.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1604,6 +1646,9 @@
         private System.Windows.Forms.ToolStripMenuItem status_lbl;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
+        private System.Windows.Forms.Timer blinker;
+        private System.Windows.Forms.GroupBox output_group_bx;
     }
 }
 

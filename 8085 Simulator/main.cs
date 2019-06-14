@@ -1,16 +1,11 @@
 ﻿using ScintillaNET;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Windows.Input;
 
 
 namespace _8085_Simulator
@@ -287,13 +282,11 @@ namespace _8085_Simulator
         private string m;
 
         private bool stop_run = true;
-        private bool intr = true;
-        private bool load_args = false;
 
         private List<ushort> memory;
         private List<ushort> port;
-
         private List<ushort> stack;
+
         private int sp = 65535;
         private int selected_index = 0;
 
@@ -316,7 +309,6 @@ namespace _8085_Simulator
 
         private bool isFileSaved = false;
         private string filePath = "";
-        private string[] argu;
 
         // main
 
@@ -327,8 +319,6 @@ namespace _8085_Simulator
         public main(string[] args)
         {
             InitializeComponent();
-            load_args = true;
-            argu = args;
         }
 
         //General functions
@@ -420,9 +410,8 @@ namespace _8085_Simulator
             string opcode = "";
             foreach (Line line in codeEditor.Lines)
             {
-                string lineF = Regex.Replace(line.Text, @",+", " ");
-                lineF = Regex.Replace(lineF, @"\s+", " ");
-                lineF = lineF.Trim(' ');
+                string lineF = line.Text;
+                FixLineFormat(ref lineF);
                 if (lineF == "")
                     continue;
                 string[] code = lineF.ToLower().Split(' ');
@@ -635,7 +624,7 @@ namespace _8085_Simulator
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
                     memory[start_location] = Convert.ToByte(code[2].ToUpper(), 16);
-                    memorybox.Items[start_location].SubItems[1].Text = code[2].ToUpper();
+                    memorybox.Items[start_location].SubItems[1].Text = code[2].ToUpper().PadLeft(2,'0');
                     start_location++;
                 } //done
 
@@ -1160,7 +1149,7 @@ namespace _8085_Simulator
                     }
 
                     memory[start_location] = Convert.ToByte(code[1], 16);
-                    memorybox.Items[start_location].SubItems[1].Text = code[1].ToUpper();
+                    memorybox.Items[start_location].SubItems[1].Text = code[1].ToUpper().PadLeft(2, '0');
                     start_location++;
                 } //done
 
@@ -1262,9 +1251,8 @@ namespace _8085_Simulator
             int start_location = 0;
             foreach (Line line in codeEditor.Lines)
             {
-                string lineF = Regex.Replace(line.Text, @",+", " ");
-                lineF = Regex.Replace(lineF, @"\s+", " ");
-                lineF = lineF.Trim(' ');
+                string lineF = line.Text;
+                FixLineFormat(ref lineF);
                 if (lineF == "")
                     continue;
                 string[] code = lineF.ToLower().Split(' ');
@@ -1372,6 +1360,15 @@ namespace _8085_Simulator
                     return true;
             return false;
         }
+        private void FixLineFormat(ref string lineF)
+        {
+            if(lineF.Split(' ')[0].Contains(":"))
+                lineF = Regex.Replace(lineF, @":+", ": ");
+            lineF = Regex.Replace(lineF, @",+", " ");
+            lineF = Regex.Replace(lineF, @";+", " ;");
+            lineF = Regex.Replace(lineF, @"\s+", " ");
+            lineF = lineF.Trim(' ');
+        }
         private bool Code_inspect(bool run_code)
         {
             Read_labels();
@@ -1383,15 +1380,14 @@ namespace _8085_Simulator
             bool halt = false;
             foreach (Line line in codeEditor.Lines)
             {
-                string lineF = Regex.Replace(line.Text, @",+", " ");
-                lineF = Regex.Replace(lineF, @"\s+", " ");
-                lineF = lineF.Trim(' ');
+                string lineF = line.Text;
+                FixLineFormat(ref lineF);
                 if (lineF == "")
                 {
                     line_number++;
                     continue;
                 }
-                if (lineF.ToLower() == "hlt")
+                if (lineF.ToLower().Split(' ')[0] == "hlt")
                     halt = true;
 
                 string[] code = lineF.Split(' ');
@@ -1399,6 +1395,13 @@ namespace _8085_Simulator
                 if (code[0].EndsWith(":"))
                 {
                     code[0] = code[0].Remove(code[0].Length - 1);
+                    if (code.Length < 2)
+                    {
+                        error_string = $"\"{code[0]}\" cannot be alone! You need to atleast add \"nop\" at the end";
+                        errors.Add($"{error_string} on line {line_number}");
+                        error_level++;
+                        continue;
+                    }
                     for (int i = 1; i < code.Length; i++)
                     {
                         code[i - 1] = code[i];
@@ -1425,6 +1428,7 @@ namespace _8085_Simulator
                 {
                     output_box.Items.Add(error);
                 }
+                blinker.Start();
                 codeEditor.Enabled = true;
                 stop_button.Enabled = false;
                 step_button.Enabled = true;
@@ -1438,6 +1442,7 @@ namespace _8085_Simulator
                 openASMToolStripMenuItem.Enabled = true;
                 saveAsToolStripMenuItem.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
+                stopToolStripMenuItem.Enabled = false;
                 status_lbl.Text = "Program Stopped, " + $"Errors :{error_level}";
                 status_lbl.ForeColor = Color.Red;
                 play_button.Enabled = true;
@@ -1483,6 +1488,7 @@ namespace _8085_Simulator
                     openASMToolStripMenuItem.Enabled = true;
                     saveAsToolStripMenuItem.Enabled = true;
                     saveToolStripMenuItem.Enabled = true;
+                    stopToolStripMenuItem.Enabled = false;
                     status_lbl.Text = "Program Stopped";
                     status_lbl.ForeColor = Color.Red;
                     play_button.Enabled = true;
@@ -2240,39 +2246,62 @@ namespace _8085_Simulator
             // DAA
             else if (hex == "27")
             {
-                string data = a.GetHex();
-                int a1, b1;
-                if(f.carry==true)
-                {
-                    a1 = Convert.ToInt32(data.Substring(0, 1),16);
-                    a1 += 6;
-                }
-                else
-                {
-                    a1 = Convert.ToInt32(data.Substring(0, 1), 16);
-                    if (a1 > 9) a1 += 6;
-                }
+                string ar = a.GetHex();
+                int al = Convert.ToInt32(ar.Substring(1, 1), 16);
+                int ah = Convert.ToInt32(ar.Substring(0, 1), 16);
                 if(f.auxiliary==true)
                 {
-                    b1 = Convert.ToInt32(data.Substring(1, 1), 16);
-                    b1 += 6;
+                    al += 6;
+                    if (al > 15)
+                    {
+                        f.auxiliary = true;
+                        al -= 16;
+                        ah += 1;
+                    }
+                    else
+                        f.auxiliary = false;
                 }
                 else
                 {
-                    b1 = Convert.ToInt32(data.Substring(1, 1), 16);
-                    if (b1 > 9) b1 += 6;
+                    if (al > 9)
+                    {
+                        al += 6;
+                        if (al > 15)
+                        {
+                            f.auxiliary = true;
+                            al -= 16;
+                            ah += 1;
+                        }
+                        else
+                            f.auxiliary = false;
+                    }
                 }
-                if (b1 > 15)
+                if(f.carry==true)
                 {
-                    a1 += 1;
-                    b1 -= 16;
+                    ah += 6;
+                    if (ah > 15)
+                    {
+                        f.carry = true;
+                        ah -= 16;
+                    }
+                    else
+                        f.carry = false;
                 }
-                if(a1>15)
+                else
                 {
-                    a1 -= 16;
-                    f.carry = true;
+                    if (ah > 9)
+                    {
+                        ah += 6;
+                        if (ah > 15)
+                        {
+                            ah -= 16;
+                            f.carry = true;
+                        }
+                        else
+                            f.carry = false;
+                    }
                 }
-                a.SetData(a1.ToString() + b1.ToString());
+                a.SetData(ah.ToString("X") + al.ToString("X"));
                 f.Update(a);
             }
             // DAD B [C]
@@ -2477,12 +2506,12 @@ namespace _8085_Simulator
             // DI
             else if (hex == "F3")
             {
-                intr = false;
+
             }
             // EI
             else if (hex == "FB")
             {
-                intr = true;
+ 
             }
             // HLT
             else if (hex == "76")
@@ -2492,8 +2521,8 @@ namespace _8085_Simulator
             // IN Port8
             else if (hex == "DB")
             {
-                //useless right now
-                //can be used if i implement hardware simulation
+                a.SetData(Convert.ToInt32(port[memory[pc.counter + 1]]));
+                pc.IncrementBy(1);
             }
             // INR A
             else if (hex == "3C")
@@ -3337,8 +3366,9 @@ namespace _8085_Simulator
             // OUT port8
             else if (hex == "D3")
             {
-                //useless right now
-                //useful if i implement hardware simulation
+                port[memory[pc.counter + 1]] = Convert.ToByte(a.GetInt());
+                portbox.Items[memory[pc.counter + 1]].SubItems[1].Text = a.GetHex();
+                portbox.Invalidate();
             }
             // PCHL
             else if (hex == "E9")
@@ -4248,7 +4278,7 @@ namespace _8085_Simulator
 
             if (code[0] == "mov")
             {
-                if (code.Length > 2)
+                if (code.Length > 2 && !code[1].Contains(";") && !code[2].Contains(";"))
                 {
                     if (code[1] == "a" ||
                         code[1] == "b" ||
@@ -4283,7 +4313,7 @@ namespace _8085_Simulator
             }  //done
             else if (code[0] == "mvi")
             {
-                if (code.Length > 2)
+                if (code.Length > 2 && !code[1].Contains(";") && !code[2].Contains(";"))
                 {
                     if (code[1] == "a" ||
                         code[1] == "b" ||
@@ -4360,7 +4390,7 @@ namespace _8085_Simulator
                 code[0] == "xra" ||
                 code[0] == "cmp")
             {
-                if (code.Length > 1)
+                if (code.Length > 1 && !code[1].Contains(";"))
                     if (
                         code[1] == "a" ||
                         code[1] == "b" ||
@@ -4388,7 +4418,7 @@ namespace _8085_Simulator
                 code[0] == "in" ||
                 code[0] == "out")
             {
-                if (code.Length > 1)
+                if (code.Length > 1 && !code[1].Contains(";"))
                     if (code[1].StartsWith("-"))
                     {
                         error_string = $"\"{code[2]}\" is not valid value";
@@ -4460,7 +4490,7 @@ namespace _8085_Simulator
 
             else if (code[0] == "lxi")
             {
-                if (code.Length > 2)
+                if (code.Length > 2 && !code[1].Contains(";") && !code[2].Contains(";"))
                     if (code[1] == "b" ||
                         code[1] == "d" ||
                         code[1] == "h" ||
@@ -4515,7 +4545,7 @@ namespace _8085_Simulator
             else if (code[0] == "ldax" ||
                 code[0] == "stax")
             {
-                if (code.Length > 1)
+                if (code.Length > 1 && !code[1].Contains(";"))
                     if (code[1] == "b" ||
                         code[1] == "d") { }
                     else
@@ -4529,7 +4559,7 @@ namespace _8085_Simulator
                 code[0] == "lhld" ||
                 code[0] == "shld")
             {
-                if (code.Length > 1)
+                if (code.Length > 1 && !code[1].Contains(";"))
                     if (code[1].StartsWith("-"))
                     {
                         error_string = $"\"{code[1]}\" is not valid value";
@@ -4573,7 +4603,7 @@ namespace _8085_Simulator
                 code[0] == "inx" ||
                 code[0] == "dcx")
             {
-                if (code.Length > 1)
+                if (code.Length > 1 && !code[1].Contains(";"))
                     if (code[1] == "b" ||
                         code[1] == "d" ||
                         code[1] == "h" ||
@@ -4603,7 +4633,7 @@ namespace _8085_Simulator
                 code[0] == "cp" ||
                 code[0] == "cm")
             {
-                if (code.Length > 1)
+                if (code.Length > 1 && !code[1].Contains(";"))
                 {
                     if (IsLabel(code[1])) { }
                     else if (code[1].StartsWith("-"))
@@ -4648,7 +4678,7 @@ namespace _8085_Simulator
 
             else if (code[0] == "rst")
             {
-                if (code.Length > 1)
+                if (code.Length > 1 && !code[1].Contains(";"))
                     try
                     {
                         if (code[1].StartsWith("0"))
@@ -4667,7 +4697,7 @@ namespace _8085_Simulator
             else if (code[0] == "push" ||
                 code[0] == "pop")
             {
-                if (code.Length > 1)
+                if (code.Length > 1 && !code[1].Contains(";"))
                     if (code[1] == "b" ||
                         code[1] == "d" ||
                         code[1] == "h" ||
@@ -4734,63 +4764,28 @@ namespace _8085_Simulator
             codeEditor.Margins[0].Width = 60;
             codeEditor.Margins[1].Width = 10;
 
+
             codeEditor.Markers[1].Symbol = MarkerSymbol.Background;
             codeEditor.Markers[1].SetBackColor(Color.LightGray);
 
-            if (!load_args)
+            if (Properties.Settings.Default.LastFile != "")
+                filePath = Properties.Settings.Default.LastFile;
+            if (File.Exists(filePath))
             {
-                if (Properties.Settings.Default.LastFile != "")
-                    filePath = Properties.Settings.Default.LastFile;
-                if (File.Exists(filePath))
+                using (FileStream file = File.OpenRead(filePath))
                 {
-                    using (FileStream file = File.OpenRead(filePath))
+                    using (StreamReader reader = new StreamReader(file))
                     {
-                        using (StreamReader reader = new StreamReader(file))
-                        {
-                            codeEditor.Text = reader.ReadToEnd();
-                            isFileSaved = true;
-                            Text = "8085 Simulator - " + Path.GetFileName(filePath);
-                            reader.Close();
-                        }
-                        file.Close();
+                        codeEditor.Text = reader.ReadToEnd();
+                        isFileSaved = true;
+                        Text = "8085 Simulator - " + Path.GetFileName(filePath);
+                        reader.Close();
                     }
+                    file.Close();
                 }
-                else
-                    filePath = "";
             }
             else
-            {
-                foreach(string word in argu)
-                {
-                    if(File.Exists(word))
-                    {
-                        filePath = word;
-                    }
-                    else
-                    {
-                        if (File.Exists(Environment.CurrentDirectory + "\\" + word))
-                        {
-                            filePath = Environment.CurrentDirectory + "\\" + word;
-                        }
-                    }
-                }
-                if (File.Exists(filePath))
-                {
-                    using (FileStream file = File.OpenRead(filePath))
-                    {
-                        using (StreamReader reader = new StreamReader(file))
-                        {
-                            codeEditor.Text = reader.ReadToEnd();
-                            isFileSaved = true;
-                            Text = "8085 Simulator - " + Path.GetFileName(filePath);
-                            reader.Close();
-                        }
-                        file.Close();
-                    }
-                }
-                else
-                    filePath = "";
-            }
+                filePath = "";
 
             codeEditor.Select();
         }
@@ -4850,6 +4845,8 @@ namespace _8085_Simulator
         private void Run_program(object sender, EventArgs e)
         {
             orignal_code = codeEditor.Text;
+            blinker.Stop();
+            status_lbl.BackColor = Color.WhiteSmoke;
             codeEditor.Enabled = false;
             stop_button.Enabled = true;
             play_button.Enabled = false;
@@ -4864,6 +4861,7 @@ namespace _8085_Simulator
             openASMToolStripMenuItem.Enabled = false;
             saveAsToolStripMenuItem.Enabled = false;
             saveToolStripMenuItem.Enabled = false;
+            stopToolStripMenuItem.Enabled = true;
             stop_run = false;
             status_lbl.Text = "Program Running, You can't edit code right now!";
             status_lbl.ForeColor = Color.DarkGreen;
@@ -4873,6 +4871,7 @@ namespace _8085_Simulator
         {
             play_button.Enabled = true;
             stop_button.Enabled = false;
+            blinker.Stop();
             selected_index = 0;
             stop_run = true;
             runToolStripMenuItem1.Enabled = true;
@@ -4885,6 +4884,7 @@ namespace _8085_Simulator
             openASMToolStripMenuItem.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
             saveToolStripMenuItem.Enabled = true;
+            stopToolStripMenuItem.Enabled = false;
             codeEditor.Text = orignal_code;
             codeEditor.Enabled = true;
             status_lbl.Text = "Program Stopped";
@@ -5048,6 +5048,7 @@ namespace _8085_Simulator
                 openASMToolStripMenuItem.Enabled = false;
                 saveAsToolStripMenuItem.Enabled = false;
                 saveToolStripMenuItem.Enabled = false;
+                stopToolStripMenuItem.Enabled = true;
                 status_lbl.Text = "Program Stepping, You can't edit code right now!";
                 status_lbl.ForeColor = Color.DarkGreen;
                 stop_run = false;
@@ -5097,6 +5098,7 @@ namespace _8085_Simulator
                         openASMToolStripMenuItem.Enabled = true;
                         saveAsToolStripMenuItem.Enabled = true;
                         saveToolStripMenuItem.Enabled = true;
+                        stopToolStripMenuItem.Enabled = false;
                         status_lbl.Text = "Program Stopped";
                         status_lbl.ForeColor = Color.Red;
                         codeEditor.Text = orignal_code;
@@ -5476,6 +5478,19 @@ namespace _8085_Simulator
                     l.SetData(address_Editbox.int_value);
             }
             Update_variables();
+        }
+        private void Blink(object sender, EventArgs e)
+        {
+            if (status_lbl.BackColor == Color.White)
+            {
+                status_lbl.BackColor = Color.Red;
+                status_lbl.ForeColor = Color.White;
+            }
+            else
+            {
+                status_lbl.BackColor = Color.White;
+                status_lbl.ForeColor = Color.Red;
+            }
         }
     }
 }
