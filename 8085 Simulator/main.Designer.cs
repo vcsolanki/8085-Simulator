@@ -78,6 +78,7 @@
             this.portAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.portData = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.code_input_layout = new System.Windows.Forms.TableLayoutPanel();
+            this.output_group_bx = new System.Windows.Forms.GroupBox();
             this.code_editors = new System.Windows.Forms.TableLayoutPanel();
             this.codeEditor = new ScintillaNET.Scintilla();
             this.status_group_layout = new System.Windows.Forms.TableLayoutPanel();
@@ -125,7 +126,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.status_lbl = new System.Windows.Forms.ToolStripMenuItem();
             this.blinker = new System.Windows.Forms.Timer(this.components);
-            this.output_group_bx = new System.Windows.Forms.GroupBox();
+            this.auto_list = new AutocompleteMenuNS.AutocompleteMenu();
             this.registers_box.SuspendLayout();
             this.register_layout.SuspendLayout();
             this.flag_box.SuspendLayout();
@@ -138,6 +139,7 @@
             this.stackTab.SuspendLayout();
             this.portTab.SuspendLayout();
             this.code_input_layout.SuspendLayout();
+            this.output_group_bx.SuspendLayout();
             this.code_editors.SuspendLayout();
             this.status_group_layout.SuspendLayout();
             this.pcandsp.SuspendLayout();
@@ -145,7 +147,6 @@
             this.conv_group_box.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.main_menu.SuspendLayout();
-            this.output_group_bx.SuspendLayout();
             this.SuspendLayout();
             // 
             // albl
@@ -738,6 +739,7 @@
             // 
             // address_to_find
             // 
+            this.auto_list.SetAutocompleteMenu(this.address_to_find, null);
             this.address_to_find.Dock = System.Windows.Forms.DockStyle.Fill;
             this.address_to_find.Location = new System.Drawing.Point(4, 4);
             this.address_to_find.Margin = new System.Windows.Forms.Padding(4);
@@ -922,6 +924,20 @@
             this.code_input_layout.Size = new System.Drawing.Size(909, 808);
             this.code_input_layout.TabIndex = 1;
             // 
+            // output_group_bx
+            // 
+            this.output_group_bx.AutoSize = true;
+            this.output_group_bx.Controls.Add(this.output_box);
+            this.output_group_bx.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.output_group_bx.Location = new System.Drawing.Point(0, 646);
+            this.output_group_bx.Margin = new System.Windows.Forms.Padding(0);
+            this.output_group_bx.Name = "output_group_bx";
+            this.output_group_bx.Padding = new System.Windows.Forms.Padding(0);
+            this.output_group_bx.Size = new System.Drawing.Size(909, 162);
+            this.output_group_bx.TabIndex = 29;
+            this.output_group_bx.TabStop = false;
+            this.output_group_bx.Text = "Errors";
+            // 
             // code_editors
             // 
             this.code_editors.ColumnCount = 1;
@@ -939,6 +955,7 @@
             // 
             // codeEditor
             // 
+            this.codeEditor.AutoCIgnoreCase = true;
             this.codeEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.codeEditor.CaretWidth = 2;
             this.codeEditor.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1421,6 +1438,7 @@
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Enabled = false;
+            this.toolStripMenuItem2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.ShowShortcutKeys = false;
             this.toolStripMenuItem2.Size = new System.Drawing.Size(31, 32);
@@ -1477,25 +1495,24 @@
             this.status_lbl.Name = "status_lbl";
             this.status_lbl.Size = new System.Drawing.Size(182, 32);
             this.status_lbl.Text = "Program Stopped";
+            this.status_lbl.Click += new System.EventHandler(this.Status_text_click);
             // 
             // blinker
             // 
             this.blinker.Interval = 700;
             this.blinker.Tick += new System.EventHandler(this.Blink);
             // 
-            // output_group_bx
+            // auto_list
             // 
-            this.output_group_bx.AutoSize = true;
-            this.output_group_bx.Controls.Add(this.output_box);
-            this.output_group_bx.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.output_group_bx.Location = new System.Drawing.Point(0, 646);
-            this.output_group_bx.Margin = new System.Windows.Forms.Padding(0);
-            this.output_group_bx.Name = "output_group_bx";
-            this.output_group_bx.Padding = new System.Windows.Forms.Padding(0);
-            this.output_group_bx.Size = new System.Drawing.Size(909, 162);
-            this.output_group_bx.TabIndex = 29;
-            this.output_group_bx.TabStop = false;
-            this.output_group_bx.Text = "Errors";
+            this.auto_list.AllowsTabKey = true;
+            this.auto_list.AppearInterval = 1;
+            this.auto_list.Colors = ((AutocompleteMenuNS.Colors)(resources.GetObject("auto_list.Colors")));
+            this.auto_list.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.auto_list.ImageList = null;
+            this.auto_list.Items = new string[0];
+            this.auto_list.MinFragmentLength = 1;
+            this.auto_list.TargetControlWrapper = null;
+            this.auto_list.Selected += new System.EventHandler<AutocompleteMenuNS.SelectedEventArgs>(this.auto_word_selected);
             // 
             // main
             // 
@@ -1534,6 +1551,7 @@
             this.portTab.ResumeLayout(false);
             this.code_input_layout.ResumeLayout(false);
             this.code_input_layout.PerformLayout();
+            this.output_group_bx.ResumeLayout(false);
             this.code_editors.ResumeLayout(false);
             this.status_group_layout.ResumeLayout(false);
             this.status_group_layout.PerformLayout();
@@ -1546,7 +1564,6 @@
             this.flowLayoutPanel1.PerformLayout();
             this.main_menu.ResumeLayout(false);
             this.main_menu.PerformLayout();
-            this.output_group_bx.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1649,6 +1666,7 @@
         private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
         private System.Windows.Forms.Timer blinker;
         private System.Windows.Forms.GroupBox output_group_bx;
+        private AutocompleteMenuNS.AutocompleteMenu auto_list;
     }
 }
 

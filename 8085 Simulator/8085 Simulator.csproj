@@ -59,6 +59,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutocompleteMenu-ScintillaNET, Version=1.3.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoCompleteMenu-ScintillaNET.1.6.1\lib\net40\AutocompleteMenu-ScintillaNET.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore">
       <Private>False</Private>
     </Reference>
@@ -100,11 +103,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="address_editbox.cs">
+    <Compile Include="value_editbox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="address_editbox.Designer.cs">
-      <DependentUpon>address_editbox.cs</DependentUpon>
+    <Compile Include="value_editbox.Designer.cs">
+      <DependentUpon>value_editbox.cs</DependentUpon>
     </Compile>
     <Compile Include="main.cs">
       <SubType>Form</SubType>
@@ -114,8 +117,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="address_editbox.resx">
-      <DependentUpon>address_editbox.cs</DependentUpon>
+    <EmbeddedResource Include="value_editbox.resx">
+      <DependentUpon>value_editbox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="main.resx">
       <DependentUpon>main.cs</DependentUpon>

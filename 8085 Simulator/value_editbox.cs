@@ -9,13 +9,13 @@ using System.Windows.Forms;
 
 namespace _8085_Simulator
 {
-    public partial class address_editbox : Form
+    public partial class value_editbox : Form
     {
 
         public int int_value = 0;
 
 
-        public address_editbox(string hex)
+        public value_editbox(string hex)
         {
             
             InitializeComponent();

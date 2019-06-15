@@ -1,6 +1,6 @@
 ﻿namespace _8085_Simulator
 {
-    partial class address_editbox
+    partial class value_editbox
     {
         /// <summary>
         /// Required designer variable.
@@ -130,7 +130,7 @@
             this.cancel_button.Text = "Cancel";
             this.cancel_button.UseVisualStyleBackColor = true;
             // 
-            // address_editbox
+            // value_editbox
             // 
             this.AcceptButton = this.set_button;
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 28F);
@@ -145,9 +145,9 @@
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.Name = "address_editbox";
+            this.Name = "value_editbox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "address_editbox";
+            this.Text = "value_editbox";
             this.type_box.ResumeLayout(false);
             this.type_box.PerformLayout();
             this.ResumeLayout(false);
