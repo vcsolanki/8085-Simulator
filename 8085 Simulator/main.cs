@@ -5,7 +5,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows.Forms;
 
 
@@ -306,7 +305,7 @@ namespace _8085_Simulator
 
         private ListViewItem[] m_items;
 
-        //File management avriables
+        //File management variables
 
         private bool isFileSaved = false;
         private string filePath = "";
@@ -1396,7 +1395,7 @@ namespace _8085_Simulator
                     code[0] = code[0].Remove(code[0].Length - 1);
                     if (code.Length < 2)
                     {
-                        error_string = $"\"{code[0]}\" cannot be alone! You need to atleast add \"nop\" at the end";
+                        error_string = $"\"{code[0]}\" cannot be alone! You need to at least add \"nop\" at the end";
                         errors.Add($"{error_string} on line {line_number}");
                         error_level++;
                         continue;
@@ -4770,88 +4769,100 @@ namespace _8085_Simulator
             codeEditor.Markers[1].SetBackColor(Color.LightGray);
 
 
-            //setting up autolist
+
+            //setting up auto list
             auto_list.TargetControlWrapper = new ScintillaWrapper(codeEditor);
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("mov",0,"mov","Help", "Copies data from destination to source!\n\nMOV R1, R2\n\nR1 = Destination Register\nR2 = Source Register"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("mvi", 0, "mvi", "Help", "Copies 8-bit value to destination!\n\nMVI R, Data\n\nR = Destination Register\nData = 8-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("lxi", 0, "lxi", "Help", "Copies 16-bit value to destination!\n\nLXI RP, Data\n\nRP = Destination Register Pair\nData = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ldax", 0, "ldax", "Help", "Copies value to accumulator from address pointed by register pair!\n\nLDAX RP\n\nRP = Destination Register Pair"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("stax", 0, "stax", "Help", "Copies value to address from accumulator pointed by register pair!\n\nSTAX RP\n\nRP = Destination Register Pair"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("lda", 0, "lda", "Help", "Copies value to accumulator from 16-bit address value!\n\nLDA Address\n\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sta", 0, "sta", "Help", "Copies value to 16-bit address value from accumulator!\n\nSTA Address\n\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("lhld", 0, "lhld", "Help", "Copies value to HL register pair from 16-bit address value!\n\nLHLD Address\n\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("shld", 0, "shld", "Help", "Copies value to 16-bit address from HL register pair!\n\nSHLD Address\n\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xchg", 0, "xchg", "Help", "Exchange 16-bit value between DE and HL register pair\n\nXCHG"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("add", 0, "add", "Help", "Add register to accumulator!\n\nADD R\n\nR = Destination Register"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("a", 0, "a", "Help", "A Register!\nSize : 8-bit"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("aci", 0, "aci", "Help", "Add 8-bit value to accumulator with carry!\n\nACI Data\n\nData = 8-bit value"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("adc", 0, "adc", "Help", "Add register to accumulator with carry!\n\nADC R\n\nR = Destination Register"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sub", 0, "sub", "Help", "Subtract register from accumulator!\n\nSUB R\n\nR = Destination Register"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sbb", 0, "sbb", "Help", "Subtract register from accumulator with borrow!\n\nSBB R\n\nR = Destination Register"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("add", 0, "add", "Help", "Add register to accumulator!\n\nADD R\n\nR = Destination Register"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("adi", 0, "adi", "Help", "Add 8-bit value to accumulator!\n\nADI Data\n\nData = 8-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("aci", 0, "aci", "Help", "Add 8-bit value to accumulator with carry!\n\nACI Data\n\nData = 8-bit valule"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sui", 0, "sui", "Help", "Subtract 8-bit value from accumulator!\n\nSUI Data\n\nData = 8-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sbi", 0, "sbi", "Help", "Subtract 8-bit value from accumulator with borrow!\n\nSBI Data\n\nData = 8-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("dad", 0, "dad", "Help", "Add register pair to HL register pair!\n\nDAD RP\n\nRP = Source Register Pair"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("inr", 0, "inr", "Help", "Increment register!\n\nINR R\n\nR = Destination Register"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("dcr", 0, "dcr", "Help", "Decrement register!\n\nDCR R\n\nR = Destination Register"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("inx", 0, "inx", "Help", "Increment register pair!\n\nINX RP\n\nRP = Destination Register Pair"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("dcx", 0, "dcx", "Help", "Decrement register pair!\n\nDCX RP\n\nRP = Destination Register Pair"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("daa", 0, "daa", "Help", "Convert accumulator value to BCD!\n\nDAA\n\nBCD = Binary Coded Decimal"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ana", 0, "ana", "Help", "AND operation between accumulator and register!\n\nANA R\n\nR = Destination Register"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ani", 0, "ani", "Help", "AND operation between accumulator and 8-bit value!\n\nANI Data\n\nData = 8-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("b", 0, "b", "Help", "B Register!\nSize : 8-bit"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("c", 0, "c", "Help", "C Register!\nSize : 8-bit"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("call", 0, "call", "Help", "Goto subroutine to label or address!\n\nCALL Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cc", 0, "cc", "Help", "Goto subroutine to label or address if carry flag is set!\n\nCC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cm", 0, "cm", "Help", "Goto subroutine to label or address if accumulator value is negative!\n\nCM Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cma", 0, "cma", "Help", "Complement value of accumulator!\n\nCMA"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cmc", 0, "cmc", "Help", "Complement value of carry flag!\n\nCMC"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("stc", 0, "stc", "Help", "Set value of carry flag!\n\nSTC"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ana", 0, "ana", "Help", "AND operation between accumulator and register!\n\nANA R\n\nR = Destination Register"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ora", 0, "ora", "Help", "OR operation between accumulator and register!\n\nORA R\n\nR = Destination Register"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xra", 0, "xra", "Help", "XOR operation between accumulator and register!\n\nXRA R\n\nR = Destination Register"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cmp", 0, "cmp", "Help", "Compare accumulator and register!\n\nCMP R\n\nR = Destination Register"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rlc", 0, "rlc", "Help", "Rotate accumulator bits to left with carry flag!\n\nRLC"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rrc", 0, "rrc", "Help", "Rotate accumulator bits to right with carry flag!\n\nRRC"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cnc", 0, "cnc", "Help", "Goto subroutine to label or address if carry flag is reset!\n\nCNC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cnz", 0, "cnz", "Help", "Goto subroutine to label or address if zero flag is reset!\n\nCNZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cp", 0, "cp", "Help", "Goto subroutine to label or address if accumulator value is positive!\n\nCP Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpe", 0, "cpe", "Help", "Goto subroutine to label or address if parity flag is set!\n\nCPE Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpi", 0, "cpi", "Help", "Compare accumulator and 8-bit value!\n\nCPI Data\n\nData = 8-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpo", 0, "cpo", "Help", "Goto subroutine to label or address if parity flag is reset!\n\nCPO Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cz", 0, "cz", "Help", "Goto subroutine to label or address if zero flag is set!\n\nCZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("d", 0, "d", "Help", "D Register!\nSize : 8-bit"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("daa", 0, "daa", "Help", "Convert accumulator value to BCD!\n\nDAA\n\nBCD = Binary Coded Decimal"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("dad", 0, "dad", "Help", "Add register pair to HL register pair!\n\nDAD RP\n\nRP = Source Register Pair"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("dcr", 0, "dcr", "Help", "Decrement register!\n\nDCR R\n\nR = Destination Register"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("dcx", 0, "dcx", "Help", "Decrement register pair!\n\nDCX RP\n\nRP = Destination Register Pair"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("di", 0, "di", "Help", "Disable interrupt\n\n\nDI"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("e", 0, "e", "Help", "E Register!\nSize : 8-bit"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ei", 0, "ei", "Help", "Enable interrupt!\n\nEI"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("h", 0, "h", "Help", "H Register!\nSize : 8-bit"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("hlt", 0, "hlt", "Help", "Stops processor execution!\n\nHLT"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("in", 0, "in", "Help", "Copies 8-bit value from specified port address!\n\nIN Address\n\nAddress = 8-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("inr", 0, "inr", "Help", "Increment register!\n\nINR R\n\nR = Destination Register"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("inx", 0, "inx", "Help", "Increment register pair!\n\nINX RP\n\nRP = Destination Register Pair"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jc", 0, "jc", "Help", "Jump to label or address if carry flag is set!\n\nJC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jm", 0, "jm", "Help", "Jump to label or address if accumulator value is negative!\n\nJM Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jmp", 0, "jmp", "Help", "Jump to label or address!\n\nJMP Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jnc", 0, "jnc", "Help", "Jump to label or address if carry flag is reset!\n\nJNC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jnz", 0, "jnz", "Help", "Jump to label or address if zero flag is reset!\n\nJNZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jp", 0, "jp", "Help", "Jump to label or address if accumulator value is positive!\n\nJP Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jpe", 0, "jpe", "Help", "Jump to label or address if parity flag is set!\n\nJPE Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jpo", 0, "jpo", "Help", "Jump to label or address if parity flag is reset!\n\nJPO Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jz", 0, "jz", "Help", "Jump to label or address if zero flag is set!\n\nJZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("l", 0, "l", "Help", "L Register!\nSize : 8-bit"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("lda", 0, "lda", "Help", "Copies value to accumulator from 16-bit address value!\n\nLDA Address\n\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ldax", 0, "ldax", "Help", "Copies value to accumulator from address pointed by register pair!\n\nLDAX RP\n\nRP = Destination Register Pair"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("lhld", 0, "lhld", "Help", "Copies value to HL register pair from 16-bit address value!\n\nLHLD Address\n\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("lxi", 0, "lxi", "Help", "Copies 16-bit value to destination!\n\nLXI RP, Data\n\nRP = Destination Register Pair\nData = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("m", 0, "m", "Help", "M Register!\nSize : 16-bit\n\nReference to HL register pair!"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("mov",0,"mov","Help", "Copies data from destination to source!\n\nMOV R1, R2\n\nR1 = Destination Register\nR2 = Source Register"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("mvi", 0, "mvi", "Help", "Copies 8-bit value to destination!\n\nMVI R, Data\n\nR = Destination Register\nData = 8-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("nop", 0, "nop", "Help", "Ignore and continue!\n\nNOP"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ora", 0, "ora", "Help", "OR operation between accumulator and register!\n\nORA R\n\nR = Destination Register"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ori", 0, "ori", "Help", "OR operation between accumulator and 8-bit value!\n\nORI Data\n\nData = 8-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("out", 0, "out", "Help", "Copies 8-bit value from accumulator to port address!\n\nOUT Address\n\nAddress = 8-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("pchl", 0, "pchl", "Help", "Replace PC with HL register pair!\n\nPCHL\n\nPC = Program Counter"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("pop", 0, "pop", "Help", "Store value to register pair and delete from stack!\n\nPOP RP\n\nRP = Destination Register Pair"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("psw", 0, "psw", "Help", "PSW Register!\nSize : 16-bit\n\nProcessor Status Word!"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("push", 0, "push", "Help", "Insert register pair to stack!\n\nPUSH RP\n\nRP = Destination Register Pair"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ral", 0, "ral", "Help", "Rotate accumulator bits to left through carry flag!\n\nRAL"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rar", 0, "rar", "Help", "Rotate accumulator bits to right through carry flag!\n\nRAR"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ani", 0, "ani", "Help", "AND operation between accumulator and 8-bit value!\n\nANI Data\n\nData = 8-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ori", 0, "ori", "Help", "OR operation between accumulator and 8-bit value!\n\nORI Data\n\nData = 8-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xri", 0, "xri", "Help", "XOR operation between accumulator and 8-bit value!\n\nXRI Data\n\nData = 8-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpi", 0, "cpi", "Help", "Compare accumulator and 8-bit value!\n\nCPI Data\n\nData = 8-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jmp", 0, "jmp", "Help", "Jump to label or address!\n\nJMP Lable/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jnz", 0, "jnz", "Help", "Jump to label or address if zero flag is reset!\n\nJNZ Lable/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jz", 0, "jz", "Help", "Jump to label or address if zero flag is set!\n\nJZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jnc", 0, "jnc", "Help", "Jump to label or address if carry flag is reset!\n\nJNC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jc", 0, "jc", "Help", "Jump to label or address if carry flag is set!\n\nJC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jpo", 0, "jpo", "Help", "Jump to label or address if parity flag is reset!\n\nJPO Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jpe", 0, "jpe", "Help", "Jump to label or address if parity flag is set!\n\nJPE Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jp", 0, "jp", "Help", "Jump to label or address if accumulator value is positive!\n\nJP Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jm", 0, "jm", "Help", "Jump to label or address if accumulator value is negative!\n\nJM Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("call", 0, "call", "Help", "Goto subroutine to label or address!\n\nCALL Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cnz", 0, "cnz", "Help", "Goto subroutine to label or address if zero flag is reset!\n\nCNZ Label/Addreess\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cz", 0, "cz", "Help", "Goto subroutine to label or address if zero flag is set!\n\nCZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cc", 0, "cc", "Help", "Goto subroutine to label or address if carry flag is set!\n\nCC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cnc", 0, "cnc", "Help", "Goto subroutine to label or address if carry flag is reset!\n\nCNC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpo", 0, "cpo", "Help", "Goto subroutine to label or address if parity flag is reset!\n\nCPO Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpe", 0, "cpe", "Help", "Goto subroutine to label or address if parity flag is set!\n\nCPE Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cp", 0, "cp", "Help", "Goto subroutine to label or address if accumulator value is positive!\n\nCP Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cm", 0, "cm", "Help", "Goto subroutine to label or address if accumulator value is negative!\n\nCM Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rc", 0, "rc", "Help", "Return to address from stack if carry flag is set!\n\nRC"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ret", 0, "ret", "Help", "Return to address from stack!\n\nRET"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rnz", 0, "rnz", "Help", "Return to address from stack if zero flag is reset!\n\nRNZ"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rz", 0, "rz", "Help", "Return to address from stack if zero flag is set!\n\nRZ"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rnc", 0, "rnc", "Help", "Return to address from stack if carry falg is reset!\n\nRNC"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rc", 0, "rc", "Help", "Retrun to address from stack if carry flag is set!\n\nRC"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rpo", 0, "rpo", "Help", "Return to address from stack if parity flag is reset!\n\nRPO"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rpe", 0, "rpe", "Help", "Return to address from stack if parity flag is set!\n\nRPE"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rp", 0, "rp", "Help", "Return to address from stack if accumulator value is positive!\n\nRP"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rm", 0, "rm", "Help", "Return to address from stack if accumulator value is negative!\n\nRM"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("pchl", 0, "pchl", "Help", "Replace PC with HL register pair!\n\nPCHL\n\nPC = Program Counter"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("in", 0, "in", "Help", "Copies 8-bit value from specified port address!\n\nIN Address\n\nAddress = 8-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("out", 0, "out", "Help", "Copies 8-bit value from accumulator to port address!\n\nOUT Address\n\nAddress = 8-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("push", 0, "push", "Help", "Insert register pair to stack!\n\nPUSH RP\n\nRP = Destination Register Pair"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("pop", 0, "pop", "Help", "Store value to register pair and delete from stack!\n\nPOP RP\n\nRP = Destination Register Pair"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xthl", 0, "xthl", "Help", "Exchange top value of stack with HL register pair!\n\nXTHL"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sphl", 0, "sphl", "Help", "Insert HL register pair to stack!\n\nSPHL"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ei", 0, "ei", "Help", "Enable interrupt!\n\nEI"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("di", 0, "di", "Help", "Disbale interrupt\n\n\nDI"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rim", 0, "rim", "Help", "Copies interrupt value to accumulator!\n\nRIM"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sim", 0, "sim", "Help", "Copies interrupt value from accumulator!\n\nSIM"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("nop", 0, "nop", "Help", "Ignore and continue!\n\nNOP"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("hlt", 0, "hlt", "Help", "Stops processor execution!\n\nHLT"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rlc", 0, "rlc", "Help", "Rotate accumulator bits to left with carry flag!\n\nRLC"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rm", 0, "rm", "Help", "Return to address from stack if accumulator value is negative!\n\nRM"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rnc", 0, "rnc", "Help", "Return to address from stack if carry flag is reset!\n\nRNC"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rnz", 0, "rnz", "Help", "Return to address from stack if zero flag is reset!\n\nRNZ"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rp", 0, "rp", "Help", "Return to address from stack if accumulator value is positive!\n\nRP"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rpe", 0, "rpe", "Help", "Return to address from stack if parity flag is set!\n\nRPE"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rpo", 0, "rpo", "Help", "Return to address from stack if parity flag is reset!\n\nRPO"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rrc", 0, "rrc", "Help", "Rotate accumulator bits to right with carry flag!\n\nRRC"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rst", 0, "rst", "Help", "Set restart values!\n\nRST Data\n\nData = 1 to 7 value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rz", 0, "rz", "Help", "Return to address from stack if zero flag is set!\n\nRZ"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sbb", 0, "sbb", "Help", "Subtract register from accumulator with borrow!\n\nSBB R\n\nR = Destination Register"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sbi", 0, "sbi", "Help", "Subtract 8-bit value from accumulator with borrow!\n\nSBI Data\n\nData = 8-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("shld", 0, "shld", "Help", "Copies value to 16-bit address from HL register pair!\n\nSHLD Address\n\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sim", 0, "sim", "Help", "Copies interrupt value from accumulator!\n\nSIM"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sp", 0, "sp", "Help", "SP Register!\nSize : 16-bit\n\nStack Pointer!"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sphl", 0, "sphl", "Help", "Insert HL register pair to stack!\n\nSPHL"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sta", 0, "sta", "Help", "Copies value to 16-bit address value from accumulator!\n\nSTA Address\n\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("stax", 0, "stax", "Help", "Copies value to address from accumulator pointed by register pair!\n\nSTAX RP\n\nRP = Destination Register Pair"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("stc", 0, "stc", "Help", "Set value of carry flag!\n\nSTC"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sub", 0, "sub", "Help", "Subtract register from accumulator!\n\nSUB R\n\nR = Destination Register"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sui", 0, "sui", "Help", "Subtract 8-bit value from accumulator!\n\nSUI Data\n\nData = 8-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xchg", 0, "xchg", "Help", "Exchange 16-bit value between DE and HL register pair\n\nXCHG"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xra", 0, "xra", "Help", "XOR operation between accumulator and register!\n\nXRA R\n\nR = Destination Register"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xri", 0, "xri", "Help", "XOR operation between accumulator and 8-bit value!\n\nXRI Data\n\nData = 8-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xthl", 0, "xthl", "Help", "Exchange top value of stack with HL register pair!\n\nXTHL"));
+
 
             //loading recent file if opened last
             if (Properties.Settings.Default.LastFile != "")
@@ -5202,8 +5213,6 @@ namespace _8085_Simulator
                 isFileSaved = false;
                 Text = "8085 Simulator - " + Path.GetFileName(filePath) + "*";
         }
-
-
         private void Find_text_keypress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Return)
@@ -5457,7 +5466,16 @@ namespace _8085_Simulator
                 string slt = output_box.SelectedItem.ToString();
                 string[] words = slt.Split(' ');
                 int line = Convert.ToInt32(words.Last<string>());
-                codeEditor.Lines[line - 1].MarkerAdd(1);
+                if (line <= codeEditor.Lines.Count)
+                {
+                    codeEditor.Lines[line - 1].MarkerAdd(1);
+                    codeEditor.CurrentPosition = codeEditor.Lines[line - 1].Position;
+                    codeEditor.SelectionStart = codeEditor.Lines[line - 1].Position;
+                    codeEditor.SelectionEnd = codeEditor.Lines[line - 1].Position;
+                    codeEditor.ScrollCaret();
+                }
+                else
+                    output_box.Items.RemoveAt(output_box.SelectedIndex);
             }
             catch { }
         }
@@ -5518,50 +5536,64 @@ namespace _8085_Simulator
             Label temp = (Label)sender;
             if (temp.Tag.ToString() == "A Register")
             {
-                address_Editbox = new value_editbox(a.GetHex());
-                address_Editbox.Text = temp.Tag.ToString();
+                address_Editbox = new value_editbox(a.GetHex())
+                {
+                    Text = temp.Tag.ToString()
+                };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     a.SetData(address_Editbox.int_value);
             }
             else if (temp.Tag.ToString() == "B Register")
             {
-                address_Editbox = new value_editbox(b.GetHex());
-                address_Editbox.Text = temp.Tag.ToString();
+                address_Editbox = new value_editbox(b.GetHex())
+                {
+                    Text = temp.Tag.ToString()
+                };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     b.SetData(address_Editbox.int_value);
             }
             else if (temp.Tag.ToString() == "C Register")
             {
-                address_Editbox = new value_editbox(c.GetHex());
-                address_Editbox.Text = temp.Tag.ToString();
+                address_Editbox = new value_editbox(c.GetHex())
+                {
+                    Text = temp.Tag.ToString()
+                };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     c.SetData(address_Editbox.int_value);
             }
             else if (temp.Tag.ToString() == "D Register")
             {
-                address_Editbox = new value_editbox(d.GetHex());
-                address_Editbox.Text = temp.Tag.ToString();
+                address_Editbox = new value_editbox(d.GetHex())
+                {
+                    Text = temp.Tag.ToString()
+                };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     d.SetData(address_Editbox.int_value);
             }
             else if (temp.Tag.ToString() == "E Register")
             {
-                address_Editbox = new value_editbox(this.e.GetHex());
-                address_Editbox.Text = temp.Tag.ToString();
+                address_Editbox = new value_editbox(this.e.GetHex())
+                {
+                    Text = temp.Tag.ToString()
+                };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     this.e.SetData(address_Editbox.int_value);
             }
             else if (temp.Tag.ToString() == "H Register")
             {
-                address_Editbox = new value_editbox(h.GetHex());
-                address_Editbox.Text = temp.Tag.ToString();
+                address_Editbox = new value_editbox(h.GetHex())
+                {
+                    Text = temp.Tag.ToString()
+                };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     h.SetData(address_Editbox.int_value);
             }
             else if (temp.Tag.ToString() == "L Register")
             {
-                address_Editbox = new value_editbox(l.GetHex());
-                address_Editbox.Text = temp.Tag.ToString();
+                address_Editbox = new value_editbox(l.GetHex())
+                {
+                    Text = temp.Tag.ToString()
+                };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     l.SetData(address_Editbox.int_value);
             }
@@ -5569,15 +5601,17 @@ namespace _8085_Simulator
         }
         private void Blink(object sender, EventArgs e)
         {
-            if (status_lbl.BackColor == Color.White)
-            {
-                status_lbl.BackColor = Color.Red;
-                status_lbl.ForeColor = Color.White;
-            }
-            else
+            if (status_lbl.BackColor == Color.Red)
             {
                 status_lbl.BackColor = Color.White;
                 status_lbl.ForeColor = Color.Red;
+                codeEditor.Markers[1].SetBackColor(Color.White);
+            }
+            else
+            {
+                status_lbl.BackColor = Color.Red;
+                status_lbl.ForeColor = Color.White;
+                codeEditor.Markers[1].SetBackColor(Color.LightGray);
             }
         }
         private void Status_text_click(object sender, EventArgs e)
@@ -5586,10 +5620,27 @@ namespace _8085_Simulator
             status_lbl.ForeColor = Color.Red;
             status_lbl.BackColor = Color.WhiteSmoke;
         }
-
-        private void auto_word_selected(object sender, AutocompleteMenuNS.SelectedEventArgs e)
+        private void memory_box_drag(object sender, ItemDragEventArgs e)
         {
-
+            ListView.SelectedIndexCollection lic = memorybox.SelectedIndices;
+            ListViewItem temp = (ListViewItem)e.Item;
+            DoDragDrop(' '+temp.Text + 'h', DragDropEffects.Copy);
+        }
+        private void code_editor_drop(object sender, DragEventArgs e)
+        {
+            if(e.Data.GetDataPresent(typeof(string)))
+                {
+                var data = e.Data.GetData(typeof(string));
+                codeEditor.CurrentPosition = codeEditor.CharPositionFromPoint(e.X, e.Y);
+                codeEditor.InsertText(codeEditor.CurrentPosition, data.ToString());
+            }
+        }
+        private void code_editor_dragenter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(string)))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
         }
     }
 }

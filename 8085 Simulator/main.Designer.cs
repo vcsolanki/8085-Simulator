@@ -806,6 +806,7 @@
             this.memorybox.VirtualListSize = 255;
             this.memorybox.VirtualMode = true;
             this.memorybox.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.Memory_cache_items);
+            this.memorybox.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.memory_box_drag);
             this.memorybox.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.Memory_retrieve_items);
             this.memorybox.SearchForVirtualItem += new System.Windows.Forms.SearchForVirtualItemEventHandler(this.Memory_search_item);
             this.memorybox.DoubleClick += new System.EventHandler(this.Memory_double_click);
@@ -955,6 +956,7 @@
             // 
             // codeEditor
             // 
+            this.codeEditor.AllowDrop = true;
             this.codeEditor.AutoCIgnoreCase = true;
             this.codeEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.codeEditor.CaretWidth = 2;
@@ -968,6 +970,8 @@
             this.codeEditor.Text = ";8085 Simulator ALPHA state!\r\n;Developed by Vishal Solanki\r\n\r\njmp start\r\n\r\n\r\nstar" +
     "t: nop\r\n\r\n\r\n\r\nhlt";
             this.codeEditor.Click += new System.EventHandler(this.CodeEditor_click);
+            this.codeEditor.DragDrop += new System.Windows.Forms.DragEventHandler(this.code_editor_drop);
+            this.codeEditor.DragEnter += new System.Windows.Forms.DragEventHandler(this.code_editor_dragenter);
             this.codeEditor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Code_editor_keypress);
             // 
             // status_group_layout
@@ -1512,7 +1516,7 @@
             this.auto_list.Items = new string[0];
             this.auto_list.MinFragmentLength = 1;
             this.auto_list.TargetControlWrapper = null;
-            this.auto_list.Selected += new System.EventHandler<AutocompleteMenuNS.SelectedEventArgs>(this.auto_word_selected);
+            this.auto_list.ToolTipDuration = 600000;
             // 
             // main
             // 
