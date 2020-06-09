@@ -2,10 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
+using WindowsInput;
+using WindowsInput.Native;
 
 
 namespace _8085_Simulator
@@ -13,8 +17,14 @@ namespace _8085_Simulator
     public partial class main : Form
     {
 
+        /*
+         * 
+         * there is error for lineBreak value
+         * still in works!
+         * 
+         */
+        
         //Custom class
-
         public class Register
         {
             public bool[] data = new bool[8];
@@ -278,10 +288,16 @@ namespace _8085_Simulator
 
         private ProgramCounter pc;
 
+        ThreadStart code_inspect_thread_start;
+        Thread code_inspect_thread;
+
+        Label tempL;
+
         private string psw;
         private string m;
 
         private bool stop_run = true;
+        //private bool pause_run = false;
 
         private List<ushort> memory;
         private List<ushort> port;
@@ -294,6 +310,7 @@ namespace _8085_Simulator
         private string formatted_code;
 
         private List<string> errors;
+        private List<string> labels_auto_list;
         private List<LabelAddress> labels;
 
         private ListViewItem[] memory_items;
@@ -304,6 +321,8 @@ namespace _8085_Simulator
         private int p_first;
 
         private ListViewItem[] m_items;
+        private ListViewItem[] s_items;
+        private ListViewItem[] p_items;
 
         //File management variables
 
@@ -378,12 +397,13 @@ namespace _8085_Simulator
             ListViewItem item;
             stackbox.VirtualListSize = stack.Count;
             stack_items = new ListViewItem[stack.Count];
+            s_items = new ListViewItem[stack.Count];
             for (int i = stack_items.Length - 1; i >= 0; i--)
             {
                 stack[i] = Convert.ToByte(0);
                 item = new ListViewItem($"{i.ToString("X").PadLeft(4, '0')}", i);
                 item.SubItems.Add($"{stack[i].ToString("X").PadLeft(2, '0')}");
-                stack_items[i] = item;
+                stack_items[i] = s_items[i] = item;
             }
             stackbox.Invalidate();
         }
@@ -392,12 +412,13 @@ namespace _8085_Simulator
             ListViewItem item;
             portbox.VirtualListSize = port.Count;
             port_items = new ListViewItem[port.Count];
+            p_items = new ListViewItem[port.Count];
             for (int i = 0; i < port_items.Length; i++)
             {
                 port[i] = Convert.ToByte(0);
                 item = new ListViewItem($"{i.ToString("X").PadLeft(2, '0')}", i);
                 item.SubItems.Add($"{port[i].ToString("X").PadLeft(2, '0')}");
-                port_items[i] = item;
+                port_items[i] = p_items[i] = item;
             }
             portbox.Update();
         }
@@ -618,12 +639,16 @@ namespace _8085_Simulator
                         int data = Convert.ToInt32(code[2]);
                         code[2] = data.ToString("X");
                     }
+
                     memory[start_location] = Convert.ToByte(opcode, 16);
                     memorybox.Items[start_location].SubItems[1].Text = opcode;
                     start_location++;
+
                     memory[start_location] = Convert.ToByte(code[2].ToUpper(), 16);
-                    memorybox.Items[start_location].SubItems[1].Text = code[2].ToUpper().PadLeft(2,'0');
+                    memorybox.Items[start_location].SubItems[1].Text = code[2].ToUpper().PadLeft(2, '0');
                     start_location++;
+
+
                 } //done
 
                 else if (code[0] == "lxi")
@@ -781,7 +806,7 @@ namespace _8085_Simulator
                             code[1] = code[1].TrimStart('0');
                             if (code[1] == "") code[1] = "0";
                         }
-                        int data = Convert.ToInt32(code[1]);
+                        int data = Convert.ToInt32(code[1], 16);
                         code[1] = data.ToString("X");
                     }
                     code[1] = code[1].PadLeft(4, '0');
@@ -1360,12 +1385,20 @@ namespace _8085_Simulator
         }
         private void FixLineFormat(ref string lineF)
         {
-            if(lineF.Split(' ')[0].Contains(":"))
+            if (lineF.Split(' ')[0].Contains(":"))
                 lineF = Regex.Replace(lineF, @":+", ": ");
             lineF = Regex.Replace(lineF, @",+", " ");
             lineF = Regex.Replace(lineF, @";+", " ;");
             lineF = Regex.Replace(lineF, @"\s+", " ");
             lineF = lineF.Trim(' ');
+            lineF = lineF.ToUpper();
+        }
+
+        public delegate bool InvokeDelegate(bool t);
+
+        private void Codeins_thread()
+        {
+            BeginInvoke(new InvokeDelegate(Code_inspect), true);
         }
         private bool Code_inspect(bool run_code)
         {
@@ -1410,6 +1443,7 @@ namespace _8085_Simulator
                 {
                     if (error_level >= 50)
                         break;
+
                     errors.Add($"{error_string} on line {line_number}");
                     error_level++;
                 }
@@ -1452,8 +1486,19 @@ namespace _8085_Simulator
                 if (run_code == true)
                 {
                     pc.counter = Load_into_memory();
+                    int line = 1;
                     while (memory[pc.counter] != 118)
                     {
+                        if(pc.counter > Convert.ToInt32("FFFD",16))
+                        {
+                            MessageBox.Show("Program Counter reached the last address!", "Program Ended", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            break;
+                        }
+                        if(sp < 2)
+                        {
+                            MessageBox.Show("Stack is full!", "Program Terminated", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            break;
+                        }
                         Code_execute(memory[pc.counter].ToString("X"));
                         pc.Increment();
                         Update_variables();
@@ -1465,6 +1510,7 @@ namespace _8085_Simulator
                             break;
                         }
                         Application.DoEvents();
+                        line++;
                     }
                     if (stop_run)
                     {
@@ -1498,7 +1544,7 @@ namespace _8085_Simulator
                 return true;
             }
         }
-        private void Code_execute(string hex)
+        private void Code_execute(string hex) 
         {
             // ACI data8
             if (hex == "CE")
@@ -2247,7 +2293,7 @@ namespace _8085_Simulator
                 string ar = a.GetHex();
                 int al = Convert.ToInt32(ar.Substring(1, 1), 16);
                 int ah = Convert.ToInt32(ar.Substring(0, 1), 16);
-                if(f.auxiliary==true)
+                if (f.auxiliary == true)
                 {
                     al += 6;
                     if (al > 15)
@@ -2274,7 +2320,7 @@ namespace _8085_Simulator
                             f.auxiliary = false;
                     }
                 }
-                if(f.carry==true)
+                if (f.carry == true)
                 {
                     ah += 6;
                     if (ah > 15)
@@ -2509,7 +2555,7 @@ namespace _8085_Simulator
             // EI
             else if (hex == "FB")
             {
- 
+
             }
             // HLT
             else if (hex == "76")
@@ -2619,7 +2665,7 @@ namespace _8085_Simulator
             else if (hex == "3")
             {
                 //inx cannot set any flags
-                string t1 = b.GetHex() + c.GetHex();
+                string t1 = b.GetHex().PadLeft(2, '0') + c.GetHex().PadLeft(2, '0');
                 int data = Convert.ToInt32(t1, 16);
                 data += 1;
                 if (data > 65535)
@@ -2632,7 +2678,7 @@ namespace _8085_Simulator
             else if (hex == "13")
             {
                 //inx cannot set any flags
-                string t1 = d.GetHex() + e.GetHex();
+                string t1 = d.GetHex().PadLeft(2, '0') + e.GetHex().PadLeft(2, '0');
                 int data = Convert.ToInt32(t1, 16);
                 data += 1;
                 if (data > 65535)
@@ -2645,9 +2691,9 @@ namespace _8085_Simulator
             else if (hex == "23")
             {
                 //inx cannot set any flags
-                string t1 = h.GetHex() + l.GetHex();
+                string t1 = h.GetHex().PadLeft(2, '0') + l.GetHex().PadLeft(2, '0');
                 int data = Convert.ToInt32(t1, 16);
-                data -= 1;
+                data += 1;
                 if (data > 65535)
                     data -= 65536;
                 t1 = data.ToString("X").PadLeft(4, '0');
@@ -3536,7 +3582,7 @@ namespace _8085_Simulator
                     address += stack[sp].ToString().PadLeft(2, '0');
                     stackbox.Items[sp].SubItems[1].Text = stack[sp].ToString("X").PadLeft(2, '0');
                     sp++;
-                    pc.counter = Convert.ToInt32(address, 16);
+                    pc.counter = Convert.ToInt32(address);
                     stackbox.Invalidate();
                 }
                 else
@@ -3548,7 +3594,7 @@ namespace _8085_Simulator
             // RIM
             else if (hex == "20")
             {
-               
+
             }
             // RLC
             else if (hex == "7")
@@ -4300,10 +4346,16 @@ namespace _8085_Simulator
                                 error_string = $"Cannot do self assignment to 'm'";
                         }
                         else
-                            error_string = $"Only 'a','b','c','d','e','h','l', or 'm' can be used! Cannot identify \"{code[1]}\"";
+                        {
+                            error_string = $"Only 'a','b','c','d','e','h','l', or 'm' can be used! Cannot identify \"{code[2]}\"";
+
+                        }
                     }
                     else
+                    {
                         error_string = $"Only 'a','b','c','d','e','h','l', or 'm' can be used! Cannot identify \"{code[1]}\"";
+
+                    }
                 }
                 else
                     error_string = "Need 2 parameters";
@@ -4359,18 +4411,21 @@ namespace _8085_Simulator
                                 Int32.Parse(code[2]);
                                 if (Int32.Parse(code[2]) > 255)
                                 {
-                                    error_string = $"\"{code[2]}\" is bigger than \"65535\"";
+                                    error_string = $"\"{code[2]}\" is bigger than \"255\"";
                                 }
                             }
                             catch
                             {
-                                error_string = $"\"{code[2]}\" is not valid value";
+                                error_string = $"Use 'h' at the end if its HEX value. \"{code[2]}\" is not valid value";
+
                             }
                         }
 
                     }
                     else
+                    {
                         error_string = $"Only 'a','b','c','d','e','h','l', or 'm' can be used! Cannot identify \"{code[1]}\"";
+                    }
                 }
                 else
                     error_string = "Need 2 parameters";
@@ -4399,7 +4454,9 @@ namespace _8085_Simulator
                         code[1] == "l" ||
                         code[1] == "m") { }
                     else
+                    {
                         error_string = $"Only 'a','b','c','d','e','h','l', or 'm' can be used! Cannot identify \"{code[1]}\"";
+                    }
                 else
                     error_string = "Need 1 parameter";
 
@@ -4432,7 +4489,9 @@ namespace _8085_Simulator
                         try
                         {
                             if (Convert.ToInt32(code[1], 16) > 255)
+                            {
                                 error_string = $"\"{code[1]}\" is bigger than \"FF\"";
+                            }
                         }
                         catch
                         {
@@ -4448,11 +4507,15 @@ namespace _8085_Simulator
                                 if (code[1] == "") code[1] += "0";
                             }
                             if (Int32.Parse(code[1]) > 255)
+                            {
                                 error_string = $"\"{code[1]}\" is bigger than \"255\"";
+
+                            }
                         }
                         catch
                         {
-                            error_string = $"\"{code[1]}\" is not valid value";
+                            error_string = $"Use 'h' at the end if its HEX value. \"{code[1]}\" is not valid value";
+
                         }
                 else
                     error_string = "Need 1 parameter";
@@ -4510,11 +4573,13 @@ namespace _8085_Simulator
                                 if (Convert.ToInt32(code[2], 16) > 65535)
                                 {
                                     error_string = $"\"{code[2]}\" is bigger than \"FFFF\"";
+
                                 }
                             }
                             catch
                             {
                                 error_string = $"\"{code[2]}\" is not valid value";
+
                             }
                         }
                         else
@@ -4528,14 +4593,18 @@ namespace _8085_Simulator
                                 if (Int32.Parse(code[2]) > 65535)
                                 {
                                     error_string = $"\"{code[2]}\" is bigger than \"65535\"";
+
                                 }
                             }
                             catch
                             {
-                                error_string = $"\"{code[2]}\" is not valid value";
+                                error_string = $"Use 'h' at the end if its HEX value. \"{code[2]}\" is not valid value";
+
                             }
                     else
+                    {
                         error_string = $"Only 'b','d','h', or \"sp\" can be used! Cannot identify \"{code[1]}\"";
+                    }
                 else
                     error_string = "Need 2 parameters";
             } //done
@@ -4547,7 +4616,9 @@ namespace _8085_Simulator
                     if (code[1] == "b" ||
                         code[1] == "d") { }
                     else
+                    {
                         error_string = $"Only 'b' or 'd' can be used! Cannot identify \"{code[1]}\"";
+                    }
                 else
                     error_string = "Need 1 parameter";
             } //done
@@ -4561,6 +4632,7 @@ namespace _8085_Simulator
                     if (code[1].StartsWith("-"))
                     {
                         error_string = $"\"{code[1]}\" is not valid value";
+
                     }
                     else if (code[1].EndsWith("h") || code[1].EndsWith("H"))
                         try
@@ -4572,7 +4644,9 @@ namespace _8085_Simulator
                                 if (code[1] == "") code[1] += "0";
                             }
                             if (Convert.ToInt32(code[1], 16) > 65334)
+                            {
                                 error_string = $"\"{code[1]}\" is bigger than \"FFFE\"";
+                            }
                         }
                         catch
                         {
@@ -4587,11 +4661,13 @@ namespace _8085_Simulator
                                 if (code[1] == "") code[1] += "0";
                             }
                             if (Int32.Parse(code[1]) > 65334)
+                            {
                                 error_string = $"\"{code[1]}\" is bigger than \"65534\"";
+                            }
                         }
                         catch
                         {
-                            error_string = $"\"{code[1]}\" is not valid value";
+                            error_string = $"Use 'h' at the end if its HEX value. \"{code[1]}\" is not valid value";
                         }
                 else
                     error_string = "Need 1 parameter";
@@ -4607,7 +4683,9 @@ namespace _8085_Simulator
                         code[1] == "h" ||
                         code[1] == "sp") { }
                     else
+                    {
                         error_string = $"Only 'b','d','h', or \"sp\" can be used! Cannot identify \"{code[1]}\"";
+                    }
                 else
                     error_string = "Need 1 parameter";
             } //done
@@ -4648,7 +4726,9 @@ namespace _8085_Simulator
                                 if (code[1] == "") code[1] += "0";
                             }
                             if (Convert.ToInt32(code[1], 16) > 65534)
+                            {
                                 error_string = $"\"{code[1]}\" is bigger than \"FFFE\"";
+                            }
                         }
                         catch
                         {
@@ -4663,11 +4743,13 @@ namespace _8085_Simulator
                                 if (code[1] == "") code[1] += "0";
                             }
                             if (Int32.Parse(code[1]) > 65534)
+                            {
                                 error_string = $"\"{code[1]}\" is bigger than \"65534\"";
+                            }
                         }
                         catch
                         {
-                            error_string = $"\"{code[1]}\" is not valid value";
+                            error_string = $"Use 'h' at the end if its HEX value. \"{code[1]}\" is not valid value";
                         }
                 }
                 else
@@ -4701,22 +4783,31 @@ namespace _8085_Simulator
                         code[1] == "h" ||
                         code[1] == "psw") { }
                     else
+                    {
                         error_string = $"Only 'b','d','h', or \"psw\" can be used! Cannot identify \"{code[1]}\"";
+                    }
                 else
                     error_string = "Need 1 parameter";
             } //done
 
             else if (code[0].StartsWith(";")) { } //done
             else
+            {
                 error_string = $"\"{code[0]}\" is incompatible instruction";
+            }
 
             return error_string;
         }
         private void Window_Closing(object sender, FormClosingEventArgs e)
         {
+            if(code_inspect_thread.IsAlive)
+            {
+                code_inspect_thread.Abort();
+                code_inspect_thread.Join();
+            }
             if (isFileSaved == false)
             {
-                DialogResult dm = MessageBox.Show("Do you wanna save this file?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                DialogResult dm = MessageBox.Show("Do you want to save this file?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (dm == DialogResult.Yes)
                     SaveFile(this, null);
                 else if (dm == DialogResult.No) { }
@@ -4730,7 +4821,14 @@ namespace _8085_Simulator
         }
         private void Window_Loading(object sender, EventArgs e)
         {
+
+            code_inspect_thread_start = new ThreadStart(delegate { Codeins_thread(); });
+            code_inspect_thread = new Thread(code_inspect_thread_start);
+
+            themeToolStripMenuItem.Visible = false;
+
             //init the arrays and variables
+            labels_auto_list = new List<string>();
             labels = new List<LabelAddress>();
             errors = new List<string>();
             memory = new List<ushort>(new ushort[65535]);
@@ -4745,7 +4843,7 @@ namespace _8085_Simulator
             Reset_port();
             Update_variables();
 
-            
+
             //setting window position and state from last run
             WindowState = Properties.Settings.Default.WindowState;
             if (WindowState != FormWindowState.Maximized)
@@ -4754,7 +4852,7 @@ namespace _8085_Simulator
             //setting up code editor
             codeEditor.Lexer = ScintillaNET.Lexer.Asm;
             codeEditor.Styles[Style.Default].Font = "Consolas";
-            codeEditor.Styles[Style.Default].Size = 14;
+            codeEditor.Styles[Style.Default].Size = 13;
             codeEditor.Styles[Style.Asm.Comment].ForeColor = Color.Green;
             codeEditor.Styles[Style.Asm.CpuInstruction].ForeColor = Color.DarkOrange;
             codeEditor.Styles[Style.Asm.Number].ForeColor = Color.Blue;
@@ -4768,8 +4866,6 @@ namespace _8085_Simulator
             codeEditor.Markers[1].Symbol = MarkerSymbol.Background;
             codeEditor.Markers[1].SetBackColor(Color.LightGray);
 
-
-
             //setting up auto list
             auto_list.TargetControlWrapper = new ScintillaWrapper(codeEditor);
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("a", 0, "a", "Help", "A Register!\nSize : 8-bit"));
@@ -4781,19 +4877,19 @@ namespace _8085_Simulator
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ani", 0, "ani", "Help", "AND operation between accumulator and 8-bit value!\n\nANI Data\n\nData = 8-bit value"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("b", 0, "b", "Help", "B Register!\nSize : 8-bit"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("c", 0, "c", "Help", "C Register!\nSize : 8-bit"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("call", 0, "call", "Help", "Goto subroutine to label or address!\n\nCALL Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cc", 0, "cc", "Help", "Goto subroutine to label or address if carry flag is set!\n\nCC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cm", 0, "cm", "Help", "Goto subroutine to label or address if accumulator value is negative!\n\nCM Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("call", 0, "call", "Help", "Goto subroutine by label or address!\n\nCALL Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cc", 0, "cc", "Help", "Goto subroutine by label or address if carry flag is set!\n\nCC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cm", 0, "cm", "Help", "Goto subroutine by label or address if accumulator value is negative!\n\nCM Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cma", 0, "cma", "Help", "Complement value of accumulator!\n\nCMA"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cmc", 0, "cmc", "Help", "Complement value of carry flag!\n\nCMC"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cmp", 0, "cmp", "Help", "Compare accumulator and register!\n\nCMP R\n\nR = Destination Register"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cnc", 0, "cnc", "Help", "Goto subroutine to label or address if carry flag is reset!\n\nCNC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cnz", 0, "cnz", "Help", "Goto subroutine to label or address if zero flag is reset!\n\nCNZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cp", 0, "cp", "Help", "Goto subroutine to label or address if accumulator value is positive!\n\nCP Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpe", 0, "cpe", "Help", "Goto subroutine to label or address if parity flag is set!\n\nCPE Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cnc", 0, "cnc", "Help", "Goto subroutine by label or address if carry flag is reset!\n\nCNC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cnz", 0, "cnz", "Help", "Goto subroutine by label or address if zero flag is reset!\n\nCNZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cp", 0, "cp", "Help", "Goto subroutine by label or address if accumulator value is positive!\n\nCP Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpe", 0, "cpe", "Help", "Goto subroutine by label or address if parity flag is set!\n\nCPE Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpi", 0, "cpi", "Help", "Compare accumulator and 8-bit value!\n\nCPI Data\n\nData = 8-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpo", 0, "cpo", "Help", "Goto subroutine to label or address if parity flag is reset!\n\nCPO Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cz", 0, "cz", "Help", "Goto subroutine to label or address if zero flag is set!\n\nCZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpo", 0, "cpo", "Help", "Goto subroutine by label or address if parity flag is reset!\n\nCPO Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cz", 0, "cz", "Help", "Goto subroutine by label or address if zero flag is set!\n\nCZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("d", 0, "d", "Help", "D Register!\nSize : 8-bit"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("daa", 0, "daa", "Help", "Convert accumulator value to BCD!\n\nDAA\n\nBCD = Binary Coded Decimal"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("dad", 0, "dad", "Help", "Add register pair to HL register pair!\n\nDAD RP\n\nRP = Source Register Pair"));
@@ -4822,7 +4918,7 @@ namespace _8085_Simulator
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("lhld", 0, "lhld", "Help", "Copies value to HL register pair from 16-bit address value!\n\nLHLD Address\n\nAddress = 16-bit value"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("lxi", 0, "lxi", "Help", "Copies 16-bit value to destination!\n\nLXI RP, Data\n\nRP = Destination Register Pair\nData = 16-bit value"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("m", 0, "m", "Help", "M Register!\nSize : 16-bit\n\nReference to HL register pair!"));
-            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("mov",0,"mov","Help", "Copies data from destination to source!\n\nMOV R1, R2\n\nR1 = Destination Register\nR2 = Source Register"));
+            auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("mov", 0, "mov", "Help", "Copies data from destination to source!\n\nMOV R1, R2\n\nR1 = Destination Register\nR2 = Source Register"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("mvi", 0, "mvi", "Help", "Copies 8-bit value to destination!\n\nMVI R, Data\n\nR = Destination Register\nData = 8-bit value"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("nop", 0, "nop", "Help", "Ignore and continue!\n\nNOP"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ora", 0, "ora", "Help", "OR operation between accumulator and register!\n\nORA R\n\nR = Destination Register"));
@@ -4864,6 +4960,7 @@ namespace _8085_Simulator
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xthl", 0, "xthl", "Help", "Exchange top value of stack with HL register pair!\n\nXTHL"));
 
 
+
             //loading recent file if opened last
             if (Properties.Settings.Default.LastFile != "")
                 filePath = Properties.Settings.Default.LastFile;
@@ -4882,25 +4979,173 @@ namespace _8085_Simulator
                 }
             }
             else
+            {
                 filePath = "";
+                codeEditor.CurrentPosition = codeEditor.Lines[7].Position;
+                codeEditor.SelectionStart = codeEditor.Lines[7].Position;
+                codeEditor.SelectionEnd = codeEditor.Lines[7].Position;
+                isFileSaved = true;
+            }
 
             //getting focus on editor
             codeEditor.Select();
         }
+        private void SetAutoList(int n = 0)
+        {
+            auto_list.Items = null;
+            if (n<0 || n == 0 || n>5)
+            {
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("a", 0, "a", "Help", "A Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("aci", 0, "aci", "Help", "Add 8-bit value to accumulator with carry!\n\nACI Data\n\nData = 8-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("adc", 0, "adc", "Help", "Add register to accumulator with carry!\n\nADC R\n\nR = Destination Register"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("add", 0, "add", "Help", "Add register to accumulator!\n\nADD R\n\nR = Destination Register"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("adi", 0, "adi", "Help", "Add 8-bit value to accumulator!\n\nADI Data\n\nData = 8-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ana", 0, "ana", "Help", "AND operation between accumulator and register!\n\nANA R\n\nR = Destination Register"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ani", 0, "ani", "Help", "AND operation between accumulator and 8-bit value!\n\nANI Data\n\nData = 8-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("b", 0, "b", "Help", "B Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("c", 0, "c", "Help", "C Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("call", 0, "call", "Help", "Goto subroutine by label or address!\n\nCALL Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cc", 0, "cc", "Help", "Goto subroutine by label or address if carry flag is set!\n\nCC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cm", 0, "cm", "Help", "Goto subroutine by label or address if accumulator value is negative!\n\nCM Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cma", 0, "cma", "Help", "Complement value of accumulator!\n\nCMA"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cmc", 0, "cmc", "Help", "Complement value of carry flag!\n\nCMC"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cmp", 0, "cmp", "Help", "Compare accumulator and register!\n\nCMP R\n\nR = Destination Register"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cnc", 0, "cnc", "Help", "Goto subroutine by label or address if carry flag is reset!\n\nCNC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cnz", 0, "cnz", "Help", "Goto subroutine by label or address if zero flag is reset!\n\nCNZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cp", 0, "cp", "Help", "Goto subroutine by label or address if accumulator value is positive!\n\nCP Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpe", 0, "cpe", "Help", "Goto subroutine by label or address if parity flag is set!\n\nCPE Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpi", 0, "cpi", "Help", "Compare accumulator and 8-bit value!\n\nCPI Data\n\nData = 8-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cpo", 0, "cpo", "Help", "Goto subroutine by label or address if parity flag is reset!\n\nCPO Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("cz", 0, "cz", "Help", "Goto subroutine by label or address if zero flag is set!\n\nCZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("d", 0, "d", "Help", "D Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("daa", 0, "daa", "Help", "Convert accumulator value to BCD!\n\nDAA\n\nBCD = Binary Coded Decimal"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("dad", 0, "dad", "Help", "Add register pair to HL register pair!\n\nDAD RP\n\nRP = Source Register Pair"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("dcr", 0, "dcr", "Help", "Decrement register!\n\nDCR R\n\nR = Destination Register"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("dcx", 0, "dcx", "Help", "Decrement register pair!\n\nDCX RP\n\nRP = Destination Register Pair"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("di", 0, "di", "Help", "Disable interrupt\n\n\nDI"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("e", 0, "e", "Help", "E Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ei", 0, "ei", "Help", "Enable interrupt!\n\nEI"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("h", 0, "h", "Help", "H Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("hlt", 0, "hlt", "Help", "Stops processor execution!\n\nHLT"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("in", 0, "in", "Help", "Copies 8-bit value from specified port address!\n\nIN Address\n\nAddress = 8-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("inr", 0, "inr", "Help", "Increment register!\n\nINR R\n\nR = Destination Register"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("inx", 0, "inx", "Help", "Increment register pair!\n\nINX RP\n\nRP = Destination Register Pair"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jc", 0, "jc", "Help", "Jump to label or address if carry flag is set!\n\nJC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jm", 0, "jm", "Help", "Jump to label or address if accumulator value is negative!\n\nJM Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jmp", 0, "jmp", "Help", "Jump to label or address!\n\nJMP Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jnc", 0, "jnc", "Help", "Jump to label or address if carry flag is reset!\n\nJNC Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jnz", 0, "jnz", "Help", "Jump to label or address if zero flag is reset!\n\nJNZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jp", 0, "jp", "Help", "Jump to label or address if accumulator value is positive!\n\nJP Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jpe", 0, "jpe", "Help", "Jump to label or address if parity flag is set!\n\nJPE Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jpo", 0, "jpo", "Help", "Jump to label or address if parity flag is reset!\n\nJPO Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("jz", 0, "jz", "Help", "Jump to label or address if zero flag is set!\n\nJZ Label/Address\n\nLabel = Name specified in code\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("l", 0, "l", "Help", "L Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("lda", 0, "lda", "Help", "Copies value to accumulator from 16-bit address value!\n\nLDA Address\n\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ldax", 0, "ldax", "Help", "Copies value to accumulator from address pointed by register pair!\n\nLDAX RP\n\nRP = Destination Register Pair"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("lhld", 0, "lhld", "Help", "Copies value to HL register pair from 16-bit address value!\n\nLHLD Address\n\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("lxi", 0, "lxi", "Help", "Copies 16-bit value to destination!\n\nLXI RP, Data\n\nRP = Destination Register Pair\nData = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("m", 0, "m", "Help", "M Register!\nSize : 16-bit\n\nReference to HL register pair!"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("mov", 0, "mov", "Help", "Copies data from destination to source!\n\nMOV R1, R2\n\nR1 = Destination Register\nR2 = Source Register"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("mvi", 0, "mvi", "Help", "Copies 8-bit value to destination!\n\nMVI R, Data\n\nR = Destination Register\nData = 8-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("nop", 0, "nop", "Help", "Ignore and continue!\n\nNOP"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ora", 0, "ora", "Help", "OR operation between accumulator and register!\n\nORA R\n\nR = Destination Register"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ori", 0, "ori", "Help", "OR operation between accumulator and 8-bit value!\n\nORI Data\n\nData = 8-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("out", 0, "out", "Help", "Copies 8-bit value from accumulator to port address!\n\nOUT Address\n\nAddress = 8-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("pchl", 0, "pchl", "Help", "Replace PC with HL register pair!\n\nPCHL\n\nPC = Program Counter"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("pop", 0, "pop", "Help", "Store value to register pair and delete from stack!\n\nPOP RP\n\nRP = Destination Register Pair"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("psw", 0, "psw", "Help", "PSW Register!\nSize : 16-bit\n\nProcessor Status Word!"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("push", 0, "push", "Help", "Insert register pair to stack!\n\nPUSH RP\n\nRP = Destination Register Pair"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ral", 0, "ral", "Help", "Rotate accumulator bits to left through carry flag!\n\nRAL"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rar", 0, "rar", "Help", "Rotate accumulator bits to right through carry flag!\n\nRAR"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rc", 0, "rc", "Help", "Return to address from stack if carry flag is set!\n\nRC"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("ret", 0, "ret", "Help", "Return to address from stack!\n\nRET"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rim", 0, "rim", "Help", "Copies interrupt value to accumulator!\n\nRIM"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rlc", 0, "rlc", "Help", "Rotate accumulator bits to left with carry flag!\n\nRLC"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rm", 0, "rm", "Help", "Return to address from stack if accumulator value is negative!\n\nRM"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rnc", 0, "rnc", "Help", "Return to address from stack if carry flag is reset!\n\nRNC"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rnz", 0, "rnz", "Help", "Return to address from stack if zero flag is reset!\n\nRNZ"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rp", 0, "rp", "Help", "Return to address from stack if accumulator value is positive!\n\nRP"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rpe", 0, "rpe", "Help", "Return to address from stack if parity flag is set!\n\nRPE"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rpo", 0, "rpo", "Help", "Return to address from stack if parity flag is reset!\n\nRPO"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rrc", 0, "rrc", "Help", "Rotate accumulator bits to right with carry flag!\n\nRRC"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rst", 0, "rst", "Help", "Set restart values!\n\nRST Data\n\nData = 1 to 7 value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("rz", 0, "rz", "Help", "Return to address from stack if zero flag is set!\n\nRZ"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sbb", 0, "sbb", "Help", "Subtract register from accumulator with borrow!\n\nSBB R\n\nR = Destination Register"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sbi", 0, "sbi", "Help", "Subtract 8-bit value from accumulator with borrow!\n\nSBI Data\n\nData = 8-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("shld", 0, "shld", "Help", "Copies value to 16-bit address from HL register pair!\n\nSHLD Address\n\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sim", 0, "sim", "Help", "Copies interrupt value from accumulator!\n\nSIM"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sp", 0, "sp", "Help", "SP Register!\nSize : 16-bit\n\nStack Pointer!"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sphl", 0, "sphl", "Help", "Insert HL register pair to stack!\n\nSPHL"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sta", 0, "sta", "Help", "Copies value to 16-bit address value from accumulator!\n\nSTA Address\n\nAddress = 16-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("stax", 0, "stax", "Help", "Copies value to address from accumulator pointed by register pair!\n\nSTAX RP\n\nRP = Destination Register Pair"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("stc", 0, "stc", "Help", "Set value of carry flag!\n\nSTC"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sub", 0, "sub", "Help", "Subtract register from accumulator!\n\nSUB R\n\nR = Destination Register"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sui", 0, "sui", "Help", "Subtract 8-bit value from accumulator!\n\nSUI Data\n\nData = 8-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xchg", 0, "xchg", "Help", "Exchange 16-bit value between DE and HL register pair\n\nXCHG"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xra", 0, "xra", "Help", "XOR operation between accumulator and register!\n\nXRA R\n\nR = Destination Register"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xri", 0, "xri", "Help", "XOR operation between accumulator and 8-bit value!\n\nXRI Data\n\nData = 8-bit value"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("xthl", 0, "xthl", "Help", "Exchange top value of stack with HL register pair!\n\nXTHL"));
+
+            }
+            else if (n == 1)
+            {
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("a", 0, "a", "Help", "A Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("b", 0, "b", "Help", "B Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("c", 0, "c", "Help", "C Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("d", 0, "d", "Help", "D Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("e", 0, "e", "Help", "E Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("h", 0, "h", "Help", "H Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("l", 0, "l", "Help", "L Register!\nSize : 8-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("m", 0, "m", "Help", "M Register!\nSize : 16-bit"));
+            }
+            else if (n == 2)
+            {
+                foreach (string lab in labels_auto_list)
+                {
+                    auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem(lab, 0, lab, "Help", "\"" + lab + "\" is a Label!"));
+                }
+            }
+            else if(n==3)
+            {
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("b", 0, "b", "Help", "BC Register Pair!\nSize : 16-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("d", 0, "d", "Help", "DE Register Pair!\nSize : 16-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("h", 0, "h", "Help", "HL Register Pair!\nSize : 16-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sp", 0, "sp", "Help", "SP Register!\nSize : 16-bit"));
+            }
+            else if(n==4)
+            {
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("b", 0, "b", "Help", "BC Register Pair!\nSize : 16-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("d", 0, "d", "Help", "DE Register Pair!\nSize : 16-bit"));
+            }
+            else if(n==5)
+            {
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("b", 0, "b", "Help", "BC Register Pair!\nSize : 16-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("d", 0, "d", "Help", "DE Register Pair!\nSize : 16-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("h", 0, "h", "Help", "HL Register Pair!\nSize : 16-bit"));
+                auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("psw", 0, "psw", "Help", "PSW Register!\nSize : 16-bit"));
+            }
+        }
 
         //Menu section
-
         private void FontToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FontDialog fd = new FontDialog();
+            fd.AllowScriptChange = false;
+            fd.AllowVerticalFonts = false;
+            fd.FontMustExist = true;
+            fd.ShowApply = false;
+            fd.ShowEffects = false;
+
             if (fd.ShowDialog() == DialogResult.OK)
             {
-                codeEditor.Styles[Style.Asm.Default].Font = Font.Name;
-                codeEditor.Styles[Style.Asm.Default].SizeF = Font.Size;
-                codeEditor.Styles[Style.Asm.Default].Bold = Font.Bold;
-                codeEditor.Styles[Style.Asm.Default].Italic = Font.Italic;
-                codeEditor.Styles[Style.Asm.Default].Underline = Font.Underline;
+                codeEditor.Styles[Style.Default].Font = fd.Font.Name;
+                codeEditor.Styles[Style.Default].Size = (int)fd.Font.Size;
+                codeEditor.Styles[Style.Default].SizeF = fd.Font.Size;
+                codeEditor.Styles[Style.Default].Bold = fd.Font.Bold;
+                codeEditor.Styles[Style.Default].Italic = fd.Font.Italic;
             }
+
+            fd.Dispose();
         }
         private void ClearMemoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -4928,17 +5173,12 @@ namespace _8085_Simulator
         }
 
         //key events
-
         private void Show_conv_tooltip(object sender, EventArgs e)
         {
             Label temp = (Label)sender;
             reg_name.Text = temp.Tag.ToString();
             int data = Convert.ToInt32(temp.Text, 16);
             conv_lbl.Text = $"BIN : {Convert.ToString(data, 2).PadLeft(8, '0')}\nHEX : {temp.Text}\nDEC : {data}";
-        }
-        private void Warning_click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Software is in ALPHA state!\nCan't guarantee software will work in every situation!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void Run_program(object sender, EventArgs e)
         {
@@ -4963,7 +5203,13 @@ namespace _8085_Simulator
             stop_run = false;
             status_lbl.Text = "Program Running, You can't edit code right now!";
             status_lbl.ForeColor = Color.DarkGreen;
-            Code_inspect(true);
+            // Code_inspect(true);
+
+
+            code_inspect_thread_start = new ThreadStart(delegate { Codeins_thread(); });
+            code_inspect_thread = new Thread(code_inspect_thread_start);
+
+            code_inspect_thread.Start();
         }
         private void Stop_program(object sender, EventArgs e)
         {
@@ -5167,6 +5413,7 @@ namespace _8085_Simulator
                         for (int i = 0; i < codeEditor.Lines.Count; i++)
                             codeEditor.Lines[i].MarkerDelete(1);
                         codeEditor.Lines[selected_index].MarkerAdd(1);
+                        codeEditor.GotoPosition(codeEditor.Lines[selected_index].DisplayIndex);
                         int ln = 0;
                         foreach (Line line in codeEditor.Lines)
                         {
@@ -5210,8 +5457,26 @@ namespace _8085_Simulator
         }
         private void Code_editor_keypress(object sender, KeyPressEventArgs e)
         {
-                isFileSaved = false;
-                Text = "8085 Simulator - " + Path.GetFileName(filePath) + "*";
+            isFileSaved = false;
+            Text = "8085 Simulator - " + Path.GetFileName(filePath) + "*";
+
+            if (e.KeyChar == (char)Keys.Enter)
+                SetAutoList();
+            else if (e.KeyChar == (char)Keys.Back)
+                SetAutoList();
+
+            GetLabelsFromCode();
+        }
+        private void GetLabelsFromCode()
+        {
+            labels_auto_list.Clear();
+            foreach (Line line in codeEditor.Lines)
+            {
+                if (line.Text.Contains(":"))
+                {
+                    labels_auto_list.Add(line.Text.Split(':')[0]);
+                }
+            }
         }
         private void Find_text_keypress(object sender, KeyPressEventArgs e)
         {
@@ -5223,7 +5488,25 @@ namespace _8085_Simulator
         }
         private void Find_address_Click(object sender, EventArgs e)
         {
-            memorybox.TopItem = memorybox.FindItemWithText(address_to_find.Text.ToUpper());
+            if (data_tabs.SelectedTab == memoryTab)
+            {
+                memorybox.TopItem = memorybox.FindItemWithText(address_to_find.Text.ToUpper());
+                memorybox.TopItem.Selected = true;
+                memorybox.Select();
+            }
+            else if (data_tabs.SelectedTab == stackTab)
+            {
+                stackbox.TopItem = stackbox.FindItemWithText(address_to_find.Text.ToUpper());
+                stackbox.TopItem.Selected = true;
+                stackbox.Select();
+            }
+            else if (data_tabs.SelectedTab == portTab)
+            {
+                portbox.TopItem = portbox.FindItemWithText(address_to_find.Text.ToUpper());
+                portbox.TopItem.Selected = true;
+                portbox.Select();
+            }
+
         }
         private void Memory_retrieve_items(object sender, RetrieveVirtualItemEventArgs e)
         {
@@ -5307,12 +5590,38 @@ namespace _8085_Simulator
                 x++;
             }
         }
+        private void Stack_search_item(object sender, SearchForVirtualItemEventArgs e)
+        {
+            int x = 0;
+            foreach (ListViewItem it in s_items)
+            {
+                if (it.Text.Contains(e.Text))
+                {
+                    e.Index = x;
+                    return;
+                }
+                x++;
+            }
+        }
+        private void Port_search_item(object sender, SearchForVirtualItemEventArgs e)
+        {
+            int x = 0;
+            foreach (ListViewItem it in p_items)
+            {
+                if (it.Text.Contains(e.Text))
+                {
+                    e.Index = x;
+                    return;
+                }
+                x++;
+            }
+        }
         private void Memory_double_click(object sender, EventArgs e)
         {
             ListView.SelectedIndexCollection lic = memorybox.SelectedIndices;
             value_editbox address_Editbox = new value_editbox(memorybox.Items[lic[0]].SubItems[1].Text)
             {
-                Text = memorybox.Items[lic[0]].Text
+                Text = "Address : " + memorybox.Items[lic[0]].Text.PadLeft(4, '0')
             };
             if (address_Editbox.ShowDialog() == DialogResult.OK)
             {
@@ -5320,10 +5629,11 @@ namespace _8085_Simulator
                 memorybox.Items[lic[0]].SubItems[1].Text = memory[Convert.ToInt32(memorybox.Items[lic[0]].Text, 16)].ToString("X").PadLeft(2, '0');
                 memorybox.Invalidate();
             }
+            address_Editbox.Dispose();
         }
         private void Create_NewFile(object sender, EventArgs e)
         {
-            if(isFileSaved==false)
+            if (isFileSaved == false)
             {
                 DialogResult dm = MessageBox.Show("Do you wanna save this file?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (dm == DialogResult.Yes)
@@ -5350,9 +5660,11 @@ namespace _8085_Simulator
                 file.Close();
                 Properties.Settings.Default.RecentPath = Path.GetDirectoryName(filePath);
                 Text = "8085 Simulator - " + Path.GetFileName(filePath);
+                codeEditor.Clear();
             }
             Properties.Settings.Default.Save();
             codeEditor.Select();
+            sfd.Dispose();
         }
         private void OpenFile(object sender, EventArgs e)
         {
@@ -5392,6 +5704,7 @@ namespace _8085_Simulator
             }
             Properties.Settings.Default.Save();
             codeEditor.Select();
+            ofd.Dispose();
         }
         private void SaveFile(object sender, EventArgs e)
         {
@@ -5408,8 +5721,9 @@ namespace _8085_Simulator
                         Filter = "ASM File (*.asm)|*.asm|All Files (*.*)|*.*",
                         InitialDirectory = Properties.Settings.Default.RecentPath
                     };
-                    if (sfd.ShowDialog()==DialogResult.OK)
-                    filePath = sfd.FileName;
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                        filePath = sfd.FileName;
+                    sfd.Dispose();
                 }
                 if (filePath != "")
                 {
@@ -5418,8 +5732,8 @@ namespace _8085_Simulator
                     {
                         using (StreamWriter write = new StreamWriter(file))
                         {
-                        write.Write(codeEditor.Text);
-                        write.Close();
+                            write.Write(codeEditor.Text);
+                            write.Close();
                         }
                         file.Close();
                     }
@@ -5458,6 +5772,7 @@ namespace _8085_Simulator
                 Text = "8085 Simulator - " + Path.GetFileName(filePath);
             }
             codeEditor.Select();
+            sfd.Dispose();
         }
         private void Output_box_DoubleClick(object sender, EventArgs e)
         {
@@ -5481,7 +5796,7 @@ namespace _8085_Simulator
         }
         private void CodeEditor_click(object sender, EventArgs e)
         {
-            if(stop_run==true)
+            if (stop_run == true)
             {
                 codeEditor.MarkerDeleteAll(1);
             }
@@ -5499,6 +5814,7 @@ namespace _8085_Simulator
                 stackbox.Items[lic[0]].SubItems[1].Text = stack[Convert.ToInt32(stackbox.Items[lic[0]].Text, 16)].ToString("X").PadLeft(2, '0');
                 stackbox.Invalidate();
             }
+            address_Editbox.Dispose();
         }
         private void Port_double_click(object sender, EventArgs e)
         {
@@ -5513,6 +5829,7 @@ namespace _8085_Simulator
                 portbox.Items[lic[0]].SubItems[1].Text = port[Convert.ToInt32(portbox.Items[lic[0]].Text, 16)].ToString("X").PadLeft(2, '0');
                 portbox.Invalidate();
             }
+            address_Editbox.Dispose();
         }
         private void DoubleClickFlagSet(object sender, EventArgs e)
         {
@@ -5528,7 +5845,7 @@ namespace _8085_Simulator
             else if (temp.Tag.ToString() == "zf")
                 f.zero = !f.zero;
             Update_variables();
-            
+
         }
         private void DoubleClickRSet(object sender, EventArgs e)
         {
@@ -5542,6 +5859,7 @@ namespace _8085_Simulator
                 };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     a.SetData(address_Editbox.int_value);
+                address_Editbox.Dispose();
             }
             else if (temp.Tag.ToString() == "B Register")
             {
@@ -5551,6 +5869,7 @@ namespace _8085_Simulator
                 };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     b.SetData(address_Editbox.int_value);
+                address_Editbox.Dispose();
             }
             else if (temp.Tag.ToString() == "C Register")
             {
@@ -5560,6 +5879,7 @@ namespace _8085_Simulator
                 };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     c.SetData(address_Editbox.int_value);
+                address_Editbox.Dispose();
             }
             else if (temp.Tag.ToString() == "D Register")
             {
@@ -5569,6 +5889,7 @@ namespace _8085_Simulator
                 };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     d.SetData(address_Editbox.int_value);
+                address_Editbox.Dispose();
             }
             else if (temp.Tag.ToString() == "E Register")
             {
@@ -5578,6 +5899,7 @@ namespace _8085_Simulator
                 };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     this.e.SetData(address_Editbox.int_value);
+                address_Editbox.Dispose();
             }
             else if (temp.Tag.ToString() == "H Register")
             {
@@ -5587,6 +5909,7 @@ namespace _8085_Simulator
                 };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     h.SetData(address_Editbox.int_value);
+                address_Editbox.Dispose();
             }
             else if (temp.Tag.ToString() == "L Register")
             {
@@ -5596,6 +5919,7 @@ namespace _8085_Simulator
                 };
                 if (address_Editbox.ShowDialog() == DialogResult.OK)
                     l.SetData(address_Editbox.int_value);
+                address_Editbox.Dispose();
             }
             Update_variables();
         }
@@ -5620,27 +5944,248 @@ namespace _8085_Simulator
             status_lbl.ForeColor = Color.Red;
             status_lbl.BackColor = Color.WhiteSmoke;
         }
-        private void memory_box_drag(object sender, ItemDragEventArgs e)
+        private void Memory_box_drag(object sender, ItemDragEventArgs e)
         {
-            ListView.SelectedIndexCollection lic = memorybox.SelectedIndices;
+            _ = memorybox.SelectedIndices;
             ListViewItem temp = (ListViewItem)e.Item;
-            DoDragDrop(' '+temp.Text + 'h', DragDropEffects.Copy);
+            DoDragDrop(' ' + temp.Text + 'h', DragDropEffects.Copy);
         }
-        private void code_editor_drop(object sender, DragEventArgs e)
+        private void Code_editor_drop(object sender, DragEventArgs e)
         {
-            if(e.Data.GetDataPresent(typeof(string)))
-                {
+            if (e.Data.GetDataPresent(typeof(string)))
+            {
                 var data = e.Data.GetData(typeof(string));
                 codeEditor.CurrentPosition = codeEditor.CharPositionFromPoint(e.X, e.Y);
                 codeEditor.InsertText(codeEditor.CurrentPosition, data.ToString());
             }
         }
-        private void code_editor_dragenter(object sender, DragEventArgs e)
+        private void Code_editor_dragenter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(typeof(string)))
             {
                 e.Effect = DragDropEffects.Copy;
             }
+        }
+        private void Memory_click(object sender, EventArgs e)
+        {
+            ListView.SelectedIndexCollection lic = memorybox.SelectedIndices;
+            int value = memory[lic[0]];
+            conv_lbl.Text = $"BIN : {Convert.ToString(value, 2).PadLeft(8, '0')}\nHEX : {Convert.ToString(value, 16).PadLeft(2, '0').ToUpper()}\nDEC : {value}";
+        }
+        private void AutoListItemsSelected(object sender, AutocompleteMenuNS.SelectedEventArgs e)
+        {
+            //Line line = codeEditor.Lines[codeEditor.CurrentLine];
+            //string[] words = line.Text.Split(' ');
+
+            if (e.Item.Text == "mov" ||
+                e.Item.Text == "mvi" ||
+                e.Item.Text == "add" ||
+                e.Item.Text == "sub" ||
+                e.Item.Text == "adc" ||
+                e.Item.Text == "sbb" ||
+                e.Item.Text == "inr" ||
+                e.Item.Text == "dcr" ||
+                e.Item.Text == "ana" ||
+                e.Item.Text == "ora" ||
+                e.Item.Text == "xra" ||
+                e.Item.Text == "cmp")
+            {
+                SetAutoList(1);
+                InputSimulator inpuptKeys = new InputSimulator();
+                inpuptKeys.Keyboard.TextEntry(" ");
+                inpuptKeys.Keyboard.ModifiedKeyStroke(VirtualKeyCode.CONTROL, VirtualKeyCode.SPACE);
+            }
+            else if (e.Item.Text == "jmp" ||
+                e.Item.Text == "jnz" ||
+                e.Item.Text == "jz" ||
+                e.Item.Text == "jnc" ||
+                e.Item.Text == "jc" ||
+                e.Item.Text == "jpo" ||
+                e.Item.Text == "jpe" ||
+                e.Item.Text == "jp" ||
+                e.Item.Text == "jm" ||
+                e.Item.Text == "call" ||
+                e.Item.Text == "cnz" ||
+                e.Item.Text == "cz" ||
+                e.Item.Text == "cnc" ||
+                e.Item.Text == "cc" ||
+                e.Item.Text == "cpo" ||
+                e.Item.Text == "cpe" ||
+                e.Item.Text == "cp" ||
+                e.Item.Text == "cm")
+            {
+                SetAutoList(2);
+                InputSimulator inpuptKeys = new InputSimulator();
+                inpuptKeys.Keyboard.TextEntry(" ");
+                inpuptKeys.Keyboard.ModifiedKeyStroke(VirtualKeyCode.CONTROL, VirtualKeyCode.SPACE);
+            }
+            else if(e.Item.Text == "lxi" ||
+                    e.Item.Text == "dad" ||
+                    e.Item.Text == "inx" ||
+                    e.Item.Text == "dcx")
+            {
+                SetAutoList(3);
+                InputSimulator inpuptKeys = new InputSimulator();
+                inpuptKeys.Keyboard.TextEntry(" ");
+                inpuptKeys.Keyboard.ModifiedKeyStroke(VirtualKeyCode.CONTROL, VirtualKeyCode.SPACE);
+            }
+            else if(e.Item.Text == "ldax" ||
+                    e.Item.Text == "stax")
+            {
+                SetAutoList(4);
+                InputSimulator inpuptKeys = new InputSimulator();
+                inpuptKeys.Keyboard.TextEntry(" ");
+                inpuptKeys.Keyboard.ModifiedKeyStroke(VirtualKeyCode.CONTROL, VirtualKeyCode.SPACE);
+            }
+            else if (e.Item.Text == "push" ||
+                    e.Item.Text == "pop")
+            {
+                SetAutoList(4);
+                InputSimulator inpuptKeys = new InputSimulator();
+                inpuptKeys.Keyboard.TextEntry(" ");
+                inpuptKeys.Keyboard.ModifiedKeyStroke(VirtualKeyCode.CONTROL, VirtualKeyCode.SPACE);
+            }
+        }
+        private void AutoListItemSelecting(object sender, AutocompleteMenuNS.SelectingEventArgs e)
+        {
+
+        }
+        private void darkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
+        private void iNSToOPCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(codeEditor.TextLength > 0)
+            {
+                opform opf = new opform();
+                opf.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("Write some ASM lines in the code editor!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+        private void ShowToolTip(object sender, EventArgs e)
+        {
+            Label temp = (Label)sender;
+
+            if(temp.Text == "A")
+                tooltip_main.SetToolTip(temp, "A Register (Accumulator)");
+            if (temp.Text == "B")
+                tooltip_main.SetToolTip(temp, "B Register");
+            if (temp.Text == "C")
+                tooltip_main.SetToolTip(temp, "C Register");
+            if (temp.Text == "D")
+                tooltip_main.SetToolTip(temp, "D Register");
+            if (temp.Text == "E")
+                tooltip_main.SetToolTip(temp, "E Register");
+            if (temp.Text == "H")
+                tooltip_main.SetToolTip(temp, "H Register");
+            if (temp.Text == "L")
+                tooltip_main.SetToolTip(temp, "L Register");
+            if (temp.Text == "C")
+                tooltip_main.SetToolTip(temp, "Carry Flag");
+            if (temp.Text == "S")
+                tooltip_main.SetToolTip(temp, "Sign Flag");
+            if (temp.Text == "AC")
+                tooltip_main.SetToolTip(temp, "Auxiliary Carry Flag");
+            if (temp.Text == "P")
+                tooltip_main.SetToolTip(temp, "Parity Flag");
+            if (temp.Text == "Z")
+                tooltip_main.SetToolTip(temp, "Zero Flag");
+            if (temp.Text == "PC")
+                tooltip_main.SetToolTip(temp, "Program Counter");
+            if (temp.Text == "PSW")
+                tooltip_main.SetToolTip(temp, "Processor Status Word");
+            if (temp.Text == "SP")
+                tooltip_main.SetToolTip(temp, "Stack Pointer");
+            if (temp.Text == "M")
+                tooltip_main.SetToolTip(temp, "M Register (H/L)");
+        }
+        private void copyAsHEXToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(tempL != null)
+                Clipboard.SetText(tempL.Text);
+        }
+        private void copyAsBINToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (tempL != null)
+            {
+                reg_name.Text = tempL.Tag.ToString();
+                int data = Convert.ToInt32(tempL.Text, 16);
+                Clipboard.SetText(Convert.ToString(data, 2).PadLeft(8, '0'));
+            }
+        }
+        private void copyAsDECToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (tempL != null)
+            {
+                reg_name.Text = tempL.Tag.ToString();
+                int data = Convert.ToInt32(tempL.Text, 16);
+                Clipboard.SetText(Convert.ToString(data, 10).PadLeft(3, '0'));
+            }
+        }
+        private void CopyValueTrigger(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Right)
+            {
+                tempL = (Label)sender;
+            }
+        }
+        private void PrintTextFileHandler(object sender, PrintPageEventArgs ppeArgs)
+        {
+            FontConverter cvt = new FontConverter();
+            Font fnt = (Font)cvt.ConvertFromString(codeEditor.Styles[Style.Default].Font);
+ 
+            Graphics g = ppeArgs.Graphics;
+
+            float linesPerPage = 0;
+            float yPos = 0;
+            int count = 0;
+            float leftMargin = ppeArgs.MarginBounds.Left;
+            float topMargin = ppeArgs.MarginBounds.Top;
+            string line = null;
+            linesPerPage = ppeArgs.MarginBounds.Height / fnt.GetHeight(g);
+
+            SaveFile(this, new EventArgs());
+
+            StreamReader reader = new StreamReader(filePath);
+
+            while (count < linesPerPage && ((line = reader.ReadLine()) != null))
+            {
+                yPos = topMargin + (count * fnt.GetHeight(g));
+                g.DrawString(line,fnt, Brushes.Black, leftMargin, yPos, new StringFormat()); 
+                count++;
+            }
+            if (line != null)
+            {
+                ppeArgs.HasMorePages = true;
+            }
+            else
+            {
+                ppeArgs.HasMorePages = false;
+            }
+
+            reader.Close();
+
+        }
+        private void printToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            PrintDocument doc = new PrintDocument();
+
+            doc.PrintPage += new PrintPageEventHandler(PrintTextFileHandler);
+
+            PrintDialog printer = new PrintDialog();
+
+            printer.Document = doc;
+
+            if (printer.ShowDialog() == DialogResult.OK)
+            {
+                printer.Document.Print();
+            }
+
         }
     }
 }

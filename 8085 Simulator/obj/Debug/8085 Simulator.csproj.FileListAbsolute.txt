@@ -15,7 +15,6 @@ C:\Users\Vishal Solanki\source\repos\8085 Simulator\8085 Simulator\obj\Debug\_80
 E:\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.main.resources
 E:\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.Properties.Resources.resources
 E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.GenerateResource.cache
-E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.CoreCompileInputs.cache
 E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.exe
 E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.pdb
 E:\8085 Simulator\8085 Simulator\bin\Debug\8085 Simulator.exe.config
@@ -26,3 +25,6 @@ E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.Fody.CopyLocal.
 E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.CopyComplete
 E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csprojAssemblyReference.cache
 E:\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.value_editbox.resources
+E:\8085 Simulator\8085 Simulator\bin\Debug\WindowsInput.xml
+E:\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.opform.resources
+E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.CoreCompileInputs.cache

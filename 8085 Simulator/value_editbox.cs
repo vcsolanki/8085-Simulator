@@ -39,6 +39,7 @@ namespace _8085_Simulator
 
         private void hex_flag_CheckedChanged(object sender, EventArgs e)
         {
+            if (int_value > 255) int_value = 0;
             if (value.MaxLength == 3)
             {
                 int_value = Convert.ToInt32(value.Text, 10);
@@ -53,6 +54,7 @@ namespace _8085_Simulator
 
         private void bin_flag_CheckedChanged(object sender, EventArgs e)
         {
+            if (int_value > 255) int_value = 0;
             if (value.MaxLength == 2)
             {
                 int_value = Convert.ToInt32(value.Text, 16);
@@ -166,8 +168,13 @@ namespace _8085_Simulator
 
         private void set_button_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
-            Close();
+            if (int_value > 255)
+                MessageBox.Show("Value cannot be bigger than 255!");
+            else
+            {
+                DialogResult = DialogResult.OK;
+                Close();
+            }
         }
     }
 }
