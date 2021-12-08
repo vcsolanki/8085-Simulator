@@ -28,3 +28,20 @@ E:\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.value_editbox.resourc
 E:\8085 Simulator\8085 Simulator\bin\Debug\WindowsInput.xml
 E:\8085 Simulator\8085 Simulator\obj\Debug\_8085_Simulator.opform.resources
 E:\8085 Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.CoreCompileInputs.cache
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\bin\Debug\8085 Simulator.exe.config
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\bin\Debug\8085 Simulator.exe
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\bin\Debug\8085 Simulator.pdb
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\bin\Debug\ScintillaNET.xml
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\bin\Debug\WindowsInput.xml
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.AssemblyReference.cache
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.SuggestedBindingRedirects.cache
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\_8085_Simulator.opform.resources
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\_8085_Simulator.value_editbox.resources
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\_8085_Simulator.main.resources
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\_8085_Simulator.Properties.Resources.resources
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.GenerateResource.cache
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.CoreCompileInputs.cache
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.Fody.CopyLocal.cache
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\8085 Simulator.csproj.CopyComplete
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\8085 Simulator.exe
+C:\Users\Vishal Solanki\Documents\GitHub\8085-Simulator\8085 Simulator\obj\Debug\8085 Simulator.pdb
