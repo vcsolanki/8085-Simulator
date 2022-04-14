@@ -3006,12 +3006,12 @@ namespace _8085_Simulator
             // MOV C E
             else if (hex == "4B")
             {
-                c.SetData(l.GetInt());
+                c.SetData(e.GetInt());
             }
             // MOV C H
             else if (hex == "4C")
             {
-                c.SetData(l.GetInt());
+                c.SetData(h.GetInt());
             }
             // MOV C L
             else if (hex == "4D")
