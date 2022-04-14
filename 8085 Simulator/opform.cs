@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace _8085_Simulator
@@ -21,7 +14,7 @@ namespace _8085_Simulator
         {
             InitializeComponent();
 
-            
+
         }
 
         private void formatToolStripMenuItem_Click(object sender, EventArgs e)
@@ -30,7 +23,7 @@ namespace _8085_Simulator
 
             fd.Font = opcodetext.Font;
 
-            if(fd.ShowDialog() == DialogResult.OK)
+            if (fd.ShowDialog() == DialogResult.OK)
             {
                 opcodetext.Font = fd.Font;
             }

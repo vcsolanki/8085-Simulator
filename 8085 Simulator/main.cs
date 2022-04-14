@@ -23,7 +23,7 @@ namespace _8085_Simulator
          * still in works!
          * 
          */
-        
+
         //Custom class
         public class Register
         {
@@ -316,6 +316,7 @@ namespace _8085_Simulator
         private ListViewItem[] memory_items;
         private ListViewItem[] stack_items;
         private ListViewItem[] port_items;
+
         private int m_first;
         private int s_first;
         private int p_first;
@@ -1489,12 +1490,12 @@ namespace _8085_Simulator
                     int line = 1;
                     while (memory[pc.counter] != 118)
                     {
-                        if(pc.counter > Convert.ToInt32("FFFD",16))
+                        if (pc.counter > Convert.ToInt32("FFFD", 16))
                         {
                             MessageBox.Show("Program Counter reached the last address!", "Program Ended", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             break;
                         }
-                        if(sp < 2)
+                        if (sp < 2)
                         {
                             MessageBox.Show("Stack is full!", "Program Terminated", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             break;
@@ -1544,7 +1545,7 @@ namespace _8085_Simulator
                 return true;
             }
         }
-        private void Code_execute(string hex) 
+        private void Code_execute(string hex)
         {
             // ACI data8
             if (hex == "CE")
@@ -4800,7 +4801,7 @@ namespace _8085_Simulator
         }
         private void Window_Closing(object sender, FormClosingEventArgs e)
         {
-            if(code_inspect_thread.IsAlive)
+            if (code_inspect_thread.IsAlive)
             {
                 code_inspect_thread.Abort();
                 code_inspect_thread.Join();
@@ -4868,6 +4869,10 @@ namespace _8085_Simulator
 
             //setting up auto list
             auto_list.TargetControlWrapper = new ScintillaWrapper(codeEditor);
+            auto_list.CaptureFocus = false;
+            auto_list.AllowsTabKey = true;
+            auto_list.AutoPopup = false;
+            auto_list.SearchPattern = "\\w+";
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("a", 0, "a", "Help", "A Register!\nSize : 8-bit"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("aci", 0, "aci", "Help", "Add 8-bit value to accumulator with carry!\n\nACI Data\n\nData = 8-bit value"));
             auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("adc", 0, "adc", "Help", "Add register to accumulator with carry!\n\nADC R\n\nR = Destination Register"));
@@ -4993,7 +4998,7 @@ namespace _8085_Simulator
         private void SetAutoList(int n = 0)
         {
             auto_list.Items = null;
-            if (n<0 || n == 0 || n>5)
+            if (n < 0 || n == 0 || n > 5)
             {
                 auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("a", 0, "a", "Help", "A Register!\nSize : 8-bit"));
                 auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("aci", 0, "aci", "Help", "Add 8-bit value to accumulator with carry!\n\nACI Data\n\nData = 8-bit value"));
@@ -5105,19 +5110,19 @@ namespace _8085_Simulator
                     auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem(lab, 0, lab, "Help", "\"" + lab + "\" is a Label!"));
                 }
             }
-            else if(n==3)
+            else if (n == 3)
             {
                 auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("b", 0, "b", "Help", "BC Register Pair!\nSize : 16-bit"));
                 auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("d", 0, "d", "Help", "DE Register Pair!\nSize : 16-bit"));
                 auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("h", 0, "h", "Help", "HL Register Pair!\nSize : 16-bit"));
                 auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("sp", 0, "sp", "Help", "SP Register!\nSize : 16-bit"));
             }
-            else if(n==4)
+            else if (n == 4)
             {
                 auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("b", 0, "b", "Help", "BC Register Pair!\nSize : 16-bit"));
                 auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("d", 0, "d", "Help", "DE Register Pair!\nSize : 16-bit"));
             }
-            else if(n==5)
+            else if (n == 5)
             {
                 auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("b", 0, "b", "Help", "BC Register Pair!\nSize : 16-bit"));
                 auto_list.AddItem(new AutocompleteMenuNS.AutocompleteItem("d", 0, "d", "Help", "DE Register Pair!\nSize : 16-bit"));
@@ -6019,7 +6024,7 @@ namespace _8085_Simulator
                 inpuptKeys.Keyboard.TextEntry(" ");
                 inpuptKeys.Keyboard.ModifiedKeyStroke(VirtualKeyCode.CONTROL, VirtualKeyCode.SPACE);
             }
-            else if(e.Item.Text == "lxi" ||
+            else if (e.Item.Text == "lxi" ||
                     e.Item.Text == "dad" ||
                     e.Item.Text == "inx" ||
                     e.Item.Text == "dcx")
@@ -6029,7 +6034,7 @@ namespace _8085_Simulator
                 inpuptKeys.Keyboard.TextEntry(" ");
                 inpuptKeys.Keyboard.ModifiedKeyStroke(VirtualKeyCode.CONTROL, VirtualKeyCode.SPACE);
             }
-            else if(e.Item.Text == "ldax" ||
+            else if (e.Item.Text == "ldax" ||
                     e.Item.Text == "stax")
             {
                 SetAutoList(4);
@@ -6052,11 +6057,11 @@ namespace _8085_Simulator
         }
         private void darkToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+
         }
         private void iNSToOPCToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(codeEditor.TextLength > 0)
+            if (codeEditor.TextLength > 0)
             {
                 opform opf = new opform();
                 opf.ShowDialog();
@@ -6070,7 +6075,7 @@ namespace _8085_Simulator
         {
             Label temp = (Label)sender;
 
-            if(temp.Text == "A")
+            if (temp.Text == "A")
                 tooltip_main.SetToolTip(temp, "A Register (Accumulator)");
             if (temp.Text == "B")
                 tooltip_main.SetToolTip(temp, "B Register");
@@ -6105,7 +6110,7 @@ namespace _8085_Simulator
         }
         private void copyAsHEXToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(tempL != null)
+            if (tempL != null)
                 Clipboard.SetText(tempL.Text);
         }
         private void copyAsBINToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6128,7 +6133,7 @@ namespace _8085_Simulator
         }
         private void CopyValueTrigger(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
                 tempL = (Label)sender;
             }
@@ -6137,7 +6142,7 @@ namespace _8085_Simulator
         {
             FontConverter cvt = new FontConverter();
             Font fnt = (Font)cvt.ConvertFromString(codeEditor.Styles[Style.Default].Font);
- 
+
             Graphics g = ppeArgs.Graphics;
 
             float linesPerPage = 0;
@@ -6155,7 +6160,7 @@ namespace _8085_Simulator
             while (count < linesPerPage && ((line = reader.ReadLine()) != null))
             {
                 yPos = topMargin + (count * fnt.GetHeight(g));
-                g.DrawString(line,fnt, Brushes.Black, leftMargin, yPos, new StringFormat()); 
+                g.DrawString(line, fnt, Brushes.Black, leftMargin, yPos, new StringFormat());
                 count++;
             }
             if (line != null)

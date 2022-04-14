@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace _8085_Simulator
@@ -17,7 +11,7 @@ namespace _8085_Simulator
 
         public value_editbox(string hex)
         {
-            
+
             InitializeComponent();
             int_value = Convert.ToInt32(hex, 16);
             value.Text = hex;
@@ -69,15 +63,15 @@ namespace _8085_Simulator
 
         private void value_keypress(object sender, KeyPressEventArgs e)
         {
-            if(e.KeyChar==(char)Keys.Return)
+            if (e.KeyChar == (char)Keys.Return)
             {
                 DialogResult = DialogResult.OK;
                 e.Handled = true;
                 Close();
             }
-            else if(bin_flag.Checked)
+            else if (bin_flag.Checked)
             {
-                if(e.KeyChar == (char)Keys.D1 ||
+                if (e.KeyChar == (char)Keys.D1 ||
                     e.KeyChar == (char)Keys.D0 ||
                     e.KeyChar == (char)Keys.Back)
                 {
@@ -88,7 +82,7 @@ namespace _8085_Simulator
                     e.Handled = true;
                 }
             }
-            else if(hex_flag.Checked)
+            else if (hex_flag.Checked)
             {
                 if ((e.KeyChar <= (char)Keys.D9 &&
                     e.KeyChar >= (char)Keys.D0) ||
@@ -113,7 +107,7 @@ namespace _8085_Simulator
                     e.Handled = true;
                 }
             }
-            else if(dec_flag.Checked)
+            else if (dec_flag.Checked)
             {
                 if (e.KeyChar <= (char)Keys.D9 ||
                    e.KeyChar >= (char)Keys.D0 ||
@@ -138,7 +132,7 @@ namespace _8085_Simulator
             {
                 if (bin_flag.Checked)
                 {
-                    if(value.MaxLength == 2)
+                    if (value.MaxLength == 2)
                         int_value = Convert.ToInt32(value.Text.ToUpper(), 16);
                     if (value.MaxLength == 3)
                         int_value = Convert.ToInt32(value.Text.ToUpper(), 10);
